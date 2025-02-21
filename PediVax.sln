@@ -1,6 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PediVax.API", "PediVax.API\PediVax.API.csproj", "{2892078E-C6CB-4BBB-BD85-D04A5F4C74D0}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PediVax.API", "PediVax.API\PediVax.API.csproj", "{2892078E-C6CB-4BBB-BD85-D04A5F4C74D0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. API", "1. API", "{AEDF5D21-5F63-4521-A30A-7D48AA18BF97}"
 EndProject
@@ -10,11 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Repositories", "3. Repos
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. BusinessObjects", "4. BusinessObjects", "{122403AA-1F7B-432C-9B80-457FA9DF510F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PediVax.Services", "PediVax.Services\PediVax.Services.csproj", "{58F44CD6-A75D-4904-B06D-5DE351D811FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PediVax.Services", "PediVax.Services\PediVax.Services.csproj", "{58F44CD6-A75D-4904-B06D-5DE351D811FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PediVax.Repositories", "PediVax.Repositories\PediVax.Repositories.csproj", "{62614540-E536-485E-AFA9-295BA8689F93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PediVax.Repositories", "PediVax.Repositories\PediVax.Repositories.csproj", "{62614540-E536-485E-AFA9-295BA8689F93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PediVax.BusinessObjects", "PediVax.BusinessObjects\PediVax.BusinessObjects.csproj", "{00B7D91A-3D62-4DE0-9A2F-98446A629C8C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PediVax.BusinessObjects", "PediVax.BusinessObjects\PediVax.BusinessObjects.csproj", "{00B7D91A-3D62-4DE0-9A2F-98446A629C8C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,10 +42,16 @@ Global
 		{00B7D91A-3D62-4DE0-9A2F-98446A629C8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00B7D91A-3D62-4DE0-9A2F-98446A629C8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2892078E-C6CB-4BBB-BD85-D04A5F4C74D0} = {AEDF5D21-5F63-4521-A30A-7D48AA18BF97}
 		{58F44CD6-A75D-4904-B06D-5DE351D811FA} = {5D7A37AC-086E-4536-8107-C572EC4DA5DA}
 		{62614540-E536-485E-AFA9-295BA8689F93} = {0F738D19-F1C1-4974-8C2C-E87B9D1CD6BE}
 		{00B7D91A-3D62-4DE0-9A2F-98446A629C8C} = {122403AA-1F7B-432C-9B80-457FA9DF510F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1F020611-DBEA-4A8F-B88B-D36714076E2B}
 	EndGlobalSection
 EndGlobal

@@ -10,4 +10,9 @@
       <ProjectReference Include="..\PediVax.BusinessObjects\PediVax.BusinessObjects.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="IRepository\" />
+      <Folder Include="Repository\Base\" />
+    </ItemGroup>
+
 </Project>

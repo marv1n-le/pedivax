@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace PediVax.BusinessObjects.Models
 {
     public class ChildProfile
     {
+        [Key]
         public int ChildId { get; set; }
         public int UserId { get; set; }
         public string FullName { get; set; }
@@ -24,5 +26,7 @@ namespace PediVax.BusinessObjects.Models
 
         // Navigation property
         public virtual User User { get; set; }
+        public ICollection<Appointment> Appointments { get; set; }
+        public ICollection<VaccineProfile> VaccineProfiles { get; set;}
     }
 }

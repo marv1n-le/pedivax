@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace PediVax.BusinessObjects.Models
 {
     public class User
     {
+        [Key]
         public int UserId { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
@@ -23,5 +25,7 @@ namespace PediVax.BusinessObjects.Models
         public string CreatedBy { get; set; }
         public DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
+
+        public ICollection<ChildProfile> ChildProfiles { get; set; }
     }
 }

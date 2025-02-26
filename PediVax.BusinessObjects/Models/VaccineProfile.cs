@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,9 +9,10 @@ namespace PediVax.BusinessObjects.Models
 {
     public class VaccineProfile
     {
+        [Key]
         public int VaccineProfileId { get; set; }
+        public int AppointmentId { get; set; }
         public int ChildId { get; set; }
-        public int VaccineId { get; set; }
         public DateTime VaccinationDate { get; set; }
         public string Reaction { get; set; }
         public string IsCompleted { get; set; }
@@ -19,12 +21,8 @@ namespace PediVax.BusinessObjects.Models
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
 
-        // Mối quan hệ với Appointment
-        public virtual ICollection<Appointment> Appointments { get; set; }
-
-        // Navigation properties
-        public virtual ChildProfile ChildProfile { get; set; }
-        public virtual Vaccine Vaccine { get; set; }
-        public virtual ICollection<VaccineProfileDetail> VaccineProfileDetails { get; set; }
+        public Appointment Appointment { get; set; }
+        public ChildProfile ChildProfile { get; set; }
+        public ICollection<VaccineProfileDetail> VaccineProfileDetails { get; set; }
     }
 }

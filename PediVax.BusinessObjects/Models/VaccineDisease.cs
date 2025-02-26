@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace PediVax.BusinessObjects.Models
 {
     public class VaccineDisease
     {
+        [Key]
         public int VaccineDiseaseId { get; set; }
         public int VaccineId { get; set; }
         public int DiseaseId { get; set; }

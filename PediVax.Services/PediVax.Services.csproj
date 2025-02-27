@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\PediVax.BusinessObjects\PediVax.BusinessObjects.csproj" />
       <ProjectReference Include="..\PediVax.Repositories\PediVax.Repositories.csproj" />
     </ItemGroup>
 

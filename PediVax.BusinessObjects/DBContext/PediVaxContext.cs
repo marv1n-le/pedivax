@@ -174,6 +174,18 @@ namespace PediVax.BusinessObjects.DBContext
                 .WithMany(v => v.VaccineProfileDetails)
                 .HasForeignKey(vpd => vpd.VaccineId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Vaccine>()
+                .Property(v => v.Price)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<VaccinePackage>()
+                .Property(vp => vp.TotalPrice)
+                .HasColumnType("decimal(18,2)");
+            
+            modelBuilder.Entity<Payment>()
+                .Property(p => p.TotalAmount)
+                .HasColumnType("decimal(18,2)");
         }
     }
-    }
+}

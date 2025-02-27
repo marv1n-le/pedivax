@@ -1,4 +1,5 @@
-﻿using PediVax.BusinessObjects.Models;
+﻿using PediVax.BusinessObjects.DTO.RequestDTO;
+using PediVax.BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace PediVax.Services.IService
     public interface IUserService
     {
         Task<List<User>> GetAllUsers();
+        Task<User> AddUser(CreateUserDTO createUserDTO);
     }
 }

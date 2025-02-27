@@ -10,5 +10,6 @@ namespace PediVax.Repositories.IRepository
     public interface IUserRepository
     {
         Task<List<User>> GetAllUsers();
+        Task<User> AddUser(User user);
     }
 }

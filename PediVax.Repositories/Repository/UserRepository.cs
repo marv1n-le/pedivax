@@ -28,5 +28,12 @@ namespace PediVax.Repositories.Repository
         {
             return await _context.Users.ToListAsync();
         }
+
+        public async Task<User> AddUser(User user)
+        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
     }
 }

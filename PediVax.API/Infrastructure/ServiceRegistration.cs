@@ -1,4 +1,8 @@
-﻿using PediVax.Services.Configuration.Mapper;
+﻿using PediVax.Repositories.IRepository;
+using PediVax.Repositories.Repository;
+using PediVax.Services.Configuration.Mapper;
+using PediVax.Services.IService;
+using PediVax.Services.Service;
 
 namespace PediVax.Infrastructure
 {
@@ -9,6 +13,14 @@ namespace PediVax.Infrastructure
             // Configure AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddAutoMapper(typeof(MapperEntities).Assembly);
+
+            #region DependencyInjection
+            //Register repositories
+            services.AddScoped<IUserRepository, UserRepository>();
+
+            //Register services
+            services.AddScoped<IUserService, UserService>();
+            #endregion
 
             return services;
         }

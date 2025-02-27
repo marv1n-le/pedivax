@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PediVax.BusinessObjects.DBContext;
+using PediVax.Infrastructure;
 
 namespace PediVax;
 
@@ -9,6 +10,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddControllers();
         // Add services to the container.
         builder.Services.AddAuthorization();
 
@@ -16,8 +18,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-    //    builder.Services.AddDbContext<PediVaxContext>(options =>
-    //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Services.Register();
 
         var app = builder.Build();
 

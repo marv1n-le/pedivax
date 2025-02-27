@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PediVax.BusinessObjects.DTO.ReponseDTO
 {
-    public class UserReponseDTO
+    public class UserResponseDTO
     {
         public int UserId { get; set; }
         public string Username { get; set; }

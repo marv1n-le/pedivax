@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PediVax.BusinessObjects.DTO.RequestDTO;
 using PediVax.Services.IService;
 
 namespace PediVax.Controllers
@@ -23,6 +24,19 @@ namespace PediVax.Controllers
                 return NotFound("No users found");
             }
             return Ok(users);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUser(CreateUserDTO createUserDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userService.AddUser(createUserDTO);
+
+            return Ok(user);
         }
     }
 }

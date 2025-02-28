@@ -20,7 +20,7 @@ namespace PediVax.BusinessObjects.Models
         public decimal Price { get; set; }
         public DateTime DateOfManufacture { get; set; }
         public DateTime ExpiryDate { get; set; }
-        public string IsActive { get; set; }
+        public Enum.EnumList.IsActive IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime ModifiedDate { get; set; }

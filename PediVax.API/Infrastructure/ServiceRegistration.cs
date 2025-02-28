@@ -13,7 +13,8 @@ namespace PediVax.Infrastructure
             // Configure AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddAutoMapper(typeof(MapperEntities).Assembly);
-
+           
+            
             #region DependencyInjection
             //Register repositories
             services.AddScoped<IUserRepository, UserRepository>();
@@ -21,7 +22,9 @@ namespace PediVax.Infrastructure
             //Register services
             services.AddScoped<IUserService, UserService>();
             #endregion
-
+            //disease
+            services.AddScoped<IDiseaseRepository, DiseaseRepository>();
+            services.AddScoped<IDiseaseService, DiseaseService>();
             return services;
         }
     }

@@ -2,6 +2,7 @@
 using PediVax.BusinessObjects.DTO.RequestDTO;
 using PediVax.BusinessObjects.Models;
 using PediVax.Repositories.IRepository;
+using PediVax.Repositories.Repository;
 using PediVax.Services.IService;
 using System;
 using System.Collections.Generic;
@@ -23,14 +24,16 @@ namespace PediVax.Services.Service
             _mapper = mapper;
         }
 
-        public Task<Disease> AddDisease(CreateDiseaseDTO createDiseaseDTO)
+        public async Task<Disease> AddDisease(CreateDiseaseDTO createDiseaseDTO)
         {
-            throw new NotImplementedException();
+            var diseas = _mapper.Map<Disease>(createDiseaseDTO);
+            return await _diseaseRepository.AddDisease(diseas);
         }
 
-        public Task<List<Disease>> GetAllDisease()
+        public async Task<List<Disease>> GetAllDisease()
         {
-            throw new NotImplementedException();
+            var diease = await _diseaseRepository.GetAllDisease();
+            return _mapper.Map<List<Disease>>(diease);
         }
     }
 }

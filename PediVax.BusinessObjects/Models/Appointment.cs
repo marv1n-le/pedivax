@@ -18,7 +18,8 @@ namespace PediVax.BusinessObjects.Models
         public int VaccineId { get; set; }
         public int VaccinePackageId { get; set; }
         public DateTime AppointmentDate { get; set; }
-        public string Status { get; set; }
+        public Enum.EnumList.AppointmentStatus AppointmentStatus { get; set; }
+        public Enum.EnumList.IsActive IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime ModifiedDate { get; set; }

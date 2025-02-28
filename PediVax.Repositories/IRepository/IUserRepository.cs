@@ -9,7 +9,11 @@ namespace PediVax.Repositories.IRepository
 {
     public interface IUserRepository
     {
-        Task<List<User>> GetAllUsers();
-        Task<User> AddUser(User user);
+        Task<List<User>> GetAllUser();
+        Task<User> GetUserById(int id);
+        Task<(List<User> Data, int TotalCount)> GetUserPaged(int pageNumber, int pageSize);
+        Task<int> AddUser(User user);
+        Task<int> UpdateUser(User user);
+        Task<bool> DeleteUser(int id);
     }
 }

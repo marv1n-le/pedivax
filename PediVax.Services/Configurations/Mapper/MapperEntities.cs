@@ -21,6 +21,12 @@ namespace PediVax.Services.Configuration.Mapper
                 .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => "System"))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
                 .ForMember(dest => dest.ModifiedBy, opt => opt.MapFrom(src => "System"));
+            CreateMap<UpdateUserDTO, User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
+                .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => "System"))
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.ModifiedBy, opt => opt.MapFrom(src => "System"));
             CreateMap<User, UserResponseDTO>();
         }
     }

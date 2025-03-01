@@ -50,8 +50,8 @@ namespace PediVax.Controllers
             return Ok(user);
         }
 
-        [HttpGet("GetUsersPaged")]
-        public async Task<IActionResult> GetUsersPaged(int pageNumber = 1, int pageSize = 10)
+        [HttpGet("GetUsersPaged/{pageNumber}/{pageSize}")]
+        public async Task<IActionResult> GetUsersPaged(int pageNumber, int pageSize)
         {
             var (data, totalCount) = await _userService.GetUserPaged(pageNumber, pageSize);
             return Ok(new { Data = data, TotalCount = totalCount });
@@ -77,6 +77,28 @@ namespace PediVax.Controllers
                 return NotFound();
             }
             return NoContent();
+        }
+        
+        [HttpGet("GetUserByEmail/{email}")]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            var user = await _userService.GetUserByEmail(email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
+        
+        [HttpGet("GetUserByName/{keyword}")]
+        public async Task<IActionResult> GetUserByName(string keyword)
+        {
+            var users = await _userService.GetUserByName(keyword);
+            if (users == null || users.Count == 0)
+            {
+                return NotFound("No users found");
+            }
+            return Ok(users);
         }
     }
 }

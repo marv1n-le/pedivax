@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PediVax.BusinessObjects.Enum;
 
 namespace PediVax.Repositories.Repository
 {
@@ -46,6 +47,18 @@ namespace PediVax.Repositories.Repository
         public async Task<bool> DeleteUser(int id)
         {
             return await DeleteAsync(id);
+        }
+        
+        public async Task<User> GetByEmailAsync(string email)
+        {
+            return await _context.Users
+                .Where(u => u.IsActive == EnumList.IsActive.Active)
+                .FirstOrDefaultAsync(u => u.Email == email );
+        }
+
+        public async Task<List<User>> GetUserByName(string keyword)
+        {
+            return await GetByNameContainingAsync(keyword);
         }
     }
 }

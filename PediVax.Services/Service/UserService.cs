@@ -73,7 +73,7 @@ namespace PediVax.Services.Service
         }
         public static string GenerateSalt()
         {
-            byte[] saltBytes = new byte[16]; // Tạo salt 16 byte
+            byte[] saltBytes = new byte[32]; // Tạo salt 16 byte
             using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(saltBytes); // Tạo số ngẫu nhiên
@@ -83,12 +83,9 @@ namespace PediVax.Services.Service
 
         public static string HashPassword(string password, string salt)
         {
-            using (var sha256 = SHA256.Create())
-            {
-                var saltedPassword = password + salt; // Kết hợp mật khẩu và salt
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword)); // Hash chuỗi kết hợp
-                return Convert.ToBase64String(hashedBytes); // Chuyển đổi sang chuỗi base64
-            }
+            var saltBytes = Convert.FromBase64String(salt);
+            var hashBytes = new Rfc2898DeriveBytes(password, saltBytes, 10000, HashAlgorithmName.SHA256).GetBytes(32);
+            return Convert.ToBase64String(hashBytes);
         }
 
         public async Task<(List<UserResponseDTO> Data, int TotalCount)> GetUserPaged(int pageNumber, int pageSize)

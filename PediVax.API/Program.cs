@@ -29,7 +29,7 @@ public class Program
         #region Configre Swagger
         builder.Services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new() { Title = "PediVax", Version = "v1" });
+            c.SwaggerDoc("v1", new() { Title = "PediVax API", Version = "v1" });
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,

@@ -19,10 +19,7 @@ namespace PediVax.Services.IService
 
         // Lấy các cuộc hẹn theo ngày
         Task<List<AppointmentResponseDTO>> GetAppointmentsByDate(DateTime appointmentDate);
-
-        // Lấy các cuộc hẹn theo status
-        Task<List<AppointmentResponseDTO>> GetAppointmentsByStatus(string status);
-
+        
         // Thêm cuộc hẹn
         Task<AppointmentResponseDTO> AddAppointment(CreateAppointmentDTO createAppointmentDTO);
 

@@ -18,9 +18,7 @@ namespace PediVax.Repositories.IRepository
 
         // Lấy danh sách cuộc hẹn theo ngày
         Task<List<Appointment>> GetAppointmentsByDate(DateTime appointmentDate);
-
-        // Lấy danh sách cuộc hẹn theo trạng thái 
-        Task<List<Appointment>> GetAppointmentsByStatus(string status);
+        
 
         // Thêm mới cuộc hẹn
         Task<Appointment> AddAppointment(Appointment appointment);

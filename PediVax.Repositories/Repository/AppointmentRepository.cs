@@ -2,6 +2,7 @@
 using PediVax.BusinessObjects.DBContext;
 using PediVax.BusinessObjects.Models;
 using PediVax.Repositories.IRepository;
+using System.Linq.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -43,11 +44,6 @@ namespace PediVax.Repositories.Repository
                 .ToListAsync();
         }
 
-        // Lấy danh sách cuộc hẹn theo trạng thái
-        public async Task<List<Appointment>> GetAppointmentsByStatus(string status)
-        {
-            return await _context.Appointments.Where(a => a.Status == status).ToListAsync();
-        }
 
         // Thêm mới cuộc hẹn
         public async Task<Appointment> AddAppointment(Appointment appointment)

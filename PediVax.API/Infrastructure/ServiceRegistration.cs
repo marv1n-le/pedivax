@@ -18,13 +18,15 @@ namespace PediVax.Infrastructure
             #region DependencyInjection
             //Register repositories
             services.AddScoped<IUserRepository, UserRepository>();
-
+            services.AddScoped<IDiseaseRepository, DiseaseRepository>();
+            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             //Register services
             services.AddScoped<IUserService, UserService>();
-            #endregion
-            //disease
-            services.AddScoped<IDiseaseRepository, DiseaseRepository>();
             services.AddScoped<IDiseaseService, DiseaseService>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
+
+            #endregion
+
             return services;
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PediVax.BusinessObjects.DTO.RequestDTO;
 using PediVax.Services.IService;
@@ -6,6 +7,7 @@ using PediVax.Services.IService;
 namespace PediVax.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {

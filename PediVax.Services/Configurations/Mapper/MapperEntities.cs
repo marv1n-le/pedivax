@@ -15,6 +15,7 @@ namespace PediVax.Services.Configuration.Mapper
     {
         public MapperEntities()
         {
+            //User Mapper
             CreateMap<CreateUserDTO, User>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
                 .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore()) 

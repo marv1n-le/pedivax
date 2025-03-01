@@ -20,11 +20,12 @@ namespace PediVax.Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDiseaseRepository, DiseaseRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            
             //Register services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDiseaseService, DiseaseService>();
             services.AddScoped<IAppointmentService, AppointmentService>();
-
+            services.AddScoped<IAuthService, AuthService>();
             #endregion
 
             return services;

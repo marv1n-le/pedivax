@@ -58,13 +58,7 @@ namespace PediVax.Services.Service
             var appointments = await _appointmentRepository.GetAppointmentsByDate(appointmentDate);
             return _mapper.Map<List<AppointmentResponseDTO>>(appointments);
         }
-        // get by status
-        public async Task<List<AppointmentResponseDTO>> GetAppointmentsByStatus(string status)
-        {
-            var appointments = await _appointmentRepository.GetAppointmentsByStatus(status);
-            return _mapper.Map<List<AppointmentResponseDTO>>(appointments);
-        }
-        // update
+
         public async Task<AppointmentResponseDTO> UpdateAppointment(CreateAppointmentDTO createAppointmentDTO)
         {
             var appointment = _mapper.Map<Appointment>(createAppointmentDTO);

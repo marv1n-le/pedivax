@@ -59,17 +59,7 @@ namespace PediVax.Controllers
             }
             return Ok(appointments);
         }
-
-        [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetByStatus(string status)
-        {
-            var appointments = await _appointmentService.GetAppointmentsByStatus(status);
-            if (appointments == null || appointments.Count == 0)
-            {
-                return NotFound($"No appointments found with status {status}");
-            }
-            return Ok(appointments);
-        }
+        
         [HttpPost]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDTO createAppointmentDTO)
         {

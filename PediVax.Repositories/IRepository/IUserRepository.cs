@@ -15,5 +15,7 @@ namespace PediVax.Repositories.IRepository
         Task<int> AddUser(User user);
         Task<int> UpdateUser(User user);
         Task<bool> DeleteUser(int id);
+        Task<User> GetByEmailAsync(string email);
+        Task<List<User>> GetUserByName(string keyword);
     }
 }

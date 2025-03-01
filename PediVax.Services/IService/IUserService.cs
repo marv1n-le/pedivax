@@ -17,5 +17,7 @@ namespace PediVax.Services.IService
         Task<UserResponseDTO> CreateUser(CreateUserDTO createUserDTO);
         Task<bool> UpdateUser(int id,UpdateUserDTO updateUserDTO);
         Task<bool> DeleteUser(int userId);
+        Task<UserResponseDTO> GetUserByEmail(string email);
+        Task<List<UserResponseDTO>> GetUserByName(string keyword);
     }
 }

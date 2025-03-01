@@ -9,31 +9,24 @@ namespace PediVax.BusinessObjects.DTO.RequestDTO
 {
     public class CreateUserDTO
     {
-        [Required]
-        public string Username { get; set; }
-
-        [Required]
-        [EmailAddress]
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Full name is required")]
         public string FullName { get; set; }
 
-        [Required]
+        [Phone(ErrorMessage = "Invalid phone number format")]
         public string PhoneNumber { get; set; }
-
+        
+        [Required(ErrorMessage = "Address is required")]
         public string Address { get; set; }
 
-        [Required]
-        public string Role { get; set; }
-
-        [Required]
+        [Required(ErrorMessage = "Date of birth is required")]
         public DateTime DateOfBirth { get; set; }
-
-        [Required]
-        public string IsActive { get; set; }
+        
     }
 }

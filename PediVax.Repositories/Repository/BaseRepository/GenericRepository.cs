@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -63,39 +64,41 @@ namespace PediVax.Repositories.Repository.BaseRepository
             var tracker = _context.Attach(entity);
             tracker.State = EntityState.Modified;
             _context.SaveChanges();
-
-            //if (_context.Entry(entity).State == EntityState.Detached)
-            //{
-            //    var tracker = _context.Attach(entity);
-            //    tracker.State = EntityState.Modified;
-            //}
-            //_context.SaveChanges();
         }
 
         public async Task<int> UpdateAsync(T entity)
         {
-            //var trackerEntity = _context.Set<T>().Local.FirstOrDefault(e => e == entity);
-            //if (trackerEntity != null)
-            //{
-            //    _context.Entry(trackerEntity).State = EntityState.Detached;
-            //}
-            //var tracker = _context.Attach(entity);
-            //tracker.State = EntityState.Modified;
-            //return await _context.SaveChangesAsync();
+            var keyProperty = typeof(T).GetProperties()
+                                  .FirstOrDefault(p => p.GetCustomAttributes(typeof(KeyAttribute), false).Any())
+                              ?? typeof(T).GetProperties().FirstOrDefault(p => p.Name.EndsWith("Id"));
 
-            var tracker = _context.Attach(entity);
-            tracker.State = EntityState.Modified;
+            if (keyProperty == null)
+            {
+                throw new InvalidOperationException("Không thể xác định khóa chính của entity.");
+            }
+
+            // Lấy giá trị ID của entity
+            var keyValue = keyProperty.GetValue(entity);
+            if (keyValue == null)
+            {
+                throw new InvalidOperationException("Giá trị ID của entity không hợp lệ.");
+            }
+
+            // Tìm thực thể trong DbContext theo ID
+            var existing = await _context.Set<T>().FindAsync(keyValue);
+            if (existing != null)
+            {
+                _context.Entry(existing).State = EntityState.Detached; // Detach thực thể cũ
+            }
+
+            _context.Attach(entity); // Gắn entity mới vào context
+            _context.Entry(entity).State = EntityState.Modified; // Đánh dấu để cập nhật
+
             return await _context.SaveChangesAsync();
-
-            //if (_context.Entry(entity).State == EntityState.Detached)
-            //{
-            //    var tracker = _context.Attach(entity);
-            //    tracker.State = EntityState.Modified;
-            //}
-
-            //return await _context.SaveChangesAsync();
         }
 
+
+        
         public bool Remove(T entity)
         {
             _context.Remove(entity);
@@ -121,18 +124,10 @@ namespace PediVax.Repositories.Repository.BaseRepository
             return entity;
         }
 
-        //public async Task<T> GetByIdAsync(int id, string idPropertyName)
-        //{
-        //    var entity = await _context.Set<T>()
-        //        .Where(e => EF.Property<int>(e, "IsActive") == 1)
-        //        .FirstOrDefaultAsync(e => EF.Property<int>(e, idPropertyName) == id);
-        //    if (entity != null)
-        //    {
-        //        _context.Entry(entity).State = EntityState.Detached;
-        //    }
-
-        //    return entity;
-        //}
+        public void Detach(T entity)
+        {
+            _context.Entry(entity).State = EntityState.Detached;
+        }
 
         public async Task<T> GetByIdAsync(int id)
         {
@@ -224,6 +219,22 @@ namespace PediVax.Repositories.Repository.BaseRepository
                 }
             }
             return false;
+        }
+        
+        public async Task<List<T>> GetByNameContainingAsync(string keyword)
+        {
+            var propertyName = typeof(T).GetProperties()
+                                   .FirstOrDefault(p => p.Name.Contains("Name"))?.Name;
+
+            if (propertyName == null)
+            {
+                throw new InvalidOperationException("Cannot determine property name to search.");
+            }
+
+            return await _context.Set<T>()
+                .Where(e => EF.Property<int>(e, "IsActive") == 1) 
+                .Where(e => EF.Property<string>(e, propertyName).Contains(keyword))
+                .ToListAsync();
         }
 
         #region Separating asigned entity and save operators        

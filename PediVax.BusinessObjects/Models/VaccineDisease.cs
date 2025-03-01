@@ -15,6 +15,7 @@ namespace PediVax.BusinessObjects.Models
         public int VaccineDiseaseId { get; set; }
         public int VaccineId { get; set; }
         public int DiseaseId { get; set; }
+        public int DoseNumber { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime ModifiedDate { get; set; }

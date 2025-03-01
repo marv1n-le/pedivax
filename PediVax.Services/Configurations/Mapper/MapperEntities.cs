@@ -45,6 +45,12 @@ namespace PediVax.Services.Configuration.Mapper
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
                 .ForMember(dest => dest.ModifiedBy, opt => opt.MapFrom(src => "System"));
 
+            CreateMap<UpdateAppointmentDTO , Appointment>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => "System"))
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.ModifiedBy, opt => opt.MapFrom(src => "System"));
+
             CreateMap<Appointment, AppointmentResponseDTO>();
         }
     }

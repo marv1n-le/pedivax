@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PediVax.BusinessObjects.DTO.RequestDTO;
+using PediVax.BusinessObjects.DTO.ResponseDTO;
+using PediVax.BusinessObjects.Enum;
 using PediVax.Services.IService;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PediVax.Controllers
@@ -17,8 +21,9 @@ namespace PediVax.Controllers
             _appointmentService = appointmentService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+       
+        [HttpGet("GetAllAppointments")]
+        public async Task<IActionResult> GetAllAppointments()
         {
             var appointments = await _appointmentService.GetAllAppointments();
             if (appointments == null || appointments.Count == 0)
@@ -28,39 +33,28 @@ namespace PediVax.Controllers
             return Ok(appointments);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        
+        [HttpGet("GetAppointmentById/{appointmentId}")]
+        public async Task<IActionResult> GetAppointmentById(int appointmentId)
         {
-            var appointment = await _appointmentService.GetAppointmentById(id);
+            var appointment = await _appointmentService.GetAppointmentById(appointmentId);
             if (appointment == null)
             {
-                return NotFound($"No appointment found with ID {id}");
+                return NotFound("Appointment not found");
             }
             return Ok(appointment);
         }
-        [HttpGet("child/{childId}")]
-        public async Task<IActionResult> GetByChildId(int childId)
+
+        
+        [HttpGet("GetAppointmentsPaged/{pageNumber}/{pageSize}")]
+        public async Task<IActionResult> GetAppointmentsPaged(int pageNumber, int pageSize)
         {
-            var appointments = await _appointmentService.GetAppointmentsByChildId(childId);
-            if (appointments == null || appointments.Count == 0)
-            {
-                return NotFound($"No appointments found for child ID {childId}");
-            }
-            return Ok(appointments);
+            var (appointments, totalCount) = await _appointmentService.GetAppointmentsPaged(pageNumber, pageSize);
+            return Ok(new { Data = appointments, TotalCount = totalCount });
         }
 
-        [HttpGet("date/{date}")]
-        public async Task<IActionResult> GetByDate(DateTime date)
-        {
-            var appointments = await _appointmentService.GetAppointmentsByDate(date);
-            if (appointments == null || appointments.Count == 0)
-            {
-                return NotFound($"No appointments found on {date:yyyy-MM-dd}");
-            }
-            return Ok(appointments);
-        }
         
-        [HttpPost]
+        [HttpPost("CreateAppointment")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDTO createAppointmentDTO)
         {
             if (!ModelState.IsValid)
@@ -68,31 +62,68 @@ namespace PediVax.Controllers
                 return BadRequest(ModelState);
             }
 
-            var appointment = await _appointmentService.AddAppointment(createAppointmentDTO);
-            return Ok(appointment);
+            var createdAppointment = await _appointmentService.CreateAppointment(createAppointmentDTO);
+            return Ok(createdAppointment);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAppointment(int id, [FromBody] CreateAppointmentDTO createAppointmentDTO)
+        
+        [HttpPut("UpdateAppointmentById/{id}")]
+        public async Task<IActionResult> UpdateAppointment(int id, [FromBody] UpdateAppointmentDTO updateAppointmentDTO)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var appointment = await _appointmentService.UpdateAppointment(createAppointmentDTO);
-            return Ok(appointment);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAppointment(int id)
-        {
-            var result = await _appointmentService.DeleteAppointment(id);
+            var result = await _appointmentService.UpdateAppointment(id, updateAppointmentDTO);
             if (!result)
             {
-                return NotFound($"No appointment found with ID {id}");
+                return NotFound("Appointment not found");
             }
-            return Ok("Appointment deleted successfully");
+            return NoContent();
+        }
+
+        
+        [HttpDelete("DeleteAppointmentById/{appointmentId}")]
+        public async Task<IActionResult> DeleteAppointment(int appointmentId)
+        {
+            var result = await _appointmentService.DeleteAppointment(appointmentId);
+            if (!result)
+            {
+                return NotFound("Appointment not found");
+            }
+            return NoContent();
+        }
+
+        
+        [HttpGet("GetAppointmentsByChildId/{childId}")]
+        public async Task<IActionResult> GetAppointmentsByChildId(int childId)
+        {
+            var appointments = await _appointmentService.GetAppointmentsByChildId(childId);
+            if (appointments == null || appointments.Count == 0)
+            {
+                return NotFound("No appointments found for this child");
+            }
+            return Ok(appointments);
+        }
+
+        
+        [HttpGet("GetAppointmentsByDate/{appointmentDate}")]
+        public async Task<IActionResult> GetAppointmentsByDate(DateTime appointmentDate)
+        {
+            var appointments = await _appointmentService.GetAppointmentsByDate(appointmentDate);
+            if (appointments == null || appointments.Count == 0)
+            {
+                return NotFound("No appointments found on this date");
+            }
+            return Ok(appointments);
+        }
+
+        
+        [HttpGet("GetAppointmentsByStatus/{status}")]
+        public async Task<IActionResult> GetAppointmentsByStatus(EnumList.AppointmentStatus status)
+        {
+            var appointments = await _appointmentService.GetAppointmentsByStatus(status);
+            if (appointments == null || appointments.Count == 0)
+            {
+                return NotFound("No appointments found with this status");
+            }
+            return Ok(appointments);
         }
     }
 }

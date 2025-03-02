@@ -51,7 +51,7 @@ namespace PediVax.BusinessObjects.Enum
         public enum Role
         {
             Admin = 1,
-            Docter = 2,
+            Doctor = 2,
             Staff = 3,
             Customer = 4
         }

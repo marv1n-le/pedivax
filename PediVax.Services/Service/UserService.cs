@@ -5,14 +5,17 @@ using PediVax.BusinessObjects.Models;
 using PediVax.Repositories.IRepository;
 using PediVax.Repositories.Repository;
 using PediVax.Services.IService;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using PediVax.BusinessObjects.Enum;
+using PediVax.BusinessObjects.Helpers;
 
 namespace PediVax.Services.Service
 {
@@ -20,11 +23,24 @@ namespace PediVax.Services.Service
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
+        }
+        
+        private string GetCurrentUserName()
+        {
+            if (_httpContextAccessor.HttpContext == null || _httpContextAccessor.HttpContext.User == null)
+            {
+                return "System";
+            }
+
+            var userName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            return string.IsNullOrEmpty(userName) ? "System" : userName;
         }
 
         public async Task<List<UserResponseDTO>> GetAllUser()
@@ -42,8 +58,8 @@ namespace PediVax.Services.Service
                     throw new Exception("Phone number already exists.");
                 if (await CheckEmailExist(createUserDTO.Email))
                     throw new Exception("Email already exists.");
-                var salt = GenerateSalt();
-                var hashedPassword = HashPassword(createUserDTO.Password, salt);
+                var salt = PasswordHelper.GenerateSalt();
+                var hashedPassword = PasswordHelper.HashPassword(createUserDTO.Password, salt);
 
                 var user = new User()
                 {
@@ -55,9 +71,9 @@ namespace PediVax.Services.Service
                     Address = createUserDTO.Address,
                     Role = EnumList.Role.Customer,
                     CreatedDate = DateTime.UtcNow,
-                    CreatedBy = "System",
+                    CreatedBy = GetCurrentUserName(),
                     ModifiedDate = DateTime.UtcNow,
-                    ModifiedBy = "System",
+                    ModifiedBy = GetCurrentUserName(),
                     IsActive = EnumList.IsActive.Active
                 };
                 if (await _userRepository.AddUser(user) <= 0)
@@ -71,21 +87,48 @@ namespace PediVax.Services.Service
                 throw new Exception("Error while saving user: " + ex.InnerException?.Message, ex);
             }
         }
-        public static string GenerateSalt()
+        
+        public async Task<UserResponseDTO> CreateSystemUser(CreateSystemUserDTO createSystemUserDto)
         {
-            byte[] saltBytes = new byte[32]; // Tạo salt 16 byte
-            using (var rng = RandomNumberGenerator.Create())
+            try
             {
-                rng.GetBytes(saltBytes); // Tạo số ngẫu nhiên
-            }
-            return Convert.ToBase64String(saltBytes); // Chuyển đổi sang chuỗi base64
-        }
+                if (createSystemUserDto.Role != EnumList.Role.Staff && createSystemUserDto.Role != EnumList.Role.Doctor)
+                {
+                    throw new Exception("Invalid role. Only Staff (2) and Doctor (3) can be created.");
+                }
+                ValidateInputs(createSystemUserDto);
+                if (await CheckPhoneExist(createSystemUserDto.PhoneNumber))
+                    throw new Exception("Phone number already exists.");
+                if (await CheckEmailExist(createSystemUserDto.Email))
+                    throw new Exception("Email already exists.");
+                var salt = PasswordHelper.GenerateSalt();
+                var hashedPassword = PasswordHelper.HashPassword(createSystemUserDto.Password, salt);
 
-        public static string HashPassword(string password, string salt)
-        {
-            var saltBytes = Convert.FromBase64String(salt);
-            var hashBytes = new Rfc2898DeriveBytes(password, saltBytes, 10000, HashAlgorithmName.SHA256).GetBytes(32);
-            return Convert.ToBase64String(hashBytes);
+                var user = new User()
+                {
+                    FullName = createSystemUserDto.FullName,
+                    Email = createSystemUserDto.Email,
+                    PhoneNumber = createSystemUserDto.PhoneNumber,
+                    PasswordHash = hashedPassword,
+                    PasswordSalt = salt,
+                    Address = createSystemUserDto.Address,
+                    Role = createSystemUserDto.Role,
+                    CreatedDate = DateTime.UtcNow,
+                    CreatedBy = GetCurrentUserName(),
+                    ModifiedDate = DateTime.UtcNow,
+                    ModifiedBy = GetCurrentUserName(),
+                    IsActive = EnumList.IsActive.Active
+                };
+                if (await _userRepository.AddUser(user) <= 0)
+                {
+                    throw new Exception("Failed to add user");
+                }
+                return _mapper.Map<UserResponseDTO>(user);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error while saving user: " + ex.InnerException?.Message, ex);
+            }
         }
 
         public async Task<(List<UserResponseDTO> Data, int TotalCount)> GetUserPaged(int pageNumber, int pageSize)
@@ -103,6 +146,11 @@ namespace PediVax.Services.Service
 
         public async Task<bool> UpdateUser(int id, UpdateUserDTO updateUserDTO)
         {
+            if (updateUserDTO.Role != EnumList.Role.Staff && updateUserDTO.Role != EnumList.Role.Doctor
+                && updateUserDTO.Role != EnumList.Role.Customer)
+            {
+                throw new Exception("Invalid role. Only Staff (2), Doctor (3) and Customer (1) can be updated.");
+            }
             if (updateUserDTO == null) throw new ArgumentNullException(nameof(updateUserDTO));
             try
             {
@@ -123,7 +171,7 @@ namespace PediVax.Services.Service
                 existing.Role = updateUserDTO.Role;
                 existing.Address = updateUserDTO.Address;
                 existing.ModifiedDate = DateTime.UtcNow;
-                existing.ModifiedBy = "System";
+                existing.ModifiedBy = GetCurrentUserName();
                 if (await _userRepository.UpdateUser(existing) <= 0)
                 {
                     throw new Exception("Failed to update user");
@@ -170,6 +218,12 @@ namespace PediVax.Services.Service
         {
             ValidateCommonInputs(createUserDTO.PhoneNumber, createUserDTO.Email, createUserDTO.FullName, createUserDTO.Password);
         }
+        
+        private void ValidateInputs(CreateSystemUserDTO createSystemUserDTO)
+        {
+            ValidateCommonInputs(createSystemUserDTO.PhoneNumber, createSystemUserDTO.Email, createSystemUserDTO.FullName, createSystemUserDTO.Password);
+        }
+        
         private void ValidateUpdateInputs(UpdateUserDTO updateUserDTO)
         {
             ValidatePhoneNumber(updateUserDTO.PhoneNumber);

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PediVax.BusinessObjects.DBContext;
 
@@ -11,9 +12,11 @@ using PediVax.BusinessObjects.DBContext;
 namespace PediVax.BusinessObjects.Migrations
 {
     [DbContext(typeof(PediVaxContext))]
-    partial class PediVaxContextModelSnapshot : ModelSnapshot
+    [Migration("20250302055259_update")]
+    partial class update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,6 +89,10 @@ namespace PediVax.BusinessObjects.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChildId"));
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -116,6 +123,10 @@ namespace PediVax.BusinessObjects.Migrations
 
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Relationship")
                         .HasColumnType("int");
@@ -311,15 +322,15 @@ namespace PediVax.BusinessObjects.Migrations
                             UserId = 1,
                             Address = "PediVax HCM",
                             CreatedBy = "System",
-                            CreatedDate = new DateTime(2025, 3, 2, 7, 29, 25, 855, DateTimeKind.Utc).AddTicks(5962),
+                            CreatedDate = new DateTime(2025, 3, 2, 5, 52, 59, 73, DateTimeKind.Utc).AddTicks(3710),
                             DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@pedivax.com",
                             FullName = "System Admin",
                             IsActive = 1,
                             ModifiedBy = "System",
-                            ModifiedDate = new DateTime(2025, 3, 2, 7, 29, 25, 855, DateTimeKind.Utc).AddTicks(5966),
-                            PasswordHash = "l0IY3N+40p/tGBRX6ZEfa8v42RlVNP+l+Xzcztg5Y7Y=",
-                            PasswordSalt = "lDSH2/Rss9Lf1AReUKiP4fBnzXacN51FKeDam+VXjRE=",
+                            ModifiedDate = new DateTime(2025, 3, 2, 5, 52, 59, 73, DateTimeKind.Utc).AddTicks(3715),
+                            PasswordHash = "w9HyqTUO7+U8Z7VO72fbn/yenQMlkwb1uAg15bEnLMw=",
+                            PasswordSalt = "PTV8VwTgGbJpg3OxlR/atGk/jwCLUwn9zIruakqn45c=",
                             PhoneNumber = "0123456789",
                             Role = 1
                         });

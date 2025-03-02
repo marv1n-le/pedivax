@@ -19,7 +19,7 @@ namespace PediVax.BusinessObjects.DBContext
             if (!optionsBuilder.IsConfigured)
             {
                 var path = Path.Combine(Directory.GetCurrentDirectory(), "..", "PediVax.API"); // Trỏ về thư mục chứa appsettings.json
-                Console.WriteLine($"📂 Adjusted Base Path: {path}");
+                Console.WriteLine($"Adjusted Base Path: {path}");
 
                 var configuration = new ConfigurationBuilder()
                     .SetBasePath(path)
@@ -27,7 +27,7 @@ namespace PediVax.BusinessObjects.DBContext
                     .Build();
 
                 string connectionString = configuration.GetConnectionString("DefaultConnection");
-                Console.WriteLine($"🔍 Connection String: {connectionString}");
+                Console.WriteLine($"Connection String: {connectionString}");
 
                 if (string.IsNullOrEmpty(connectionString))
                 {
@@ -186,6 +186,8 @@ namespace PediVax.BusinessObjects.DBContext
             modelBuilder.Entity<Payment>()
                 .Property(p => p.TotalAmount)
                 .HasColumnType("decimal(18,2)");
+            
+            SeedData.Seed(modelBuilder);
         }
     }
 }

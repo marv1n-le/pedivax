@@ -80,7 +80,13 @@ namespace PediVax.Services.Service
             else
             {
 
-                _mapper.Map(updateAppointmentDTO, existingAppointment);
+                existingAppointment.PaymentId = updateAppointmentDTO.PaymentId;
+                existingAppointment.ChildId = updateAppointmentDTO.ChildId;
+                existingAppointment.VaccineId = updateAppointmentDTO.VaccineId;
+                existingAppointment.VaccinePackageId = updateAppointmentDTO.VaccinePackageId;
+                existingAppointment.AppointmentDate = updateAppointmentDTO.AppointmentDate;
+                existingAppointment.AppointmentStatus = updateAppointmentDTO.AppointmentStatus;
+                existingAppointment.IsActive = updateAppointmentDTO.IsActive;
                 existingAppointment.ModifiedDate = DateTime.UtcNow;
                 existingAppointment.ModifiedBy = GetCurrentUserName();
 

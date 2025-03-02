@@ -35,10 +35,10 @@ namespace PediVax.Controllers
 
         
         [HttpGet("GetAppointmentById/{appointmentId}")]
-        public async Task<IActionResult> GetAppointmentById(int appointmentId)
+        public async Task<IActionResult> GetAppointmentById([FromRoute] int appointmentId)
         {
             var appointment = await _appointmentService.GetAppointmentById(appointmentId);
-            if (appointment == null)
+            if (appointment != null)
             {
                 return NotFound("Appointment not found");
             }
@@ -75,7 +75,7 @@ namespace PediVax.Controllers
             {
                 return NotFound("Appointment not found");
             }
-            return NoContent();
+            return Ok(result);
         }
 
         

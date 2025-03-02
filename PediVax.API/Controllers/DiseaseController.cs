@@ -54,7 +54,7 @@ namespace PediVax.Controllers
         }
 
         [HttpPut("update-disease-by-id/{id}")]
-        [Authorize(Roles = "Admin, Staff, Doctor")]
+        //[Authorize(Roles = "Admin, Staff, Doctor")]
         public async Task<IActionResult> UpdateDisease(int id, [FromBody] UpdateDiseaseDTO updateDiseaseDTO)
         {
             var result = await _diseaseService.UpdateDisease(id, updateDiseaseDTO);

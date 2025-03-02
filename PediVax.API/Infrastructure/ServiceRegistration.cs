@@ -1,6 +1,7 @@
 ﻿using PediVax.Repositories.IRepository;
 using PediVax.Repositories.Repository;
 using PediVax.Services.Configuration.Mapper;
+using PediVax.Services.ExternalService;
 using PediVax.Services.IService;
 using PediVax.Services.Service;
 
@@ -26,9 +27,11 @@ namespace PediVax.Infrastructure
             services.AddScoped<IDiseaseService, DiseaseService>();
             services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddScoped<IAuthService, AuthService>();
-            
+            services.AddScoped<ICloudinaryService, CloudinaryService>();
+            services.AddScoped<IChildProfileService, ChildProfileService>();
+
             //External services
-            
+
             #endregion
 
             return services;

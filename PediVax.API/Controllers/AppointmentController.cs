@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PediVax.BusinessObjects.DTO.AppointmentDTO;
 using PediVax.BusinessObjects.DTO.ResponseDTO;
@@ -53,7 +54,7 @@ namespace PediVax.Controllers
             return Ok(new { Data = appointments, TotalCount = totalCount });
         }
 
-        
+        [Authorize(Roles = "Admin, Staff, Doctor")]
         [HttpPost("CreateAppointment")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDTO createAppointmentDTO)
         {
@@ -66,7 +67,7 @@ namespace PediVax.Controllers
             return Ok(createdAppointment);
         }
 
-        
+        [Authorize(Roles = "Admin, Staff, Doctor")]
         [HttpPut("UpdateAppointmentById/{id}")]
         public async Task<IActionResult> UpdateAppointment([FromRoute] int id, [FromBody] UpdateAppointmentDTO updateAppointmentDTO)
         {
@@ -78,7 +79,7 @@ namespace PediVax.Controllers
             return Ok(result);
         }
 
-        
+        [Authorize(Roles = "Admin, Staff, Doctor")]
         [HttpDelete("DeleteAppointmentById/{appointmentId}")]
         public async Task<IActionResult> DeleteAppointment(int appointmentId)
         {

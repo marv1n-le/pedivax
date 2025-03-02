@@ -26,6 +26,9 @@ namespace PediVax.Infrastructure
             services.AddScoped<IDiseaseService, DiseaseService>();
             services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddScoped<IAuthService, AuthService>();
+            
+            //External services
+            
             #endregion
 
             return services;

@@ -15,6 +15,7 @@ namespace PediVax.BusinessObjects.Models
         public int ChildId { get; set; }
         public int UserId { get; set; }
         public string FullName { get; set; }
+        public string Image { get; set; }
         public DateTime DateOfBirth { get; set; }
         public Enum.EnumList.Gender Gender { get; set; }
         public string Address { get; set; }

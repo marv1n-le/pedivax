@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using PediVax.BusinessObjects.DBContext;
 using PediVax.Infrastructure;
 using System.Text;
+using CloudinaryDotNet;
 
 namespace PediVax;
 
@@ -17,8 +18,7 @@ public class Program
         builder.Services.AddControllers();
         // Add services to the container.
         builder.Services.AddAuthorization();
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -75,6 +75,19 @@ public class Program
             });
         #endregion
 
+        #region Configure Cloudinary
+        var cloudinarySettings = builder.Configuration.GetSection("Cloudinary");
+        var cloudinaryAccount = new Account(
+            cloudinarySettings["CloudName"],
+            cloudinarySettings["ApiKey"],
+            cloudinarySettings["ApiSecret"]
+        );
+        var cloudinary = new Cloudinary(cloudinaryAccount);
+        builder.Services.AddSingleton(cloudinary);
+        #endregion
+
+        builder.Services.AddHttpContextAccessor();
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

@@ -15,6 +15,7 @@ namespace PediVax.BusinessObjects.DTO.ReponseDTO
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
         public string Role { get; set; }
+        [JsonConverter(typeof(DateOnlyJsonConverter))]
         public DateTime DateOfBirth { get; set; }
         public string IsActive { get; set; }
         [JsonConverter(typeof(DateOnlyJsonConverter))]

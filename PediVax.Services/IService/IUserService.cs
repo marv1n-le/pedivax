@@ -15,6 +15,7 @@ namespace PediVax.Services.IService
         Task<UserResponseDTO> GetUserById(int userId);
         Task<(List<UserResponseDTO> Data, int TotalCount)> GetUserPaged(int pageNumber, int pageSize);
         Task<UserResponseDTO> CreateUser(CreateUserDTO createUserDTO);
+        Task<UserResponseDTO> CreateSystemUser(CreateSystemUserDTO createSystemUserDTO);
         Task<bool> UpdateUser(int id,UpdateUserDTO updateUserDTO);
         Task<bool> DeleteUser(int userId);
         Task<UserResponseDTO> GetUserByEmail(string email);

@@ -1,16 +1,17 @@
-﻿using PediVax.BusinessObjects.DTO.RequestDTO;
-using PediVax.BusinessObjects.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PediVax.BusinessObjects.DTO.DiseaseDTO;
+using PediVax.BusinessObjects.DTO.ReponseDTO;
+using PediVax.BusinessObjects.DTO.RequestDTO;
 
 namespace PediVax.Services.IService
 {
     public interface IDiseaseService
     {
-        Task<List<Disease>> GetAllDisease();
-        Task<Disease> AddDisease(CreateDiseaseDTO createDiseaseDTO);
+        Task<List<DiseaseResponseDTO>> GetAllDisease();
+        Task<DiseaseResponseDTO> AddDisease(CreateDiseaseDTO createDiseaseDTO);
+        Task<DiseaseResponseDTO> GetDiseasebyId(int diseaseId);
+        Task<bool> DeleteDisease(int diseaseId);
+        Task<bool> UpdateDisease(int id, UpdateDiseaseDTO updateDiseaseDTO);
+        Task<(List<DiseaseResponseDTO> Data, int TotalCount)> GetDiseasePaged(int pageNumber, int pageSize);
+
     }
 }

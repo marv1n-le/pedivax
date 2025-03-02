@@ -36,7 +36,7 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Property<int>("AppointmentStatus")
                         .HasColumnType("int");
 
-                    b.Property<int>("ChildId")
+                    b.Property<int?>("ChildId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
@@ -56,13 +56,13 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("PaymentId")
+                    b.Property<int?>("PaymentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("VaccineId")
+                    b.Property<int?>("VaccineId")
                         .HasColumnType("int");
 
-                    b.Property<int>("VaccinePackageId")
+                    b.Property<int?>("VaccinePackageId")
                         .HasColumnType("int");
 
                     b.HasKey("AppointmentId");
@@ -311,15 +311,15 @@ namespace PediVax.BusinessObjects.Migrations
                             UserId = 1,
                             Address = "PediVax HCM",
                             CreatedBy = "System",
-                            CreatedDate = new DateTime(2025, 3, 2, 7, 29, 25, 855, DateTimeKind.Utc).AddTicks(5962),
+                            CreatedDate = new DateTime(2025, 3, 2, 13, 20, 52, 135, DateTimeKind.Utc).AddTicks(8706),
                             DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@pedivax.com",
                             FullName = "System Admin",
                             IsActive = 1,
                             ModifiedBy = "System",
-                            ModifiedDate = new DateTime(2025, 3, 2, 7, 29, 25, 855, DateTimeKind.Utc).AddTicks(5966),
-                            PasswordHash = "l0IY3N+40p/tGBRX6ZEfa8v42RlVNP+l+Xzcztg5Y7Y=",
-                            PasswordSalt = "lDSH2/Rss9Lf1AReUKiP4fBnzXacN51FKeDam+VXjRE=",
+                            ModifiedDate = new DateTime(2025, 3, 2, 13, 20, 52, 135, DateTimeKind.Utc).AddTicks(8709),
+                            PasswordHash = "InoTdj/K9+R2MBJ2ssgWswpsQjwfuPYLSSAb47kpyWE=",
+                            PasswordSalt = "iMM1MPeWHoK01VaFc56YJ1oAiaEoAq2W0wqdni/aMMo=",
                             PhoneNumber = "0123456789",
                             Role = 1
                         });
@@ -655,26 +655,22 @@ namespace PediVax.BusinessObjects.Migrations
                     b.HasOne("PediVax.BusinessObjects.Models.ChildProfile", "ChildProfile")
                         .WithMany("Appointments")
                         .HasForeignKey("ChildId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("PediVax.BusinessObjects.Models.Payment", "Payment")
                         .WithMany("Appointments")
                         .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("PediVax.BusinessObjects.Models.Vaccine", "Vaccine")
                         .WithMany("Appointments")
                         .HasForeignKey("VaccineId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("PediVax.BusinessObjects.Models.VaccinePackage", "VaccinePackage")
                         .WithMany("Appointments")
                         .HasForeignKey("VaccinePackageId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("ChildProfile");
 

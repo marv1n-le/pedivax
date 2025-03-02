@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PediVax.BusinessObjects.DTO.RequestDTO;
+using PediVax.BusinessObjects.DTO.AppointmentDTO;
 using PediVax.BusinessObjects.DTO.ResponseDTO;
 using PediVax.BusinessObjects.Enum;
 using PediVax.Services.IService;
@@ -68,7 +68,7 @@ namespace PediVax.Controllers
 
         
         [HttpPut("UpdateAppointmentById/{id}")]
-        public async Task<IActionResult> UpdateAppointment(int id, [FromBody] UpdateAppointmentDTO updateAppointmentDTO)
+        public async Task<IActionResult> UpdateAppointment([FromRoute] int id, [FromBody] UpdateAppointmentDTO updateAppointmentDTO)
         {
             var result = await _appointmentService.UpdateAppointment(id, updateAppointmentDTO);
             if (!result)

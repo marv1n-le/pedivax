@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using PediVax.BusinessObjects.Enum;
 
-namespace PediVax.BusinessObjects.DTO.RequestDTO
+namespace PediVax.BusinessObjects.DTO.AppointmentDTO
 {
     public class UpdateAppointmentDTO
     {

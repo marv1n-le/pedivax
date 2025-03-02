@@ -1,34 +1,44 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PediVax.BusinessObjects.DBContext;
-using PediVax.BusinessObjects.Models;
+﻿using PediVax.BusinessObjects.Models;
 using PediVax.Repositories.IRepository;
-using System;
+using PediVax.Repositories.Repository.BaseRepository;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace PediVax.Repositories.Repository
+namespace PediVax.Repositories.Repository;
+
+public class DiseaseRepository : GenericRepository<Disease>, IDiseaseRepository
 {
-    public class DiseaseRepository : IDiseaseRepository
+    public DiseaseRepository() : base() { }
+
+    public async Task<int> CreateDisease(Disease disease)
     {
-        private readonly PediVaxContext _context;
+        return await CreateAsync(disease);
+    }
 
-        public DiseaseRepository()
-        {
-            _context ??= new PediVaxContext();
-        }
-        public async Task<Disease> AddDisease(Disease disease)
-        {
-            _context.Diseases.Add(disease);
-            await _context.SaveChangesAsync();
-            return disease;
+    public async Task<bool> DeleteDisease(int diseaseId)
+    {
+        return await DeleteAsync(diseaseId);
+    }
 
-        }
+    public async Task<List<Disease>> GetAllDiseases()
+    {
+        return await GetAllAsync();
+    }
 
-        public async Task<List<Disease>> GetAllDisease()
-        {
-            return await _context.Diseases.ToListAsync();
-        }
+    public async Task<Disease?> GetDiseaseById(int diseaseId)
+    {
+        return await GetByIdAsync(diseaseId);
+    }
+
+   
+
+    public async Task<(List<Disease>, int)> GetDiseasePaged(int pageNumber, int pageSize)
+    {
+        return await GetPagedAsync(pageNumber, pageSize);
+    }
+
+    public async Task<int> UpdateDisease(Disease disease)
+    {
+        return await UpdateAsync(disease);
     }
 }

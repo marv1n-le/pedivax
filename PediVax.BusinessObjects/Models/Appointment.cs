@@ -15,8 +15,8 @@ namespace PediVax.BusinessObjects.Models
         public int AppointmentId { get; set; }
         public int PaymentId { get; set; }
         public int ChildId { get; set; }
-        public int VaccineId { get; set; }
-        public int VaccinePackageId { get; set; }
+        public int? VaccineId { get; set; }
+        public int? VaccinePackageId { get; set; }
         public DateTime AppointmentDate { get; set; }
         public Enum.EnumList.AppointmentStatus AppointmentStatus { get; set; }
         public Enum.EnumList.IsActive IsActive { get; set; }

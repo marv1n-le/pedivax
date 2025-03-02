@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PediVax.BusinessObjects.DTO.RequestDTO
+namespace PediVax.BusinessObjects.DTO.AppointmentDTO
 {
     public class CreateAppointmentDTO
     {

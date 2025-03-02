@@ -1,9 +1,8 @@
-﻿using PediVax.BusinessObjects.DTO.ResponseDTO;
-using PediVax.BusinessObjects.DTO.RequestDTO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using PediVax.BusinessObjects.Enum;
+using PediVax.BusinessObjects.DTO.AppointmentDTO;
 
 namespace PediVax.Services.IService
 {

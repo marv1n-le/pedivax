@@ -76,14 +76,14 @@ public class Program
         #endregion
 
         #region Configure Cloudinary
-        var cloudinarySettings = builder.Configuration.GetSection("Cloudinary");
-        var cloudinaryAccount = new Account(
-            cloudinarySettings["CloudName"],
-            cloudinarySettings["ApiKey"],
-            cloudinarySettings["ApiSecret"]
-        );
-        var cloudinary = new Cloudinary(cloudinaryAccount);
-        builder.Services.AddSingleton(cloudinary);
+        //var cloudinarySettings = builder.Configuration.GetSection("Cloudinary");
+        //var cloudinaryAccount = new Account(
+        //    cloudinarySettings["CloudName"],
+        //    cloudinarySettings["ApiKey"],
+        //    cloudinarySettings["ApiSecret"]
+        //);
+        //var cloudinary = new Cloudinary(cloudinaryAccount);
+        //builder.Services.AddSingleton(cloudinary);
         #endregion
 
         builder.Services.AddHttpContextAccessor();

@@ -31,7 +31,8 @@ namespace PediVax.Services.Configuration.Mapper
             //ChildProfile Mapper
             CreateMap<CreateChildProfileDTO, ChildProfile>();
             CreateMap<UpdateChildProfileDTO, ChildProfile>();
-            CreateMap<ChildProfile, ChildProfileResponseDTO>();
+            CreateMap<ChildProfile, ChildProfileResponseDTO>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Image == null ? null : src.Image));
 
             
             //Disease_mapper

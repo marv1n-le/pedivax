@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PediVax.BusinessObjects.DTO.ChildProfileDTO;
 
 namespace PediVax.Services.Configuration.Mapper
 {
@@ -26,6 +27,13 @@ namespace PediVax.Services.Configuration.Mapper
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
                 .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore());
             CreateMap<User, UserResponseDTO>();
+            
+            //ChildProfile Mapper
+            CreateMap<CreateChildProfileDTO, ChildProfile>();
+            CreateMap<UpdateChildProfileDTO, ChildProfile>();
+            CreateMap<ChildProfile, ChildProfileResponseDTO>();
+
+            
             //Disease_mapper
             CreateMap<CreateDiseaseDTO, Disease>()
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))

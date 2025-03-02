@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
         <PrivateAssets>all</PrivateAssets>
@@ -22,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="DTO\VaccineDTO\" />
       <Folder Include="Migrations\" />
     </ItemGroup>
 

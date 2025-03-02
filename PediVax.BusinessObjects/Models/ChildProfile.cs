@@ -18,8 +18,6 @@ namespace PediVax.BusinessObjects.Models
         public string Image { get; set; }
         public DateTime DateOfBirth { get; set; }
         public Enum.EnumList.Gender Gender { get; set; }
-        public string Address { get; set; }
-        public string PhoneNumber { get; set; }
         public Enum.EnumList.Relationship Relationship { get; set; }
         public Enum.EnumList.IsActive IsActive { get; set; }
         public DateTime CreatedDate { get; set; }

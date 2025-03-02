@@ -20,16 +20,21 @@ namespace PediVax.Controllers
         [HttpGet("current-user")]
         public IActionResult GetCurrentUser()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var email = User.FindFirst(ClaimTypes.Name)?.Value;
-            var role = User.FindFirst(ClaimTypes.Role)?.Value;
-
-            if (userId == null)
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
                 return Unauthorized("User is not logged in.");
+            }
+
+            var userIdClaim = User.Claims
+                .Where(c => c.Type == ClaimTypes.NameIdentifier && int.TryParse(c.Value, out _))
+                .FirstOrDefault()?.Value;
+
+            var email = User.FindFirst(ClaimTypes.Email)?.Value ?? "Unknown";
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "Unknown";
 
             return Ok(new
             {
-                UserId = userId,
+                UserId = userIdClaim ?? "Unknown",
                 Email = email,
                 Role = role
             });

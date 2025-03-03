@@ -26,13 +26,13 @@ namespace PediVax.Repositories.Repository.BaseRepository
         {
             return _context.Set<T>().ToList();
         }
-        public async Task<List<T>> GetAllAsync()
+        public async Task<List<T>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             return await _context.Set<T>()
                 .Where(e => EF.Property<int>(e, "IsActive") == 1)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
-        public async Task<(List<T> Data, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize)
+        public async Task<(List<T> Data, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
         {
             if (pageNumber < 1) pageNumber = 1;
             if (pageSize < 1) pageSize = 10;
@@ -43,7 +43,7 @@ namespace PediVax.Repositories.Repository.BaseRepository
             var data = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             return (data, totalRecords);
         }
@@ -53,7 +53,7 @@ namespace PediVax.Repositories.Repository.BaseRepository
             _context.SaveChanges();
         }
 
-        public async Task<int> CreateAsync(T entity)
+        public async Task<int> CreateAsync(T entity, CancellationToken cancellationToken = default)
         {
             _context.AddAsync(entity);
             return await _context.SaveChangesAsync();
@@ -66,7 +66,7 @@ namespace PediVax.Repositories.Repository.BaseRepository
             _context.SaveChanges();
         }
 
-        public async Task<int> UpdateAsync(T entity)
+        public async Task<int> UpdateAsync(T entity, CancellationToken cancellationToken = default)
         {
             var keyProperty = typeof(T).GetProperties()
                                   .FirstOrDefault(p => p.GetCustomAttributes(typeof(KeyAttribute), false).Any())
@@ -98,21 +98,6 @@ namespace PediVax.Repositories.Repository.BaseRepository
         }
 
 
-        
-        public bool Remove(T entity)
-        {
-            _context.Remove(entity);
-            _context.SaveChanges();
-            return true;
-        }
-
-        public async Task<bool> RemoveAsync(T entity)
-        {
-            _context.Remove(entity);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
         public T GetById(int id)
         {
             var entity = _context.Set<T>().Find(id);
@@ -129,7 +114,7 @@ namespace PediVax.Repositories.Repository.BaseRepository
             _context.Entry(entity).State = EntityState.Detached;
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             // Lấy tên khóa chính thông qua reflection
             var keyProperty = typeof(T).GetProperties()
@@ -149,7 +134,7 @@ namespace PediVax.Repositories.Repository.BaseRepository
             // Truy vấn dữ liệu từ entity dựa trên tên khóa chính
             var entity = await _context.Set<T>()
                 .Where(e => EF.Property<int>(e, "IsActive") == 1)  // Lọc theo IsActive = 1
-                .FirstOrDefaultAsync(e => EF.Property<int>(e, keyProperty.Name) == id);  // Tìm theo khóa chính tự động xác định
+                .FirstOrDefaultAsync(e => EF.Property<int>(e, keyProperty.Name) == id, cancellationToken);  // Tìm theo khóa chính tự động xác định
 
             if (entity != null)
             {
@@ -205,7 +190,7 @@ namespace PediVax.Repositories.Repository.BaseRepository
 
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
             var entity = await GetByIdAsync(id);
             if (entity != null)
@@ -214,14 +199,14 @@ namespace PediVax.Repositories.Repository.BaseRepository
                 if (property != null)
                 {
                     property.SetValue(entity, 0);
-                    await UpdateAsync(entity);
+                    await UpdateAsync(entity, cancellationToken);
                     return true;
                 }
             }
             return false;
         }
-        
-        public async Task<List<T>> GetByNameContainingAsync(string keyword)
+
+        public async Task<List<T>> GetByNameContainingAsync(string keyword, CancellationToken cancellationToken = default)
         {
             var propertyName = typeof(T).GetProperties()
                                    .FirstOrDefault(p => p.Name.Contains("Name"))?.Name;
@@ -232,9 +217,9 @@ namespace PediVax.Repositories.Repository.BaseRepository
             }
 
             return await _context.Set<T>()
-                .Where(e => EF.Property<int>(e, "IsActive") == 1) 
+                .Where(e => EF.Property<int>(e, "IsActive") == 1)
                 .Where(e => EF.Property<string>(e, propertyName).Contains(keyword))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
         #region Separating asigned entity and save operators        

@@ -13,4 +13,11 @@ public class ChildProfileResponseDTO
     public DateTime DateOfBirth { get; set; }
     public EnumList.Gender Gender { get; set; }
     public EnumList.Relationship Relationship { get; set; }
+    [JsonConverter(typeof(DateOnlyJsonConverter))]
+    public DateTime CreatedDate { get; set; }
+    public string CreatedBy { get; set; }
+    [JsonConverter(typeof(DateOnlyJsonConverter))]
+    public DateTime ModifiedDate { get; set; }
+    public string ModifiedBy { get; set; }
+    public EnumList.IsActive IsActive { get; set; }
 }

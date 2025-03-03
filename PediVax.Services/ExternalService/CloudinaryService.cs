@@ -32,8 +32,8 @@ public class CloudinaryService : ICloudinaryService
         var uploadParams = new ImageUploadParams
         {
             File = new FileDescription(file.FileName, stream),
-            Folder = "child-images",
-            PublicId = $"child_{Guid.NewGuid()}",
+            Folder = "pedivax-images",
+            PublicId = $"pedivax_{Guid.NewGuid()}",
             Overwrite = true
         };
 

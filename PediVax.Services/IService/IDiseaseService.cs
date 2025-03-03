@@ -1,17 +1,17 @@
 ﻿using PediVax.BusinessObjects.DTO.DiseaseDTO;
-using PediVax.BusinessObjects.DTO.ReponseDTO;
-using PediVax.BusinessObjects.DTO.RequestDTO;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PediVax.Services.IService
 {
     public interface IDiseaseService
     {
-        Task<List<DiseaseResponseDTO>> GetAllDisease();
-        Task<DiseaseResponseDTO> AddDisease(CreateDiseaseDTO createDiseaseDTO);
-        Task<DiseaseResponseDTO> GetDiseasebyId(int diseaseId);
-        Task<bool> DeleteDisease(int diseaseId);
-        Task<bool> UpdateDisease(int id, UpdateDiseaseDTO updateDiseaseDTO);
-        Task<(List<DiseaseResponseDTO> Data, int TotalCount)> GetDiseasePaged(int pageNumber, int pageSize);
-
+        Task<List<DiseaseResponseDTO>> GetAllDiseases(CancellationToken cancellationToken);
+        Task<DiseaseResponseDTO> GetDiseaseById(int diseaseId, CancellationToken cancellationToken);
+        Task<(List<DiseaseResponseDTO> Data, int TotalCount)> GetDiseasePaged(int pageNumber, int pageSize, CancellationToken cancellationToken);
+        Task<DiseaseResponseDTO> AddDisease(CreateDiseaseDTO createDiseaseDTO, CancellationToken cancellationToken);
+        Task<bool> UpdateDisease(int id, UpdateDiseaseDTO updateDiseaseDTO, CancellationToken cancellationToken);
+        Task<bool> DeleteDisease(int id, CancellationToken cancellationToken);
     }
 }

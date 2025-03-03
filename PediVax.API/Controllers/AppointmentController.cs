@@ -1,130 +1,106 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using PediVax.BusinessObjects.DTO.AppointmentDTO;
-using PediVax.BusinessObjects.DTO.ResponseDTO;
 using PediVax.BusinessObjects.Enum;
 using PediVax.Services.IService;
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PediVax.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentService;
+        private readonly ILogger<AppointmentController> _logger;
 
-        public AppointmentController(IAppointmentService appointmentService)
+        public AppointmentController(IAppointmentService appointmentService, ILogger<AppointmentController> logger)
         {
             _appointmentService = appointmentService;
+            _logger = logger;
         }
 
-       
-        [HttpGet("GetAllAppointments")]
-        public async Task<IActionResult> GetAllAppointments()
+        [HttpGet("get-all")]
+        [ProducesResponseType(typeof(List<AppointmentResponseDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetAllAppointments(CancellationToken cancellationToken)
         {
-            var appointments = await _appointmentService.GetAllAppointments();
-            if (appointments == null || appointments.Count == 0)
+            var response = await _appointmentService.GetAllAppointments(cancellationToken);
+            if (response == null || response.Count == 0)
             {
-                return NotFound("No appointments found");
+                _logger.LogWarning("No appointments found.");
+                return NotFound(new { message = "No appointments available." });
             }
-            return Ok(appointments);
+            return Ok(response);
         }
 
-        
-        [HttpGet("GetAppointmentById/{appointmentId}")]
-        public async Task<IActionResult> GetAppointmentById([FromRoute] int appointmentId)
+        [HttpGet("get-by-id/{appointmentId}")]
+        [ProducesResponseType(typeof(AppointmentResponseDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAppointmentById(int appointmentId, CancellationToken cancellationToken)
         {
-            var appointment = await _appointmentService.GetAppointmentById(appointmentId);
-            if (appointment != null)
+            if (appointmentId <= 0)
             {
-                return NotFound("Appointment not found");
+                return BadRequest(new { message = "Invalid appointment ID." });
             }
-            return Ok(appointment);
-        }
-
-        
-        [HttpGet("GetAppointmentsPaged/{pageNumber}/{pageSize}")]
-        public async Task<IActionResult> GetAppointmentsPaged(int pageNumber, int pageSize)
-        {
-            var (appointments, totalCount) = await _appointmentService.GetAppointmentsPaged(pageNumber, pageSize);
-            return Ok(new { Data = appointments, TotalCount = totalCount });
-        }
-
-        [Authorize(Roles = "Admin, Staff, Doctor")]
-        [HttpPost("CreateAppointment")]
-        public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDTO createAppointmentDTO)
-        {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                var response = await _appointmentService.GetAppointmentById(appointmentId, cancellationToken);
+                return Ok(response);
             }
-
-            var createdAppointment = await _appointmentService.CreateAppointment(createAppointmentDTO);
-            return Ok(createdAppointment);
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { message = "Appointment not found." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching appointment with ID {appointmentId}", appointmentId);
+                return Problem("An unexpected error occurred.");
+            }
         }
 
-        [Authorize(Roles = "Admin, Staff, Doctor")]
-        [HttpPut("UpdateAppointmentById/{id}")]
-        public async Task<IActionResult> UpdateAppointment([FromRoute] int id, [FromBody] UpdateAppointmentDTO updateAppointmentDTO)
+        [HttpGet("get-by-status/{appointmentStatus}")]
+        [ProducesResponseType(typeof(List<AppointmentResponseDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAppointmentsByStatus(EnumList.AppointmentStatus appointmentStatus, CancellationToken cancellationToken)
         {
-            var result = await _appointmentService.UpdateAppointment(id, updateAppointmentDTO);
-            if (!result)
+            if (!Enum.IsDefined(typeof(EnumList.AppointmentStatus), appointmentStatus))
             {
-                return NotFound("Appointment not found");
+                return BadRequest(new { message = "Invalid appointment status." });
             }
-            return Ok(result);
+            var response = await _appointmentService.GetAppointmentsByStatus(appointmentStatus, cancellationToken);
+            return Ok(response);
         }
 
-        [Authorize(Roles = "Admin, Staff, Doctor")]
-        [HttpDelete("DeleteAppointmentById/{appointmentId}")]
-        public async Task<IActionResult> DeleteAppointment(int appointmentId)
+        [HttpGet("get-by-childId/{childId}")]
+        [ProducesResponseType(typeof(List<AppointmentResponseDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAppointmentsByChildId(int childId, CancellationToken cancellationToken)
         {
-            var result = await _appointmentService.DeleteAppointment(appointmentId);
-            if (!result)
+            if (childId <= 0)
             {
-                return NotFound("Appointment not found");
+                return BadRequest(new { message = "Invalid child ID." });
             }
-            return NoContent();
+            var response = await _appointmentService.GetAppointmentsByChildId(childId, cancellationToken);
+            return Ok(response);
         }
 
-        
-        [HttpGet("GetAppointmentsByChildId/{childId}")]
-        public async Task<IActionResult> GetAppointmentsByChildId(int childId)
+        [HttpGet("get-by-date/{appointmentDate}")]
+        [ProducesResponseType(typeof(List<AppointmentResponseDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAppointmentsByDate(DateTime appointmentDate, CancellationToken cancellationToken)
         {
-            var appointments = await _appointmentService.GetAppointmentsByChildId(childId);
-            if (appointments == null || appointments.Count == 0)
+            if (appointmentDate == default)
             {
-                return NotFound("No appointments found for this child");
+                return BadRequest(new { message = "Invalid appointment date." });
             }
-            return Ok(appointments);
-        }
-
-        
-        [HttpGet("GetAppointmentsByDate/{appointmentDate}")]
-        public async Task<IActionResult> GetAppointmentsByDate(DateTime appointmentDate)
-        {
-            var appointments = await _appointmentService.GetAppointmentsByDate(appointmentDate);
-            if (appointments == null || appointments.Count == 0)
-            {
-                return NotFound("No appointments found on this date");
-            }
-            return Ok(appointments);
-        }
-
-        
-        [HttpGet("GetAppointmentsByStatus/{status}")]
-        public async Task<IActionResult> GetAppointmentsByStatus(EnumList.AppointmentStatus status)
-        {
-            var appointments = await _appointmentService.GetAppointmentsByStatus(status);
-            if (appointments == null || appointments.Count == 0)
-            {
-                return NotFound("No appointments found with this status");
-            }
-            return Ok(appointments);
+            var response = await _appointmentService.GetAppointmentsByDate(appointmentDate, cancellationToken);
+            return Ok(response);
         }
     }
 }

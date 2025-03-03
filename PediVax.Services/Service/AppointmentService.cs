@@ -1,121 +1,184 @@
-﻿using AutoMapper;
-using PediVax.BusinessObjects.DTO.ReponseDTO;
+﻿using System.Security.Claims;
+using System.Threading;
+using System.Transactions;
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using PediVax.BusinessObjects.DTO.AppointmentDTO;
+using PediVax.BusinessObjects.Enum;
 using PediVax.BusinessObjects.Models;
 using PediVax.Repositories.IRepository;
 using PediVax.Services.IService;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using PediVax.BusinessObjects.Enum;
-using PediVax.BusinessObjects.DTO.AppointmentDTO;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
-namespace PediVax.Services.Service
+namespace PediVax.Services.Service;
+
+public class AppointmentService : IAppointmentService
 {
-    public class AppointmentService : IAppointmentService
+    private readonly IAppointmentRepository _appointmentRepository;
+    private readonly IMapper _mapper;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ILogger<AppointmentService> _logger;
+
+    public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<AppointmentService> logger)
     {
-        private readonly IAppointmentRepository _appointmentRepository;
-        private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        _appointmentRepository = appointmentRepository;
+        _mapper = mapper;
+        _httpContextAccessor = httpContextAccessor;
+        _logger = logger;
+    }
 
-        public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    private string GetCurrentUserName()
+    {
+        return _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value ?? "System";
+    }
+
+    private void SetAuditFields(Appointment appointment)
+    {
+        appointment.ModifiedBy = GetCurrentUserName();
+        appointment.ModifiedDate = DateTime.UtcNow;
+    }
+
+    public async Task<List<AppointmentResponseDTO>> GetAllAppointments(CancellationToken cancellationToken)
+    {
+        var appointments = await _appointmentRepository.GetAllAppointments(cancellationToken);
+        return _mapper.Map<List<AppointmentResponseDTO>>(appointments);
+    }
+
+    public async Task<AppointmentResponseDTO> GetAppointmentById(int appointmentId, CancellationToken cancellationToken)
+    {
+        if (appointmentId <= 0)
         {
-            _appointmentRepository = appointmentRepository;
-            _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;
+            _logger.LogWarning("Invalid appointment ID: {appointmentId}", appointmentId);
+            throw new ArgumentException("Invalid appointment ID");
         }
 
-        private string GetCurrentUserName()
+        var appointment = await _appointmentRepository.GetAppointmentById(appointmentId, cancellationToken);
+        if (appointment == null)
         {
-            if (_httpContextAccessor.HttpContext == null || _httpContextAccessor.HttpContext.User == null)
-            {
-                return "System";
-            }
-
-            var userName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
-            return string.IsNullOrEmpty(userName) ? "System" : userName;
+            _logger.LogWarning("Appointment with ID {appointmentId} not found", appointmentId);
+            throw new KeyNotFoundException("Appointment not found");
         }
 
-        public async Task<List<AppointmentResponseDTO>> GetAllAppointments()
+        return _mapper.Map<AppointmentResponseDTO>(appointment);
+    }
+
+    public async Task<(List<AppointmentResponseDTO> Data, int TotalCount)> GetAppointmentsPaged(int pageNumber, int pageSize, CancellationToken cancellationToken)
+    {
+        if (pageNumber <= 0 || pageSize <= 0)
         {
-            var appointments = await _appointmentRepository.GetAllAppointments();
-            return _mapper.Map<List<AppointmentResponseDTO>>(appointments);
+            _logger.LogWarning("Invalid pagination parameters: PageNumber={pageNumber}, PageSize={pageSize}", pageNumber, pageSize);
+            throw new ArgumentException("Invalid pagination parameters");
         }
 
-        public async Task<AppointmentResponseDTO> GetAppointmentById(int appointmentId)
+        var (appointments, totalCount) = await _appointmentRepository.GetAppointmentsPaged(pageNumber, pageSize, cancellationToken);
+        return (_mapper.Map<List<AppointmentResponseDTO>>(appointments), totalCount);
+    }
+
+    public async Task<AppointmentResponseDTO> CreateAppointment(CreateAppointmentDTO createAppointmentDTO, CancellationToken cancellationToken)
+    {
+        if (createAppointmentDTO == null)
         {
-            var appointment = await _appointmentRepository.GetAppointmentById(appointmentId);
-            return _mapper.Map<AppointmentResponseDTO>(appointment);
+            throw new ArgumentNullException(nameof(createAppointmentDTO), "Appointment data is required");
         }
 
-        public async Task<(List<AppointmentResponseDTO> Data, int TotalCount)> GetAppointmentsPaged(int pageNumber, int pageSize)
-        {
-            var (data, totalCount) = await _appointmentRepository.GetAppointmentsPaged(pageNumber, pageSize);
-            var mappedData = _mapper.Map<List<AppointmentResponseDTO>>(data);
-            return (mappedData, totalCount);
-        }
-
-        public async Task<AppointmentResponseDTO> CreateAppointment(CreateAppointmentDTO createAppointmentDTO)
+        try
         {
             var appointment = _mapper.Map<Appointment>(createAppointmentDTO);
-            appointment.CreatedDate = DateTime.UtcNow;
-            appointment.CreatedBy = GetCurrentUserName();
-            appointment.ModifiedDate = DateTime.UtcNow;
-            appointment.AppointmentStatus = EnumList.AppointmentStatus.Pending;
-            appointment.ModifiedBy = GetCurrentUserName();
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-            var createdAppointment = await _appointmentRepository.AddAppointment(appointment);
+            appointment.CreatedBy = GetCurrentUserName();
+            appointment.CreatedDate = DateTime.UtcNow;
+            appointment.AppointmentStatus = EnumList.AppointmentStatus.Pending;
+            SetAuditFields(appointment);
+
+            if (await _appointmentRepository.AddAppointment(appointment, cancellationToken) <= 0)
+            {
+                throw new ApplicationException("Adding new appointment failed");
+            }
+
+            scope.Complete();
             return _mapper.Map<AppointmentResponseDTO>(appointment);
         }
-
-        public async Task<bool> UpdateAppointment(int id, UpdateAppointmentDTO updateAppointmentDTO)
+        catch (Exception ex)
         {
-            var existingAppointment = await _appointmentRepository.GetAppointmentById(id);
-            if (existingAppointment == null)
+            _logger.LogError(ex, "Error adding new appointment");
+            throw new ApplicationException("Error while saving appointment", ex);
+        }
+    }
+
+    public async Task<bool> UpdateAppointment(int id, UpdateAppointmentDTO updateAppointmentDTO, CancellationToken cancellationToken)
+    {
+        if (id <= 0)
+        {
+            throw new ArgumentException("Invalid appointment ID");
+        }
+
+        if (updateAppointmentDTO == null)
+        {
+            throw new ArgumentNullException(nameof(updateAppointmentDTO), "Appointment data is required");
+        }
+
+        try
+        {
+            var appointment = await _appointmentRepository.GetAppointmentById(id, cancellationToken);
+            if (appointment == null)
             {
-                throw new Exception("Appointment not found.");
+                _logger.LogWarning("Appointment with ID {id} not found", id);
+                throw new KeyNotFoundException("Appointment not found");
             }
-            else
-            {
 
-                existingAppointment.PaymentId = updateAppointmentDTO.PaymentId;
-                existingAppointment.ChildId = updateAppointmentDTO.ChildId;
-                existingAppointment.VaccineId = updateAppointmentDTO.VaccineId;
-                existingAppointment.VaccinePackageId = updateAppointmentDTO.VaccinePackageId;
-                existingAppointment.AppointmentDate = updateAppointmentDTO.AppointmentDate;
-                existingAppointment.AppointmentStatus = updateAppointmentDTO.AppointmentStatus;
-                existingAppointment.IsActive = updateAppointmentDTO.IsActive;
-                existingAppointment.ModifiedDate = DateTime.UtcNow;
-                existingAppointment.ModifiedBy = GetCurrentUserName();
+            SetAuditFields(appointment);
+            appointment.PaymentId = updateAppointmentDTO.PaymentId;
+            appointment.ChildId = updateAppointmentDTO.ChildId;
+            appointment.VaccineId = updateAppointmentDTO.VaccineId;
+            appointment.VaccinePackageId = updateAppointmentDTO.VaccinePackageId;
+            appointment.AppointmentDate = updateAppointmentDTO.AppointmentDate;
+            appointment.AppointmentStatus = updateAppointmentDTO.AppointmentStatus;
+            appointment.IsActive = updateAppointmentDTO.IsActive;
 
-                var updated = await _appointmentRepository.UpdateAppointment(existingAppointment);
-                return true;
-            }
+            int rowAffected = await _appointmentRepository.UpdateAppointment(appointment, cancellationToken);
+            return rowAffected > 0;
         }
-
-        public async Task<bool> DeleteAppointment(int appointmentId)
+        catch (Exception ex)
         {
-            return await _appointmentRepository.DeleteAppointment(appointmentId);
+            _logger.LogError(ex, "Error updating appointment with ID {id}", id);
+            throw new ApplicationException("Error while updating appointment", ex);
+        }
+    }
+
+    public async Task<bool> DeleteAppointment(int appointmentId, CancellationToken cancellationToken)
+    {
+        if (appointmentId <= 0)
+        {
+            throw new ArgumentException("Invalid appointment ID");
         }
 
-        public async Task<List<AppointmentResponseDTO>> GetAppointmentsByChildId(int childId)
+        try
         {
-            var appointments = await _appointmentRepository.GetAppointmentsByChildId(childId);
-            return _mapper.Map<List<AppointmentResponseDTO>>(appointments);
+            return await _appointmentRepository.DeleteAppointment(appointmentId, cancellationToken);
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting appointment with ID {appointmentId}", appointmentId);
+            throw new ApplicationException("Error while deleting appointment", ex);
+        }
+    }
 
-        public async Task<List<AppointmentResponseDTO>> GetAppointmentsByDate(DateTime appointmentDate)
-        {
-            var appointments = await _appointmentRepository.GetAppointmentsByDate(appointmentDate);
-            return _mapper.Map<List<AppointmentResponseDTO>>(appointments);
-        }
+    public async Task<List<AppointmentResponseDTO>> GetAppointmentsByChildId(int childId, CancellationToken cancellationToken)
+    {
+        var appointments = await _appointmentRepository.GetAppointmentsByChildId(childId, cancellationToken);
+        return _mapper.Map<List<AppointmentResponseDTO>>(appointments);
+    }
 
-        public async Task<List<AppointmentResponseDTO>> GetAppointmentsByStatus(EnumList.AppointmentStatus status)
-        {
-            var appointments = await _appointmentRepository.GetAppointmentsByStatus(status);
-            return _mapper.Map<List<AppointmentResponseDTO>>(appointments);
-        }
+    public async Task<List<AppointmentResponseDTO>> GetAppointmentsByDate(DateTime appointmentDate, CancellationToken cancellationToken)
+    {
+        var appointments = await _appointmentRepository.GetAppointmentsByDate(appointmentDate, cancellationToken);
+        return _mapper.Map<List<AppointmentResponseDTO>>(appointments);
+    }
+
+    public async Task<List<AppointmentResponseDTO>> GetAppointmentsByStatus(EnumList.AppointmentStatus appointmentStatus, CancellationToken cancellationToken)
+    {
+        var appointments = await _appointmentRepository.GetAppointmentsByStatus(appointmentStatus, cancellationToken);
+        return _mapper.Map<List<AppointmentResponseDTO>>(appointments);
     }
 }

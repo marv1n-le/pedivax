@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using PediVax.BusinessObjects.DTO.ChildProfileDTO;
 using PediVax.BusinessObjects.DTO.AppointmentDTO;
 using PediVax.BusinessObjects.DTO.DiseaseDTO;
+using PediVax.BusinessObjects.DTO.VaccineDTO;
 
 namespace PediVax.Services.Configuration.Mapper
 {
@@ -34,6 +35,12 @@ namespace PediVax.Services.Configuration.Mapper
             CreateMap<UpdateChildProfileDTO, ChildProfile>();
             CreateMap<ChildProfile, ChildProfileResponseDTO>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Image == null ? null : src.Image));
+            
+            //Vaccine Mapper
+            CreateMap<CreateVaccineDTO, Vaccine>();
+            CreateMap<UpdateVaccineDTO, Vaccine>();
+            CreateMap<Vaccine, VaccineResponseDTO>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image == null ? null : src.Image));
 
 
             //Disease_mapper

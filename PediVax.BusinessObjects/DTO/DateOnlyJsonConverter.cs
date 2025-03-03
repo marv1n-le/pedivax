@@ -6,7 +6,7 @@ namespace PediVax.BusinessObjects.DTO;
 
 public class DateOnlyJsonConverter : JsonConverter<DateTime>
 {
-    private readonly string _format = "dd/MM/yyyy";
+    private readonly string _format = "dd/MM/yyyy HH:mm:ss";
 
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {

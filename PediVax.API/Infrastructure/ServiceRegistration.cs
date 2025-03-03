@@ -22,6 +22,8 @@ namespace PediVax.Infrastructure
             services.AddScoped<IDiseaseRepository, DiseaseRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<IChildProfileRepository, ChildProfileRepository>();
+            services.AddScoped<IVaccineService, VaccineService>();
+            
             //Register services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDiseaseService, DiseaseService>();
@@ -29,6 +31,7 @@ namespace PediVax.Infrastructure
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICloudinaryService, CloudinaryService>();
             services.AddScoped<IChildProfileService, ChildProfileService>();
+            services.AddScoped<IVaccineRepository, VaccineRepository>();
 
             //External services
 

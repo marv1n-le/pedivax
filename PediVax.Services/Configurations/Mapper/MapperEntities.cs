@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using PediVax.BusinessObjects.DTO.ReponseDTO;
 using PediVax.BusinessObjects.DTO.RequestDTO;
-using PediVax.BusinessObjects.DTO.ResponseDTO;
 using PediVax.BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
@@ -9,12 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PediVax.BusinessObjects.DTO.ChildProfileDTO;
-<<<<<<< Updated upstream
-=======
 using PediVax.BusinessObjects.DTO.AppointmentDTO;
 using PediVax.BusinessObjects.DTO.DiseaseDTO;
 using PediVax.BusinessObjects.DTO.VaccineDTO;
->>>>>>> Stashed changes
 
 namespace PediVax.Services.Configuration.Mapper
 {
@@ -46,24 +42,17 @@ namespace PediVax.Services.Configuration.Mapper
             CreateMap<Vaccine, VaccineResponseDTO>()
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image == null ? null : src.Image));
 
-            
+
             //Disease_mapper
-            CreateMap<CreateDiseaseDTO, Disease>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => "System"))
-                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.ModifiedBy, opt => opt.MapFrom(src => "System"));
-                
+            CreateMap<CreateDiseaseDTO, Disease>();
             CreateMap<Disease, DiseaseResponseDTO>();
             //Appointment_mapper
-            
-            CreateMap<CreateAppointmentDTO, Appointment>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => "System"))  
-                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.ModifiedBy, opt => opt.MapFrom(src => "System"));
 
+            CreateMap<CreateAppointmentDTO, Appointment>();
+            CreateMap<UpdateAppointmentDTO, Appointment>();
             CreateMap<Appointment, AppointmentResponseDTO>();
+
+
         }
     }
 }

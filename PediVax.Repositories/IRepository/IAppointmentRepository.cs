@@ -1,4 +1,5 @@
-﻿using PediVax.BusinessObjects.Models;
+﻿using PediVax.BusinessObjects.Enum;
+using PediVax.BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ namespace PediVax.Repositories.IRepository
         // Lấy tất cả cuộc hẹn
         Task<List<Appointment>> GetAllAppointments();
 
+        Task<(List<Appointment> Data, int TotalCount)> GetAppointmentsPaged(int pageNumber, int pageSize);
+
         // Lấy cuộc hẹn theo ID
         Task<Appointment> GetAppointmentById(int appointmentId);
 
@@ -18,15 +21,17 @@ namespace PediVax.Repositories.IRepository
 
         // Lấy danh sách cuộc hẹn theo ngày
         Task<List<Appointment>> GetAppointmentsByDate(DateTime appointmentDate);
-        
 
-        // Thêm mới cuộc hẹn
-        Task<Appointment> AddAppointment(Appointment appointment);
+        // Lấy danh sách cuộc hẹn theo trạng thái (sử dụng Enum thay vì string)
+        Task<List<Appointment>> GetAppointmentsByStatus(EnumList.AppointmentStatus status);
 
-        // Cập nhật thông tin cuộc hẹn
-        Task<Appointment> UpdateAppointment(Appointment appointment);
+        // Thêm mới cuộc hẹn, trả về số lượng bản ghi bị ảnh hưởng
+        Task<int> AddAppointment(Appointment appointment);
 
-        // Xóa cuộc hẹn theo ID
+        // Cập nhật thông tin cuộc hẹn, trả về số lượng bản ghi bị ảnh hưởng
+        Task<int> UpdateAppointment(Appointment appointment);
+
+        // Xóa cuộc hẹn theo ID, trả về true nếu thành công
         Task<bool> DeleteAppointment(int appointmentId);
     }
 }

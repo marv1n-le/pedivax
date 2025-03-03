@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PediVax.BusinessObjects.DTO.ResponseDTO
+namespace PediVax.BusinessObjects.DTO.DiseaseDTO
 {
     public class DiseaseResponseDTO
     {

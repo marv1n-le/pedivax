@@ -13,9 +13,9 @@ namespace PediVax.BusinessObjects.Models
     {
         [Key]
         public int PaymentId { get; set; }
-        public int VaccinePackageId { get; set; }
-        public int VaccineId { get; set; }
-        public string PaymentType { get; set; }
+        public int? VaccinePackageId { get; set; }
+        public int? VaccineId { get; set; }
+        public string? PaymentType { get; set; }
         public decimal TotalAmount { get; set; }
         public DateTime PaymentDate { get; set; }
         public string PaymentStatus { get; set; }

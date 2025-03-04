@@ -11,14 +11,14 @@ namespace PediVax.Services.IService
 {
     public interface IUserService
     {
-        Task<List<UserResponseDTO>> GetAllUser();
-        Task<UserResponseDTO> GetUserById(int userId);
-        Task<(List<UserResponseDTO> Data, int TotalCount)> GetUserPaged(int pageNumber, int pageSize);
-        Task<UserResponseDTO> CreateUser(CreateUserDTO createUserDTO);
-        Task<UserResponseDTO> CreateSystemUser(CreateSystemUserDTO createSystemUserDTO);
-        Task<bool> UpdateUser(int id,UpdateUserDTO updateUserDTO);
-        Task<bool> DeleteUser(int userId);
-        Task<UserResponseDTO> GetUserByEmail(string email);
-        Task<List<UserResponseDTO>> GetUserByName(string keyword);
+        Task<List<UserResponseDTO>> GetAllUser(CancellationToken cancellationToken);
+        Task<UserResponseDTO> GetUserById(int userId, CancellationToken cancellationToken);
+        Task<(List<UserResponseDTO> Data, int TotalCount)> GetUserPaged(int pageNumber, int pageSize, CancellationToken cancellationToken);
+        Task<UserResponseDTO> CreateUser(CreateUserDTO createUserDTO, CancellationToken cancellationToken);
+        Task<UserResponseDTO> CreateSystemUser(CreateSystemUserDTO createSystemUserDTO, CancellationToken cancellationToken);
+        Task<bool> UpdateUser(int id,UpdateUserDTO updateUserDTO, CancellationToken cancellationToken);
+        Task<bool> DeleteUser(int userId, CancellationToken cancellationToken);
+        Task<UserResponseDTO> GetUserByEmail(string email, CancellationToken cancellationToken);
+        Task<List<UserResponseDTO>> GetUserByName(string keyword, CancellationToken cancellationToken);
     }
 }

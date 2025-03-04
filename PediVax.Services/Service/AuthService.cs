@@ -23,9 +23,9 @@ public class AuthService : IAuthService
         _userRepository = userRepository;
     }
 
-    public async Task<AuthResponseDTO> LoginAsync(LoginRequestDTO loginRequest)
+    public async Task<AuthResponseDTO> LoginAsync(LoginRequestDTO loginRequest, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByEmailAsync(loginRequest.Email);
+        var user = await _userRepository.GetByEmailAsync(loginRequest.Email, cancellationToken);
         if (user == null || !VerifyPassword(loginRequest.Password, user.PasswordHash, user.PasswordSalt))
         {
             throw new Exception("Invalid email or password.");

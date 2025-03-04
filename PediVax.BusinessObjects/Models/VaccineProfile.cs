@@ -13,7 +13,7 @@ namespace PediVax.BusinessObjects.Models
     {
         [Key]
         public int VaccineProfileId { get; set; }
-        public int AppointmentId { get; set; }
+        public int? AppointmentId { get; set; }
         public int ChildId { get; set; }
         public DateTime VaccinationDate { get; set; }
         public string Reaction { get; set; }

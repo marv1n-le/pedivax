@@ -55,7 +55,7 @@ namespace PediVax.Repositories.Repository.BaseRepository
 
         public async Task<int> CreateAsync(T entity, CancellationToken cancellationToken = default)
         {
-            _context.AddAsync(entity);
+            await _context.AddAsync(entity);
             return await _context.SaveChangesAsync();
         }
 

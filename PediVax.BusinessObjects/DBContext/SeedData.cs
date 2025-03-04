@@ -27,6 +27,7 @@ public static class SeedData
                 IsActive = Enum.EnumList.IsActive.Active,
                 CreatedDate = DateTime.UtcNow,
                 CreatedBy = "System",
+                Image = "https://pedivax.com/images/user.png",
                 ModifiedDate = DateTime.UtcNow,
                 ModifiedBy = "System"
             }

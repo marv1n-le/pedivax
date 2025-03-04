@@ -1,7 +1,9 @@
-﻿using System.Security.Claims;
+﻿using System.Net;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PediVax.BusinessObjects.DTO.ReponseDTO;
 using PediVax.BusinessObjects.DTO.RequestDTO;
 using PediVax.Services.IService;
 
@@ -12,12 +14,16 @@ namespace PediVax.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly ILogger<UserController> _logger;
+        public UserController(IUserService userService, ILogger<UserController> logger)
         {
             _userService = userService;
+            _logger = logger;
         }
         
         [HttpGet("current-user")]
+        [ProducesResponseType(typeof(object), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public IActionResult GetCurrentUser()
         {
             if (User.Identity == null || !User.Identity.IsAuthenticated)
@@ -41,110 +47,213 @@ namespace PediVax.Controllers
         }
 
         [HttpGet("get-all-users")]
+        [ProducesResponseType(typeof(List<UserResponseDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [Authorize(Roles = "Admin, Staff, Doctor")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var users = await _userService.GetAllUser();
-            if (users == null || users.Count == 0)
+            var response = await _userService.GetAllUser(cancellationToken);
+            if (response == null || response.Count == 0)
             {
-                return NotFound("No users found");
+                _logger.LogWarning("No users found");
+                return NotFound(new {message = "No users available."});
             }
-            return Ok(users);
+            return Ok(response);
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody]CreateUserDTO createUserDTO)
+        public async Task<IActionResult> Register([FromForm]CreateUserDTO createUserDTO, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var user = await _userService.CreateUser(createUserDTO);
+            var user = await _userService.CreateUser(createUserDTO, cancellationToken);
 
             return Ok(user);
         }
 
         [HttpGet("get-user-by-id/{id}")]
+        [ProducesResponseType(typeof(UserResponseDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [Authorize(Roles = "Admin, Staff, Doctor")]
-        public async Task<IActionResult> GetUserById(int id)
+        public async Task<IActionResult> GetUserById(int id, CancellationToken cancellationToken)
         {
-            var user = await _userService.GetUserById(id);
-            if (user == null)
+            if (id <= 0)
             {
-                return NotFound();
+                return BadRequest(new { message = "Invalid user ID." });
             }
-            return Ok(user);
+            try
+            {
+                var user = await _userService.GetUserById(id, cancellationToken);
+                return Ok(user);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching user with ID {id}", id);
+                return Problem("An unexpected error occurred.");
+            }
+            
         }
 
         [HttpGet("get-user-paged/{pageNumber}/{pageSize}")]
+        [ProducesResponseType(typeof(object), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [Authorize(Roles = "Admin, Staff, Doctor")]
-        public async Task<IActionResult> GetUsersPaged(int pageNumber, int pageSize)
+        public async Task<IActionResult> GetUsersPaged(int pageNumber, int pageSize, CancellationToken cancellationToken)
         {
-            var (data, totalCount) = await _userService.GetUserPaged(pageNumber, pageSize);
+            if (pageNumber <= 0 || pageSize <= 0)
+            {
+                return BadRequest(new { message = "Invalid pagination parameters" });
+            }
+            var (data, totalCount) = await _userService.GetUserPaged(pageNumber, pageSize, cancellationToken);
             return Ok(new { Data = data, TotalCount = totalCount });
         }
 
         [HttpPut("update-user-by-id/{id}")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [Authorize(Roles = "Admin, Staff, Doctor")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDTO updateUserDto)
+        public async Task<IActionResult> UpdateUser(int id, [FromForm] UpdateUserDTO updateUserDto, CancellationToken cancellationToken)
         {
-            var result = await _userService.UpdateUser(id, updateUserDto);
-            if (!result)
+            if (id <= 0)
             {
-                return NotFound();
+                return BadRequest(new { message = "Invalid user ID." });
             }
-            return NoContent();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Invalid data.", errors = ModelState.Values });
+            }
+            try
+            {
+                var response = await _userService.UpdateUser(id, updateUserDto, cancellationToken);
+                return Ok(new { success = response});
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+            catch (ApplicationException ex)
+            {
+                _logger.LogError(ex, "Error updating user with ID {id}", id);
+                return Problem("An error occurred while updating the user !");
+            }
+            
         }
 
         [HttpDelete("delete-user-by-id/{id}")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [Authorize(Roles = "Admin, Staff, Doctor")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(int id, CancellationToken cancellationToken)
         {
-            var result = await _userService.DeleteUser(id);
-            if (!result)
+            if (id <= 0)
             {
-                return NotFound();
+                return BadRequest(new
+                {
+                    message = "Invalid user ID."
+                });
             }
-            return NoContent();
+
+            try
+            {
+                var result = await _userService.DeleteUser(id, cancellationToken);
+                if (!result)
+                {
+                    return NotFound(new
+                    {
+                        message = "User not found or already deleted !"
+                    });
+                }
+
+                return Ok(new
+                {
+                    message = "User deleted successfully !"
+                });
+            }
+            catch (ApplicationException ex)
+            {
+                _logger.LogError(ex, "Error deleting user with ID {id}", id);
+                return Problem("An error occurred while deleting the user !");
+            }
+            
         }
         
         [HttpGet("get-user-by-email/{email}")]
+        [ProducesResponseType(typeof(UserResponseDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [Authorize(Roles = "Admin, Staff, Doctor")]
-        public async Task<IActionResult> GetUserByEmail(string email)
+        public async Task<IActionResult> GetUserByEmail(string email, CancellationToken cancellationToken)
         {
-            var user = await _userService.GetUserByEmail(email);
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest(new
+                {
+                    message = "Email cannot be empty!"
+                });
+            }
+            var user = await _userService.GetUserByEmail(email, cancellationToken);
             if (user == null)
             {
-                return NotFound();
+                return NotFound("No users found with the given email !");
             }
             return Ok(user);
         }
         
         [HttpGet("get-user-by-name/{keyword}")]
+        [ProducesResponseType(typeof(List<UserResponseDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [Authorize(Roles = "Admin, Staff, Doctor")]
-        public async Task<IActionResult> GetUserByName(string keyword)
+        public async Task<IActionResult> GetUserByName(string keyword, CancellationToken cancellationToken)
         {
-            var users = await _userService.GetUserByName(keyword);
+            if (string.IsNullOrWhiteSpace(keyword)  )
+            {
+                return BadRequest(new
+                {
+                    message = "Keyword cannot be empty!"
+                });
+            }
+            var users = await _userService.GetUserByName(keyword, cancellationToken);
             if (users == null || users.Count == 0)
             {
-                return NotFound("No users found");
+                return NotFound("No users found with the give keyword !");
             }
             return Ok(users);
         }
         
         [HttpPost("create-system-user")]
+        [ProducesResponseType(typeof(UserResponseDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [Authorize(Roles = "Admin, Staff, Doctor")]
-        public async Task<IActionResult> CreateSystemUser([FromBody] CreateSystemUserDTO createSystemUserDTO)
+        public async Task<IActionResult> CreateSystemUser([FromForm] CreateSystemUserDTO createSystemUserDTO, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new
+                {
+                    message = "Invalid data.", errors = ModelState.Values
+                });
             }
-
-            var user = await _userService.CreateSystemUser(createSystemUserDTO);
-
-            return Ok(user);
+            
+            try
+            {
+                var response = await _userService.CreateSystemUser(createSystemUserDTO, cancellationToken);
+                return CreatedAtAction(nameof(GetUserById), new { id = response.UserId }, response);
+            }
+            catch (ApplicationException ex)
+            {
+                _logger.LogError(ex, "Error creating a new system user.");
+                return Problem("An error occurred while creating the user !");
+            }
         }
         
     }

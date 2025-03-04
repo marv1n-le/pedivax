@@ -1,7 +1,8 @@
 using PediVax.BusinessObjects.Enum;
+using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace PediVax.BusinessObjects.DTO.RequestDTO;
-using System.ComponentModel.DataAnnotations;
 
 public class CreateSystemUserDTO
 {
@@ -15,9 +16,13 @@ public class CreateSystemUserDTO
     [Required(ErrorMessage = "Full name is required")]
     public string FullName { get; set; }
 
+    [Required(ErrorMessage = "Phone number is required")]
     [Phone(ErrorMessage = "Invalid phone number format")]
     public string PhoneNumber { get; set; }
-        
+
+    [Required(ErrorMessage = "Image is required")]
+    public IFormFile Image { get; set; }
+
     [Required(ErrorMessage = "Address is required")]
     public string Address { get; set; }
 

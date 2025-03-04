@@ -13,7 +13,7 @@ namespace PediVax.BusinessObjects.DTO.AppointmentDTO
         [Required(ErrorMessage = "PaymentId is required")]
         public int PaymentId { get; set; }
 
-        [Required(ErrorMessage = "ChildId is required")]
+       // [Required(ErrorMessage = "ChildId is required")]
         public int ChildId { get; set; }
 
         public int? VaccineId { get; set; }

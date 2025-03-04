@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PediVax.BusinessObjects.DBContext;
-using PediVax.BusinessObjects.Models;
+﻿using PediVax.BusinessObjects.Models;
 using PediVax.Repositories.IRepository;
 using PediVax.Repositories.Repository.BaseRepository;
-using System;
+using System.Threading;
 using System.Collections.Generic;
-using System.Linq;
+using System;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using PediVax.BusinessObjects.Enum;
 
 namespace PediVax.Repositories.Repository
@@ -17,55 +17,56 @@ namespace PediVax.Repositories.Repository
         {
         }
 
-        public async Task<List<Appointment>> GetAllAppointments()
+        public async Task<List<Appointment>> GetAllAppointments(CancellationToken cancellationToken)
         {
-            return await GetAllAsync();
+            return await GetAllAsync(cancellationToken);
         }
 
-        public async Task<Appointment> GetAppointmentById(int appointmentId)
+        public async Task<(List<Appointment> Data, int TotalCount)> GetAppointmentsPaged(int pageNumber, int pageSize, CancellationToken cancellationToken)
         {
-            return await GetByIdAsync(appointmentId);
+            return await GetPagedAsync(pageNumber, pageSize, cancellationToken);
         }
 
-        public async Task<(List<Appointment> Data, int TotalCount)> GetAppointmentsPaged(int pageNumber, int pageSize)
+        public async Task<Appointment> GetAppointmentById(int appointmentId, CancellationToken cancellationToken)
         {
-            return await GetPagedAsync(pageNumber, pageSize);
+            return await GetByIdAsync(appointmentId, cancellationToken);
         }
 
-        public async Task<int> AddAppointment(Appointment appointment)
-        {
-            return await CreateAsync(appointment);
-        }
-
-        public async Task<int> UpdateAppointment(Appointment appointment)
-        {
-            return await UpdateAsync(appointment);
-        }
-
-        public async Task<bool> DeleteAppointment(int appointmentId)
-        {
-            return await DeleteAsync(appointmentId);
-        }
-
-        public async Task<List<Appointment>> GetAppointmentsByChildId(int childId)
+        public async Task<List<Appointment>> GetAppointmentsByChildId(int childId, CancellationToken cancellationToken)
         {
             return await _context.Appointments
                 .Where(a => a.ChildId == childId)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<List<Appointment>> GetAppointmentsByDate(DateTime appointmentDate)
+        public async Task<List<Appointment>> GetAppointmentsByDate(DateTime appointmentDate, CancellationToken cancellationToken)
         {
             return await _context.Appointments
                 .Where(a => a.AppointmentDate.Date == appointmentDate.Date)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<List<Appointment>> GetAppointmentsByStatus(EnumList.AppointmentStatus status)
+        public async Task<List<Appointment>> GetAppointmentsByStatus(EnumList.AppointmentStatus status, CancellationToken cancellationToken)
         {
             return await _context.Appointments
                 .Where(a => a.AppointmentStatus == status)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
+        }
+
+
+        public async Task<int> AddAppointment(Appointment appointment, CancellationToken cancellationToken)
+        {
+            return await CreateAsync(appointment, cancellationToken);
+        }
+
+        public async Task<int> UpdateAppointment(Appointment appointment, CancellationToken cancellationToken)
+        {
+            return await UpdateAsync(appointment, cancellationToken);
+        }
+
+        public async Task<bool> DeleteAppointment(int appointmentId, CancellationToken cancellationToken)
+        {
+            return await DeleteAsync(appointmentId, cancellationToken);
         }
     }
 }

@@ -1,164 +1,161 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using System.Threading;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using PediVax.BusinessObjects.DTO.DiseaseDTO;
-using PediVax.BusinessObjects.DTO.ReponseDTO;
+using PediVax.BusinessObjects.DTO.VaccineDTO;
 using PediVax.BusinessObjects.Enum;
 using PediVax.BusinessObjects.Models;
 using PediVax.Repositories.IRepository;
 using PediVax.Repositories.Repository;
 using PediVax.Services.IService;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace PediVax.Services.Service
+namespace PediVax.Services.Service;
+
+public class DiseaseService : IDiseaseService
 {
-    public class DiseaseService : IDiseaseService
+    private readonly IDiseaseRepository _diseaseRepository;
+    private readonly IMapper _mapper;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ILogger<DiseaseService> _logger;
+
+    public DiseaseService(IDiseaseRepository diseaseRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<DiseaseService> logger)
     {
-        private readonly IDiseaseRepository _diseaseRepository;
-        private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        _diseaseRepository = diseaseRepository;
+        _mapper = mapper;
+        _httpContextAccessor = httpContextAccessor;
+        _logger = logger;
+    }
 
+    private string GetCurrentUserName()
+    {
+        return _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value ?? "System";
+    }
 
-        public DiseaseService(IDiseaseRepository diseaseRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    private void SetAuditFields(Disease disease)
+    {
+        disease.ModifiedBy = GetCurrentUserName();
+        disease.ModifiedDate = DateTime.UtcNow;
+    }
+
+  
+
+    public async Task<DiseaseResponseDTO> GetDiseaseById(int diseaseId, CancellationToken cancellationToken)
+    {
+        if (diseaseId <= 0)
         {
-            _diseaseRepository = diseaseRepository;
-            _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;
+            _logger.LogWarning("Invalid disease ID: {diseaseId}", diseaseId);
+            throw new ArgumentException("Invalid disease ID");
         }
-        private string GetCurrentUserName()
+
+        var disease = await _diseaseRepository.GetDiseaseById(diseaseId, cancellationToken);
+        if (disease == null)
         {
-            if (_httpContextAccessor.HttpContext == null || _httpContextAccessor.HttpContext.User == null)
+            _logger.LogWarning("Disease with ID {diseaseId} not found", diseaseId);
+            throw new KeyNotFoundException("Disease not found");
+        }
+
+        return _mapper.Map<DiseaseResponseDTO>(disease);
+    }
+
+    public async Task<DiseaseResponseDTO> AddDisease(CreateDiseaseDTO createDiseaseDTO, CancellationToken cancellationToken)
+    {
+        if (createDiseaseDTO == null)
+        {
+            throw new ArgumentNullException(nameof(createDiseaseDTO), "Disease data is required");
+        }
+
+        try
+        {
+            var disease = _mapper.Map<Disease>(createDiseaseDTO);
+            disease.IsActive = EnumList.IsActive.Active;
+            disease.CreatedBy = GetCurrentUserName();
+            disease.CreatedDate = DateTime.UtcNow;
+            SetAuditFields(disease);
+
+            if (await _diseaseRepository.CreateDisease(disease, cancellationToken) <= 0)
             {
-                return "System";
+                throw new ApplicationException("Adding new disease failed");
             }
 
-            var userName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
-            return string.IsNullOrEmpty(userName) ? "System" : userName;
-        }
-
-        public async Task<DiseaseResponseDTO> AddDisease(CreateDiseaseDTO createDiseaseDTO)
-        {
-            try
-            {
-                ValidateInputs(createDiseaseDTO);
-
-                var disease = new Disease()
-                {
-                    Name = createDiseaseDTO.Name,
-                    Description = createDiseaseDTO.Description,
-                    CreatedDate = DateTime.UtcNow,
-                    CreatedBy = GetCurrentUserName(),
-                    ModifiedDate = DateTime.UtcNow,
-                    ModifiedBy = GetCurrentUserName(),
-                    IsActive = EnumList.IsActive.Active
-                };
-
-                if (await _diseaseRepository.CreateDisease(disease) <= 0)
-                {
-                    throw new Exception("Failed to create disease.");
-                }
-
-                return _mapper.Map<DiseaseResponseDTO>(disease);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error while saving disease: " + ex.InnerException?.Message, ex);
-            }
-        }
-
-       
-
-
-        public async Task<bool> DeleteDisease(int diseaseId)
-        {
-            return await _diseaseRepository.DeleteDisease(diseaseId);
-        }
-
-        public async Task<List<DiseaseResponseDTO>> GetAllDisease()
-        {
-            var disease = await _diseaseRepository.GetAllDiseases();
-            return _mapper.Map<List<DiseaseResponseDTO>>(disease);
-        }
-
-        public async Task<DiseaseResponseDTO> GetDiseasebyId(int diseaseId)
-        {
-            var disease = await _diseaseRepository.GetDiseaseById(diseaseId);
             return _mapper.Map<DiseaseResponseDTO>(disease);
         }
-
-        public async Task<(List<DiseaseResponseDTO> Data, int TotalCount)> GetDiseasePaged(int pageNumber, int pageSize)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Error adding new disease");
+            throw new ApplicationException("Error while saving disease", ex);
+        }
+    }
 
-            var (data, totalCount) = await _diseaseRepository.GetDiseasePaged(pageNumber, pageSize);
-            var mappedData = _mapper.Map<List<DiseaseResponseDTO>>(data);
-            return (mappedData, totalCount);
+    public async Task<bool> UpdateDisease(int id, UpdateDiseaseDTO updateDiseaseDTO, CancellationToken cancellationToken)
+    {
+        if (id <= 0)
+        {
+            throw new ArgumentException("Invalid disease ID");
         }
 
-        public async Task<bool> UpdateDisease(int id, UpdateDiseaseDTO updateDiseaseDTO)
+        if (updateDiseaseDTO == null)
         {
-            try
+            throw new ArgumentNullException(nameof(updateDiseaseDTO), "Disease data is required");
+        }
+
+        try
+        {
+            var disease = await _diseaseRepository.GetDiseaseById(id, cancellationToken);
+            if (disease == null)
             {
-                ValidateUpdateInputs(updateDiseaseDTO);
-
-                var existingDisease = await _diseaseRepository.GetDiseaseById(id);
-                if (existingDisease == null)
-                {
-                    throw new Exception("Disease not found.");
-                }
-
-                
-                existingDisease.Name = updateDiseaseDTO.Name.Trim();
-                existingDisease.Description = updateDiseaseDTO.Description?.Trim();
-                existingDisease.ModifiedDate = DateTime.UtcNow;
-                existingDisease.ModifiedBy = GetCurrentUserName();
-
-                if (await _diseaseRepository.UpdateDisease(existingDisease) <= 0)
-                {
-                    throw new Exception("Failed to update disease.");
-                }
-
-                return true;
+                _logger.LogWarning("Disease with ID {id} not found", id);
+                throw new KeyNotFoundException("Disease not found");
             }
-            catch (Exception ex)
-            {
-                throw new Exception("Error while updating disease: " + ex.InnerException?.Message, ex);
-            }
+
+            SetAuditFields(disease);
+            disease.Name = updateDiseaseDTO.Name ?? disease.Name;
+            disease.Description = updateDiseaseDTO.Description ?? disease.Description;
+
+            int rowsAffected = await _diseaseRepository.UpdateDisease(disease, cancellationToken);
+            return rowsAffected > 0;
         }
-        // validate
-        private void ValidateInputs(CreateDiseaseDTO createDiseaseDTO)
+        catch (Exception ex)
         {
-            if (string.IsNullOrWhiteSpace(createDiseaseDTO.Name))
-                throw new ArgumentException("Disease name cannot be empty.");
-
-            if (createDiseaseDTO.Name.Length > 100)
-                throw new ArgumentException("Disease name must be under 100 characters.");
-
-            if (!string.IsNullOrWhiteSpace(createDiseaseDTO.Description) && createDiseaseDTO.Description.Length > 500)
-                throw new ArgumentException("Description must be under 500 characters.");
+            _logger.LogError(ex, "Error updating disease with ID {id}", id);
+            throw new ApplicationException("Error while updating disease", ex);
         }
+    }
 
-        private void ValidateUpdateInputs(UpdateDiseaseDTO updateDiseaseDTO)
+    public async Task<bool> DeleteDisease(int diseaseId, CancellationToken cancellationToken)
+    {
+        if (diseaseId <= 0)
         {
-            if (updateDiseaseDTO == null)
-                throw new ArgumentNullException(nameof(updateDiseaseDTO), "Update data cannot be null.");
-
-            if (string.IsNullOrWhiteSpace(updateDiseaseDTO.Name))
-                throw new ArgumentException("Disease name cannot be empty.");
-
-            if (updateDiseaseDTO.Name.Length > 100)
-                throw new ArgumentException("Disease name must be under 100 characters.");
-
-            if (!Regex.IsMatch(updateDiseaseDTO.Name, @"^[a-zA-Z0-9\s]+$"))
-                throw new ArgumentException("Disease name can only contain letters, numbers, and spaces.");
-
-            if (!string.IsNullOrWhiteSpace(updateDiseaseDTO.Description) && updateDiseaseDTO.Description.Length > 500)
-                throw new ArgumentException("Description must be under 500 characters.");
+            throw new ArgumentException("Invalid disease ID");
         }
 
+        try
+        {
+            return await _diseaseRepository.DeleteDisease(diseaseId, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting disease with ID {diseaseId}", diseaseId);
+            throw new ApplicationException("Error while deleting disease", ex);
+        }
+    }
+
+    public async Task<List<DiseaseResponseDTO>> GetAllDiseases(CancellationToken cancellationToken)
+    {
+        var diseases = await _diseaseRepository.GetAllDiseases(cancellationToken);
+        return _mapper.Map<List<DiseaseResponseDTO>>(diseases);
+    }
+
+    public async Task<(List<DiseaseResponseDTO> Data, int TotalCount)> GetDiseasePaged(int pageNumber, int pageSize, CancellationToken cancellationToken)
+    {
+        if (pageNumber <= 0 || pageSize <= 0)
+        {
+            _logger.LogWarning("Invalid pagination parameters: PageNumber={pageNumber}, PageSize={pageSize}", pageNumber, pageSize);
+            throw new ArgumentException("Invalid pagination parameters");
+        }
+
+        var (diseases, totalCount) = await _diseaseRepository.GetDiseasePaged(pageNumber, pageSize, cancellationToken);
+        return (_mapper.Map<List<DiseaseResponseDTO>>(diseases), totalCount);
     }
 }

@@ -2,43 +2,45 @@
 using PediVax.Repositories.IRepository;
 using PediVax.Repositories.Repository.BaseRepository;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace PediVax.Repositories.Repository;
-
-public class DiseaseRepository : GenericRepository<Disease>, IDiseaseRepository
+namespace PediVax.Repositories.Repository
 {
-    public DiseaseRepository() : base() { }
-
-    public async Task<int> CreateDisease(Disease disease)
+    public class DiseaseRepository : GenericRepository<Disease>, IDiseaseRepository
     {
-        return await CreateAsync(disease);
-    }
+        public DiseaseRepository() : base()
+        {
+        }
 
-    public async Task<bool> DeleteDisease(int diseaseId)
-    {
-        return await DeleteAsync(diseaseId);
-    }
+        public async Task<List<Disease>> GetAllDiseases(CancellationToken cancellationToken)
+        {
+            return await GetAllAsync(cancellationToken);
+        }
 
-    public async Task<List<Disease>> GetAllDiseases()
-    {
-        return await GetAllAsync();
-    }
+        public async Task<Disease?> GetDiseaseById(int diseaseId, CancellationToken cancellationToken)
+        {
+            return await GetByIdAsync(diseaseId, cancellationToken);
+        }
 
-    public async Task<Disease?> GetDiseaseById(int diseaseId)
-    {
-        return await GetByIdAsync(diseaseId);
-    }
+        public async Task<(List<Disease>, int)> GetDiseasePaged(int pageNumber, int pageSize, CancellationToken cancellationToken)
+        {
+            return await GetPagedAsync(pageNumber, pageSize, cancellationToken);
+        }
 
-   
+        public async Task<int> CreateDisease(Disease disease, CancellationToken cancellationToken)
+        {
+            return await CreateAsync(disease, cancellationToken);
+        }
 
-    public async Task<(List<Disease>, int)> GetDiseasePaged(int pageNumber, int pageSize)
-    {
-        return await GetPagedAsync(pageNumber, pageSize);
-    }
+        public async Task<int> UpdateDisease(Disease disease, CancellationToken cancellationToken)
+        {
+            return await UpdateAsync(disease, cancellationToken);
+        }
 
-    public async Task<int> UpdateDisease(Disease disease)
-    {
-        return await UpdateAsync(disease);
+        public async Task<bool> DeleteDisease(int diseaseId, CancellationToken cancellationToken)
+        {
+            return await DeleteAsync(diseaseId, cancellationToken);
+        }
     }
 }

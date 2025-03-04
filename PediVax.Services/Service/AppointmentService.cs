@@ -111,10 +111,6 @@ public class AppointmentService : IAppointmentService
         if (id <= 0)
         {
             throw new ArgumentException("Invalid appointment ID");
-        }
-
-        if (updateAppointmentDTO == null)
-        {
             throw new ArgumentNullException(nameof(updateAppointmentDTO), "Appointment data is required");
         }
 

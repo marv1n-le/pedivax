@@ -19,6 +19,14 @@ public class Program
         // Add services to the container.
         builder.Services.AddAuthorization();
         
+        // Session Configuration
+        builder.Services.AddDistributedMemoryCache();
+        builder.Services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(30);
+            options.Cookie.IsEssential = true;
+        });
+        
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -101,6 +109,8 @@ public class Program
 
         app.UseCors("AllowAllOrigins");
 
+        app.UseSession();
+        
         app.UseAuthentication();
 
         app.UseAuthorization();

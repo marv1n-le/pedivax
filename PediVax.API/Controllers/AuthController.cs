@@ -28,4 +28,14 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = ex.Message });
         }
     }
+    
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        _authService.Logout();
+        return Ok(new
+        {
+            message = "Logout successful"
+        });
+    }
 }

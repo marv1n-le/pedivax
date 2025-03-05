@@ -7,4 +7,5 @@ namespace PediVax.Services.IService;
 public interface IAuthService
 {
     Task<AuthResponseDTO> LoginAsync(LoginRequestDTO loginRequestDto, CancellationToken cancellationToken);
+    void Logout();
 }

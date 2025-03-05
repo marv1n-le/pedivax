@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PediVax.BusinessObjects.DTO.RequestDTO;
@@ -16,11 +17,13 @@ public class AuthService : IAuthService
 {
     private readonly IConfiguration _configuration;
     private readonly IUserRepository _userRepository;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     
-    public AuthService(IConfiguration configuration, IUserRepository userRepository)
+    public AuthService(IConfiguration configuration, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor)
     {
         _configuration = configuration;
         _userRepository = userRepository;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<AuthResponseDTO> LoginAsync(LoginRequestDTO loginRequest, CancellationToken cancellationToken)
@@ -44,7 +47,12 @@ public class AuthService : IAuthService
             FullName = user.FullName
         };
     }
-    
+
+    public void Logout()
+    {
+        var session = _httpContextAccessor.HttpContext.Session;
+        session.Clear();
+    }
     
     private bool VerifyPassword(string password, string storedHash, string storedSalt)
     {

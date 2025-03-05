@@ -12,6 +12,8 @@ using PediVax.BusinessObjects.DTO.AppointmentDTO;
 using PediVax.BusinessObjects.DTO.DiseaseDTO;
 using PediVax.BusinessObjects.DTO.VaccineDTO;
 using PediVax.BusinessObjects.DTO.VaccinationRecordDTo;
+using PediVax.BusinessObjects.DTO.VaccinePackageDTO;
+using PediVax.BusinessObjects.DTO.VaccinePackageDetailDTO;
 
 namespace PediVax.Services.Configuration.Mapper
 {
@@ -57,6 +59,15 @@ namespace PediVax.Services.Configuration.Mapper
             CreateMap<UpdateVaccinationRecordDTO, VaccinationRecord>();
             CreateMap<VaccinationRecord, VaccinationRecordRequestDTO>();
 
+            //VaccinePackage_mappper 
+            CreateMap<CreateVaccinePackageDTO, VaccinePackage>();
+            CreateMap<UpdateVaccinePackageDTO, VaccinePackage>();
+            CreateMap<VaccinePackage, VaccinePackageResponseDTO>();
+
+            //VaccinePackageDetail_mapper
+            CreateMap<CreateVaccinePackageDetailDTO, VaccinePackageDetail>();
+            CreateMap<UpdateVaccinePackageDetailDTO, VaccinePackageDetail>();
+            CreateMap<VaccinePackageDetail, VaccinePackageDetailResponseDTO>();
         }
     }
 }

@@ -177,4 +177,49 @@ public class AppointmentService : IAppointmentService
         var appointments = await _appointmentRepository.GetAppointmentsByStatus(appointmentStatus, cancellationToken);
         return _mapper.Map<List<AppointmentResponseDTO>>(appointments);
     }
+
+    public async Task<bool> UpdateAppointmentStatus(int appointmentId, EnumList.AppointmentStatus appointmentStatus, CancellationToken cancellationToken)
+    {
+        var appointment = await _appointmentRepository.GetAppointmentById(appointmentId, cancellationToken);
+        if ((int)appointment.AppointmentStatus == 1)
+        {
+            if ((int)appointmentStatus == 2 || (int)appointmentStatus == 5)
+            {
+                appointment.AppointmentStatus = appointmentStatus;
+            }
+            else
+            {
+                throw new ArgumentException("AppoitmentId is Pending, You can only change to WaitingForInjection (2) or Canceled (5).");
+            }
+        }
+        else if ((int)appointment.AppointmentStatus == 2)
+        {
+            if ((int)appointmentStatus == 3)
+            {
+                appointment.AppointmentStatus = appointmentStatus;
+            }
+            else
+            {
+                throw new ArgumentException("AppoitmentId is WaitingForInjection, You can only change to WaitingForResponse (3).");
+            }
+        }
+        else if ((int)appointment.AppointmentStatus == 3) 
+        {
+            if ((int)appointmentStatus == 4)
+            {
+                appointment.AppointmentStatus = appointmentStatus;
+            }
+            else
+            {
+                throw new ArgumentException("AppoitmentId is WaitingForResponse, You can only change to Completed (4).");
+            }
+        }
+        else
+        {
+            throw new ArgumentException("You can not change Appoitment Status");
+        }
+        var rowAffected = await _appointmentRepository.UpdateAppointment(appointment, cancellationToken);
+        return rowAffected > 0;
+
+    }
 }

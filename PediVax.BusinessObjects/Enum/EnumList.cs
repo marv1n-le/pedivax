@@ -17,8 +17,10 @@ namespace PediVax.BusinessObjects.Enum
         public enum AppointmentStatus
         {
             Pending = 1,
-            Completed = 2,
-            Cancelled = 3
+            WaitingForInjection = 2,
+            WaitingForResponse = 3,
+            Completed = 4,
+            Cancelled = 5
         }
 
         public enum Gender

@@ -61,6 +61,13 @@ namespace PediVax.BusinessObjects.DBContext
             base.OnModelCreating(modelBuilder);
 
             // Configure relationships using Fluent API
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.ChildProfiles)
+                .WithOne(cp => cp.User)
+                .HasForeignKey(cp => cp.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            
             modelBuilder.Entity<ChildProfile>()
                 .HasOne(cp => cp.User)
                 .WithMany(u => u.ChildProfiles)

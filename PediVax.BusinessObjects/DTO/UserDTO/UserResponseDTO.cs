@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PediVax.BusinessObjects.DTO.ChildProfileDTO;
+using PediVax.BusinessObjects.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,5 +27,7 @@ namespace PediVax.BusinessObjects.DTO.ReponseDTO
         [JsonConverter(typeof(DateOnlyJsonConverter))]
         public DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
+
+        public List<ChildProfileResponseDTO> ChildProfile { get; set; }
     }
 }

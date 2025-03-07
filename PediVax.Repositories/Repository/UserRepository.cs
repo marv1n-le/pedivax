@@ -26,7 +26,8 @@ namespace PediVax.Repositories.Repository
 
         public async Task<User> GetUserById(int id, CancellationToken cancellationToken)
         {
-            return await GetByIdAsync(id, cancellationToken) ;
+            return await _context.Users.Include(u => u.ChildProfiles)
+                .FirstOrDefaultAsync(u => u.UserId == id, cancellationToken);
         }
 
         public async Task<(List<User> Data, int TotalCount)> GetUserPaged(int pageNumber, int pageSize, CancellationToken cancellationToken)

@@ -32,7 +32,10 @@ namespace PediVax.Services.Configuration.Mapper
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
                 .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore());
             CreateMap<User, UserResponseDTO>();
-            
+            CreateMap<User, UserResponseDTO>()
+                .ForMember(dest => dest.ChildProfile, opt => opt.MapFrom(src => src.ChildProfiles));
+
+
             //ChildProfile Mapper
             CreateMap<CreateChildProfileDTO, ChildProfile>();
             CreateMap<UpdateChildProfileDTO, ChildProfile>();

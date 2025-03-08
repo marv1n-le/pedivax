@@ -44,7 +44,7 @@ namespace PediVax.BusinessObjects.DBContext
         public DbSet<User> Users { get; set; }
         public DbSet<ChildProfile> ChildProfiles { get; set; }
         public DbSet<Vaccine> Vaccines { get; set; }
-        public DbSet<VaccineDose> VaccineDoses { get; set; }
+        public DbSet<VaccineSchedule> VaccineSchedules { get; set; }
         public DbSet<Disease> Diseases { get; set; }
         public DbSet<VaccineDisease> VaccineDiseases { get; set; }
         public DbSet<VaccinePackage> VaccinePackages { get; set; }
@@ -74,12 +74,18 @@ namespace PediVax.BusinessObjects.DBContext
                 .HasForeignKey(cp => cp.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<VaccineDose>()
-                .HasOne(vd => vd.Vaccine)
-                .WithMany(v => v.VaccineDoses)
-                .HasForeignKey(vd => vd.VaccineId)
+            modelBuilder.Entity<VaccineSchedule>()
+                .HasOne(vs => vs.Disease)
+                .WithMany(d => d.VaccineSchedules)
+                .HasForeignKey(vs => vs.DiseaseId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<VaccineSchedule>()
+                .HasOne(vs => vs.Vaccine)
+                .WithMany(v => v.VaccineSchedules)
+                .HasForeignKey(vs => vs.VaccineId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
             modelBuilder.Entity<VaccineDisease>()
                 .HasOne(vd => vd.Vaccine)
                 .WithMany(v => v.VaccineDiseases)

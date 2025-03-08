@@ -26,8 +26,8 @@ namespace PediVax.BusinessObjects.Models
         public string CreatedBy { get; set; }
         public DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
-
-        public ICollection<VaccineDose> VaccineDoses { get; set; }
+        
+        public ICollection<VaccineSchedule> VaccineSchedules { get; set; }
         public ICollection<VaccineDisease> VaccineDiseases { get; set; }
         public ICollection<VaccinePackageDetail> VaccinePackageDetails { get; set; }
         public ICollection<Appointment> Appointments { get; set; }

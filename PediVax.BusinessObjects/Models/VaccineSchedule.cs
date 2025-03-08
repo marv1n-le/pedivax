@@ -1,28 +1,28 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PediVax.BusinessObjects.Enum;
 
 namespace PediVax.BusinessObjects.Models
 {
-    [Table("VaccineDisease")]
-    public class VaccineDisease
+    [Table("VaccineSchedule")]
+    public class VaccineSchedule
     {
         [Key]
-        public int VaccineDiseaseId { get; set; }
+        public int VaccineScheduleId { get; set; }
+        public int DiseaseId { get; set; } 
         public int VaccineId { get; set; }
-        public int DiseaseId { get; set; }
+        public int AgeInMonths { get; set; }
+        public int DoseNumber { get; set; }
+        public EnumList.IsActive IsActive{ get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime ModifiedDate { get; set; }
+        public string ModifiedBy { get; set; }
 
         // Navigation properties
-        [ForeignKey("VaccineId")]
-        public virtual Vaccine Vaccine { get; set; }
-        [ForeignKey("DiseaseId")]
         public virtual Disease Disease { get; set; }
+        public virtual Vaccine Vaccine { get; set; }
     }
 }

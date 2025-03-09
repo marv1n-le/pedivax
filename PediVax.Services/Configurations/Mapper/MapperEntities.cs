@@ -15,6 +15,7 @@ using PediVax.BusinessObjects.DTO.VaccinationRecordDTo;
 using PediVax.BusinessObjects.DTO.VaccinePackageDTO;
 using PediVax.BusinessObjects.DTO.VaccinePackageDetailDTO;
 using PediVax.BusinessObjects.DTO.VaccineScheduleDTO;
+using PediVax.BusinessObjects.DTO.VaccineProfileDTO;
 
 namespace PediVax.Services.Configuration.Mapper
 {
@@ -49,26 +50,25 @@ namespace PediVax.Services.Configuration.Mapper
             CreateMap<Vaccine, VaccineResponseDTO>()
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image == null ? null : src.Image));
 
-
-            //Disease_mapper
+            //Disease Mapper
             CreateMap<CreateDiseaseDTO, Disease>();
             CreateMap<Disease, DiseaseResponseDTO>();
-            //Appointment_mapper
+            //Appointment Mapper
 
             CreateMap<CreateAppointmentDTO, Appointment>();
             CreateMap<UpdateAppointmentDTO, Appointment>();
             CreateMap<Appointment, AppointmentResponseDTO>();
-            //VaccinationRecord_mapper
+            //VaccinationRecord Mapper
             CreateMap<CreateVaccinationRecordDTO, VaccinationRecord>();
             CreateMap<UpdateVaccinationRecordDTO, VaccinationRecord>();
             CreateMap<VaccinationRecord, VaccinationRecordRequestDTO>();
 
-            //VaccinePackage_mappper 
+            //VaccinePackage Mappper 
             CreateMap<CreateVaccinePackageDTO, VaccinePackage>();
             CreateMap<UpdateVaccinePackageDTO, VaccinePackage>();
             CreateMap<VaccinePackage, VaccinePackageResponseDTO>();
 
-            //VaccinePackageDetail_mapper
+            //VaccinePackageDetail Mapper
             CreateMap<CreateVaccinePackageDetailDTO, VaccinePackageDetail>();
             CreateMap<UpdateVaccinePackageDetailDTO, VaccinePackageDetail>();
             CreateMap<VaccinePackageDetail, VaccinePackageDetailResponseDTO>();
@@ -77,6 +77,11 @@ namespace PediVax.Services.Configuration.Mapper
             CreateMap<CreateVaccineScheduleDTO, VaccineSchedule>();
             CreateMap<UpdateVaccineScheduleDTO, VaccineSchedule>();
             CreateMap<VaccineSchedule, VaccineScheduleResponseDTO>();
+
+            //VaccineProfile Mapper
+            CreateMap<CreateVaccineProfileDTO, VaccineProfile>();
+            CreateMap<UpdateVaccineProfileDTO, VaccineProfile>();
+            CreateMap<VaccineProfile, VaccineProfileResponseDTO>();
         }
     }
 }

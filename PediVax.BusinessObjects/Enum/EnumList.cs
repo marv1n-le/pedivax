@@ -8,6 +8,12 @@ namespace PediVax.BusinessObjects.Enum
 {
     public class EnumList
     {
+        public enum IsCompleted
+        {
+            Yes = 1,
+            No = 0,
+            Pending = 2
+        }
         public enum IsActive
         {
             Active = 1,

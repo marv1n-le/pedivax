@@ -54,7 +54,7 @@ namespace PediVax.BusinessObjects.DBContext
         public DbSet<VaccinationRecord> VaccinationRecords { get; set; }
         public DbSet<VaccineProfile> VaccineProfiles { get; set; }
         public DbSet<PaymentDetail> PaymentDetails { get; set; }
-        public DbSet<VaccineProfileDetail> VaccineProfileDetails { get; set; }
+        public DbSet<VaccineSchedulePersonal> VaccineSchedulePersonals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -162,6 +162,30 @@ namespace PediVax.BusinessObjects.DBContext
                 .HasOne(vp => vp.ChildProfile)
                 .WithMany(cp => cp.VaccineProfiles)
                 .HasForeignKey(vp => vp.ChildId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<VaccineProfile>()
+                .HasOne(vp => vp.Disease)
+                .WithMany(d => d.VaccineProfiles)
+                .HasForeignKey(vp => vp.DiseaseId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<VaccineSchedulePersonal>()
+                .HasOne(vsp => vsp.ChildProfile)
+                .WithMany(cp => cp.VaccineSchedulePersonals)
+                .HasForeignKey(vsp => vsp.ChildId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<VaccineSchedulePersonal>()
+                .HasOne(vsp => vsp.Disease)
+                .WithMany(d => d.VaccineSchedulePersonals)
+                .HasForeignKey(vsp => vsp.DiseaseId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<VaccineSchedulePersonal>()
+                .HasOne(vsp => vsp.Vaccine)
+                .WithMany(v => v.VaccineSchedulePersonals)
+                .HasForeignKey(vsp => vsp.VaccineId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<PaymentDetail>()
@@ -176,18 +200,6 @@ namespace PediVax.BusinessObjects.DBContext
                 .HasForeignKey(pd => pd.VaccinePackageId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<VaccineProfileDetail>()
-                .HasOne(vpd => vpd.VaccineProfile)
-                .WithMany(vp => vp.VaccineProfileDetails)
-                .HasForeignKey(vpd => vpd.VaccineProfileId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<VaccineProfileDetail>()
-                .HasOne(vpd => vpd.Vaccine)
-                .WithMany(v => v.VaccineProfileDetails)
-                .HasForeignKey(vpd => vpd.VaccineId)
-                .OnDelete(DeleteBehavior.NoAction);
-
             modelBuilder.Entity<Vaccine>()
                 .Property(v => v.Price)
                 .HasColumnType("decimal(18,2)");
@@ -199,7 +211,13 @@ namespace PediVax.BusinessObjects.DBContext
             modelBuilder.Entity<Payment>()
                 .Property(p => p.TotalAmount)
                 .HasColumnType("decimal(18,2)");
-            
+
+            modelBuilder.Entity<VaccineSchedulePersonal>()
+                .HasOne(vsp => vsp.VaccineSchedule)
+                .WithMany(vs => vs.VaccineSchedulePersonals)
+                .HasForeignKey(vsp => vsp.VaccineScheduleId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             SeedData.Seed(modelBuilder);
         }
     }

@@ -28,6 +28,7 @@ namespace PediVax.BusinessObjects.Models
         public DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
 
-        public ICollection<ChildProfile> ChildProfiles { get; set; }
+        // Navigation properties
+        public virtual ICollection<ChildProfile> ChildProfiles { get; set; }
     }
 }

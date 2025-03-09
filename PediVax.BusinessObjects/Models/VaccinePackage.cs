@@ -22,6 +22,7 @@ namespace PediVax.BusinessObjects.Models
         public DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
 
+        // Navigation properties
         public ICollection<VaccinePackageDetail> VaccinePackageDetails { get; set; }
         public ICollection<Payment> Payments { get; set; }
         public ICollection<Appointment> Appointments { get; set; }

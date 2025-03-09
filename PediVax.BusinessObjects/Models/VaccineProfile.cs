@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PediVax.BusinessObjects.Enum;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,17 +16,23 @@ namespace PediVax.BusinessObjects.Models
         public int VaccineProfileId { get; set; }
         public int? AppointmentId { get; set; }
         public int ChildId { get; set; }
-        public DateTime VaccinationDate { get; set; }
-        public string Reaction { get; set; }
-        public string IsCompleted { get; set; }
-        public Enum.EnumList.IsActive IsActive { get; set; }
+        public int DiseaseId { get; set; }
+        public DateTime? VaccinationDate { get; set; }
+        public EnumList.IsCompleted IsCompleted { get; set; }
+        public EnumList.IsActive IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
 
-        public Appointment Appointment { get; set; }
-        public ChildProfile ChildProfile { get; set; }
-        public ICollection<VaccineProfileDetail> VaccineProfileDetails { get; set; }
+        // Navigation properties
+        public virtual Appointment Appointment { get; set; }
+
+        [ForeignKey("ChildId")]
+        public virtual ChildProfile ChildProfile { get; set; }
+
+        [ForeignKey("DiseaseId")]
+        public virtual Disease Disease { get; set; }
+
     }
 }

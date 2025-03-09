@@ -18,7 +18,11 @@ namespace PediVax.BusinessObjects.Models
         public int Quantity { get; set; }
         public string IsActive { get; set; }
 
-        public VaccinePackage VaccinePackage { get; set; }
-        public Vaccine Vaccine { get; set; }
+        // Navigation properties
+        [ForeignKey("PackageId")]
+        public virtual VaccinePackage VaccinePackage { get; set; }
+
+        [ForeignKey("VaccineId")]
+        public virtual Vaccine Vaccine { get; set; }
     }
 }

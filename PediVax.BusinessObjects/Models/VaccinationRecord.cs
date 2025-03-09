@@ -24,6 +24,7 @@ namespace PediVax.BusinessObjects.Models
         public string ModifiedBy { get; set; }
 
         // Navigation property
+        [ForeignKey("AppointmentId")]
         public virtual Appointment Appointment { get; set; }
     }
 }

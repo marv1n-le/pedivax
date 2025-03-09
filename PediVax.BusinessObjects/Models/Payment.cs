@@ -23,9 +23,11 @@ namespace PediVax.BusinessObjects.Models
         public string CreatedBy { get; set; }
 
         // Navigation properties
+        [ForeignKey("VaccinePackageId")]
         public virtual VaccinePackage VaccinePackage { get; set; }
+        [ForeignKey("VaccineId")]
         public virtual Vaccine Vaccine { get; set; }
-        public ICollection<Appointment> Appointments { get; set; }
-        public ICollection<PaymentDetail> PaymentDetails { get; set; }
+        public virtual ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<PaymentDetail> PaymentDetails { get; set; }
     }
 }

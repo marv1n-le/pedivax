@@ -25,11 +25,19 @@ namespace PediVax.BusinessObjects.Models
         public DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
 
-        public Payment Payment { get; set; }
-        public ChildProfile ChildProfile { get; set; }
-        public Vaccine Vaccine { get; set; }
-        public VaccinePackage VaccinePackage { get; set; }
-        public ICollection<VaccinationRecord> VaccinationRecords { get; set; }
-        public ICollection<VaccineProfile> VaccineProfiles { get; set; }
+        // Navigation properties
+        [ForeignKey("PaymentId")]
+        public virtual Payment Payment { get; set; }
+
+        [ForeignKey("ChildId")]
+        public virtual ChildProfile ChildProfile { get; set; }
+
+        [ForeignKey("VaccineId")]
+        public virtual Vaccine Vaccine { get; set; }
+
+        [ForeignKey("VaccinePackageId")]
+        public virtual VaccinePackage VaccinePackage { get; set; }
+        public virtual ICollection<VaccinationRecord> VaccinationRecords { get; set; }
+        public virtual ICollection<VaccineProfile> VaccineProfiles { get; set; }
     }
 }

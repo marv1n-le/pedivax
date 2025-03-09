@@ -26,12 +26,13 @@ namespace PediVax.BusinessObjects.Models
         public string CreatedBy { get; set; }
         public DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
-        
+
+        // Navigation properties
         public ICollection<VaccineSchedule> VaccineSchedules { get; set; }
         public ICollection<VaccineDisease> VaccineDiseases { get; set; }
         public ICollection<VaccinePackageDetail> VaccinePackageDetails { get; set; }
         public ICollection<Appointment> Appointments { get; set; }
         public ICollection<Payment> Payments { get; set; }
-        public ICollection<VaccineProfileDetail> VaccineProfileDetails { get; set; }
+        public ICollection<VaccineSchedulePersonal> VaccineSchedulePersonals { get; set; }
     }
 }

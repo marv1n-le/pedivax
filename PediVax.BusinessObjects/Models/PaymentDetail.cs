@@ -19,7 +19,11 @@ namespace PediVax.BusinessObjects.Models
         public DateTime AdministeredDate { get; set; }
         public string Notes { get; set; }
 
+        // Navigation properties
+        [ForeignKey("PaymentId")]
         public Payment Payment { get; set; }
+
+        [ForeignKey("VaccinePackageId")]
         public VaccinePackage VaccinePackage { get; set; }
     }
 }

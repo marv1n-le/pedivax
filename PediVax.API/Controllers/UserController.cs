@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using PediVax.BusinessObjects.DTO.ReponseDTO;
 using PediVax.BusinessObjects.DTO.RequestDTO;
 using PediVax.Services.IService;
@@ -20,7 +21,7 @@ namespace PediVax.Controllers
             _userService = userService;
             _logger = logger;
         }
-        
+
         [HttpGet("current-user")]
         [ProducesResponseType(typeof(object), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
@@ -49,9 +50,14 @@ namespace PediVax.Controllers
         [HttpGet("get-all-users")]
         [ProducesResponseType(typeof(List<UserResponseDTO>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [Authorize(Roles = "Admin, Staff, Doctor")]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        [Authorize(Roles = "Admin, Staff, Doctor, Customer")]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                return Unauthorized("Unauthorized user!!!.");
+            }
             var response = await _userService.GetAllUser(cancellationToken);
             if (response == null || response.Count == 0)
             {
@@ -78,6 +84,7 @@ namespace PediVax.Controllers
         [ProducesResponseType(typeof(UserResponseDTO), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [Authorize(Roles = "Admin, Staff, Doctor")]
         public async Task<IActionResult> GetUserById(int id, CancellationToken cancellationToken)
         {
@@ -105,6 +112,7 @@ namespace PediVax.Controllers
         [HttpGet("get-user-paged/{pageNumber}/{pageSize}")]
         [ProducesResponseType(typeof(object), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [Authorize(Roles = "Admin, Staff, Doctor")]
         public async Task<IActionResult> GetUsersPaged(int pageNumber, int pageSize, CancellationToken cancellationToken)
         {
@@ -120,6 +128,7 @@ namespace PediVax.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [Authorize(Roles = "Admin, Staff, Doctor")]
         public async Task<IActionResult> UpdateUser(int id, [FromForm] UpdateUserDTO updateUserDto, CancellationToken cancellationToken)
         {
@@ -153,6 +162,8 @@ namespace PediVax.Controllers
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+
         [Authorize(Roles = "Admin, Staff, Doctor")]
         public async Task<IActionResult> DeleteUser(int id, CancellationToken cancellationToken)
         {
@@ -191,6 +202,8 @@ namespace PediVax.Controllers
         [HttpGet("get-user-by-email/{email}")]
         [ProducesResponseType(typeof(UserResponseDTO), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+
         [Authorize(Roles = "Admin, Staff, Doctor")]
         public async Task<IActionResult> GetUserByEmail(string email, CancellationToken cancellationToken)
         {
@@ -212,6 +225,8 @@ namespace PediVax.Controllers
         [HttpGet("get-user-by-name/{keyword}")]
         [ProducesResponseType(typeof(List<UserResponseDTO>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+
         [Authorize(Roles = "Admin, Staff, Doctor")]
         public async Task<IActionResult> GetUserByName(string keyword, CancellationToken cancellationToken)
         {
@@ -233,6 +248,8 @@ namespace PediVax.Controllers
         [HttpPost("create-system-user")]
         [ProducesResponseType(typeof(UserResponseDTO), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+
         [Authorize(Roles = "Admin, Staff, Doctor")]
         public async Task<IActionResult> CreateSystemUser([FromForm] CreateSystemUserDTO createSystemUserDTO, CancellationToken cancellationToken)
         {

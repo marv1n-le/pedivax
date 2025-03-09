@@ -8,7 +8,7 @@ public class CreateVaccineDTO
 {
     [Required(ErrorMessage = ("Name is required"))]
     public string Name { get; set; }
-    [FromForm]
+    [Required(ErrorMessage = ("Image is required"))]
     public IFormFile Image { get; set; }
     [Required(ErrorMessage = ("Description is required"))]
     public string Description { get; set; }

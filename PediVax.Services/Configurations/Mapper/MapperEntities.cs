@@ -16,6 +16,7 @@ using PediVax.BusinessObjects.DTO.VaccinePackageDTO;
 using PediVax.BusinessObjects.DTO.VaccinePackageDetailDTO;
 using PediVax.BusinessObjects.DTO.VaccineScheduleDTO;
 using PediVax.BusinessObjects.DTO.VaccineProfileDTO;
+using PediVax.BusinessObjects.DTO.VaccineSchedulePersonalDTO;
 
 namespace PediVax.Services.Configuration.Mapper
 {
@@ -82,6 +83,9 @@ namespace PediVax.Services.Configuration.Mapper
             CreateMap<CreateVaccineProfileDTO, VaccineProfile>();
             CreateMap<UpdateVaccineProfileDTO, VaccineProfile>();
             CreateMap<VaccineProfile, VaccineProfileResponseDTO>();
+
+            //VaccineSchedulePersonal Mapper
+            CreateMap<VaccineSchedulePersonal, VaccineSchedulePersonalResponseDTO>();
         }
     }
 }

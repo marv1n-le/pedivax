@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PediVax.BusinessObjects.Enum;
 using PediVax.BusinessObjects.Models;
 using PediVax.Repositories.IRepository;
 using PediVax.Repositories.Repository.BaseRepository;
@@ -15,6 +16,16 @@ namespace PediVax.Repositories.Repository
         public VaccineProfileRepository() : base()
         {
 
+        }
+
+        public async Task<List<int>> GetCompletedDiseasesForChild(int childId, CancellationToken cancellationToken)
+        {
+            var completedDiseases = await _context.VaccineProfiles
+                .Where(vp => vp.ChildId == childId && vp.IsCompleted == EnumList.IsCompleted.Yes)
+                .Select(vp => vp.DiseaseId)
+                .ToListAsync(cancellationToken);
+
+            return completedDiseases;
         }
 
         public async Task<List<VaccineProfile>> GetAllVaccineProfile(CancellationToken cancellationToken)

@@ -9,6 +9,7 @@ namespace PediVax.Repositories.IRepository
 {
     public interface IVaccineProfileRepository
     {
+        Task<List<int>> GetCompletedDiseasesForChild(int childId, CancellationToken cancellationToken);
         Task<List<VaccineProfile>> GetAllVaccineProfile(CancellationToken cancellationToken);
         Task<VaccineProfile> GetVaccineProfileById(int id, CancellationToken cancellationToken);
         Task<VaccineProfile?> GetVaccineProfileByChildId(int childId, CancellationToken cancellationToken);

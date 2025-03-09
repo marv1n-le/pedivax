@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using PediVax.BusinessObjects.Enum;
 using PediVax.BusinessObjects.Models;
 using PediVax.Repositories.IRepository;
 using PediVax.Repositories.Repository.BaseRepository;

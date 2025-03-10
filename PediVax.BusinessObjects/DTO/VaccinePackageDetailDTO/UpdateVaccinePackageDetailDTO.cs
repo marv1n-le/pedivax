@@ -9,5 +9,8 @@ namespace PediVax.BusinessObjects.DTO.VaccinePackageDetailDTO
     public class UpdateVaccinePackageDetailDTO
     {
         public int? Quantity { get; set; }
+
+        public int PackageId { get; set; }
+        public int VaccineId { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using PediVax.BusinessObjects.DTO.VaccinePackageDetailDTO;
+using PediVax.BusinessObjects.Enum;
 using PediVax.BusinessObjects.Models;
 using PediVax.Repositories.IRepository;
 using PediVax.Services.IService;
@@ -58,7 +59,7 @@ public class VaccinePackageDetailService : IVaccinePackageDetailService
         try
         {
             var vaccinePackageDetail = _mapper.Map<VaccinePackageDetail>(createDTO);
-            vaccinePackageDetail.IsActive = "Active";
+            vaccinePackageDetail.IsActive = EnumList.IsActive.Active;
 
             if (await _vaccinePackageDetailRepository.CreateVaccinePackageDetail(vaccinePackageDetail, cancellationToken) <= 0)
             {

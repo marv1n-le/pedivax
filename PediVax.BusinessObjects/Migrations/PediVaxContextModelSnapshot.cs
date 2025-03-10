@@ -313,16 +313,16 @@ namespace PediVax.BusinessObjects.Migrations
                             UserId = 1,
                             Address = "PediVax HCM",
                             CreatedBy = "System",
-                            CreatedDate = new DateTime(2025, 3, 9, 21, 46, 50, 31, DateTimeKind.Utc).AddTicks(7215),
+                            CreatedDate = new DateTime(2025, 3, 10, 8, 45, 44, 630, DateTimeKind.Utc).AddTicks(8402),
                             DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@pedivax.com",
                             FullName = "System Admin",
                             Image = "https://pedivax.com/images/user.png",
                             IsActive = 1,
                             ModifiedBy = "System",
-                            ModifiedDate = new DateTime(2025, 3, 9, 21, 46, 50, 31, DateTimeKind.Utc).AddTicks(7221),
-                            PasswordHash = "1iXMi4+wOJtGUFq7b7wkJJ5IFDFjifo2EWmBNeNf0BM=",
-                            PasswordSalt = "pHOcqL+Rehkoff9dXw46YQ4PXFXWAx5vdF6I+oh/eic=",
+                            ModifiedDate = new DateTime(2025, 3, 10, 8, 45, 44, 630, DateTimeKind.Utc).AddTicks(8406),
+                            PasswordHash = "znAjCtbI9wgJUIynxmTmndSzq8b+tfXI/ViICrXUPfM=",
+                            PasswordSalt = "wC5gnGVQLTwAsWcOsC4/Ch2+RGQpMb16gtpzCWvuBsM=",
                             PhoneNumber = "0123456789",
                             Role = 1
                         });
@@ -576,9 +576,6 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Property<DateTime?>("VaccinationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("VaccineSchedulePersonalId")
-                        .HasColumnType("int");
-
                     b.HasKey("VaccineProfileId");
 
                     b.HasIndex("AppointmentId");
@@ -586,8 +583,6 @@ namespace PediVax.BusinessObjects.Migrations
                     b.HasIndex("ChildId");
 
                     b.HasIndex("DiseaseId");
-
-                    b.HasIndex("VaccineSchedulePersonalId");
 
                     b.ToTable("VaccineProfile");
                 });
@@ -844,10 +839,6 @@ namespace PediVax.BusinessObjects.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("PediVax.BusinessObjects.Models.VaccineSchedulePersonal", null)
-                        .WithMany("VaccineProfiles")
-                        .HasForeignKey("VaccineSchedulePersonalId");
-
                     b.Navigation("Appointment");
 
                     b.Navigation("ChildProfile");
@@ -977,11 +968,6 @@ namespace PediVax.BusinessObjects.Migrations
             modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccineSchedule", b =>
                 {
                     b.Navigation("VaccineSchedulePersonals");
-                });
-
-            modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccineSchedulePersonal", b =>
-                {
-                    b.Navigation("VaccineProfiles");
                 });
 #pragma warning restore 612, 618
         }

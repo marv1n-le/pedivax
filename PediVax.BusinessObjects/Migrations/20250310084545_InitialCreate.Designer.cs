@@ -12,8 +12,8 @@ using PediVax.BusinessObjects.DBContext;
 namespace PediVax.BusinessObjects.Migrations
 {
     [DbContext(typeof(PediVaxContext))]
-    [Migration("20250309142508_bigupdate")]
-    partial class bigupdate
+    [Migration("20250310084545_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -316,16 +316,16 @@ namespace PediVax.BusinessObjects.Migrations
                             UserId = 1,
                             Address = "PediVax HCM",
                             CreatedBy = "System",
-                            CreatedDate = new DateTime(2025, 3, 9, 14, 25, 7, 431, DateTimeKind.Utc).AddTicks(9697),
+                            CreatedDate = new DateTime(2025, 3, 10, 8, 45, 44, 630, DateTimeKind.Utc).AddTicks(8402),
                             DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@pedivax.com",
                             FullName = "System Admin",
                             Image = "https://pedivax.com/images/user.png",
                             IsActive = 1,
                             ModifiedBy = "System",
-                            ModifiedDate = new DateTime(2025, 3, 9, 14, 25, 7, 431, DateTimeKind.Utc).AddTicks(9700),
-                            PasswordHash = "FjOsRdXx75N4f8bEaPMaPFLSQ4rgEan4YrOOAzijXlE=",
-                            PasswordSalt = "vWYf1gVHRwFNJMcHamJes4RapKonP4BSN2AoLQACnw0=",
+                            ModifiedDate = new DateTime(2025, 3, 10, 8, 45, 44, 630, DateTimeKind.Utc).AddTicks(8406),
+                            PasswordHash = "znAjCtbI9wgJUIynxmTmndSzq8b+tfXI/ViICrXUPfM=",
+                            PasswordSalt = "wC5gnGVQLTwAsWcOsC4/Ch2+RGQpMb16gtpzCWvuBsM=",
                             PhoneNumber = "0123456789",
                             Role = 1
                         });

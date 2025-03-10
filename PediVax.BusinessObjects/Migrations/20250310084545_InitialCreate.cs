@@ -399,8 +399,7 @@ namespace PediVax.BusinessObjects.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VaccineSchedulePersonalId = table.Column<int>(type: "int", nullable: true)
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -421,17 +420,12 @@ namespace PediVax.BusinessObjects.Migrations
                         column: x => x.DiseaseId,
                         principalTable: "Disease",
                         principalColumn: "DiseaseId");
-                    table.ForeignKey(
-                        name: "FK_VaccineProfile_VaccineSchedulePersonal_VaccineSchedulePersonalId",
-                        column: x => x.VaccineSchedulePersonalId,
-                        principalTable: "VaccineSchedulePersonal",
-                        principalColumn: "VaccineSchedulePersonalId");
                 });
 
             migrationBuilder.InsertData(
                 table: "User",
                 columns: new[] { "UserId", "Address", "CreatedBy", "CreatedDate", "DateOfBirth", "Email", "FullName", "Image", "IsActive", "ModifiedBy", "ModifiedDate", "PasswordHash", "PasswordSalt", "PhoneNumber", "Role" },
-                values: new object[] { 1, "PediVax HCM", "System", new DateTime(2025, 3, 9, 21, 46, 50, 31, DateTimeKind.Utc).AddTicks(7215), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@pedivax.com", "System Admin", "https://pedivax.com/images/user.png", 1, "System", new DateTime(2025, 3, 9, 21, 46, 50, 31, DateTimeKind.Utc).AddTicks(7221), "1iXMi4+wOJtGUFq7b7wkJJ5IFDFjifo2EWmBNeNf0BM=", "pHOcqL+Rehkoff9dXw46YQ4PXFXWAx5vdF6I+oh/eic=", "0123456789", 1 });
+                values: new object[] { 1, "PediVax HCM", "System", new DateTime(2025, 3, 10, 8, 45, 44, 630, DateTimeKind.Utc).AddTicks(8402), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@pedivax.com", "System Admin", "https://pedivax.com/images/user.png", 1, "System", new DateTime(2025, 3, 10, 8, 45, 44, 630, DateTimeKind.Utc).AddTicks(8406), "znAjCtbI9wgJUIynxmTmndSzq8b+tfXI/ViICrXUPfM=", "wC5gnGVQLTwAsWcOsC4/Ch2+RGQpMb16gtpzCWvuBsM=", "0123456789", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Appointment_ChildId",
@@ -519,11 +513,6 @@ namespace PediVax.BusinessObjects.Migrations
                 column: "DiseaseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VaccineProfile_VaccineSchedulePersonalId",
-                table: "VaccineProfile",
-                column: "VaccineSchedulePersonalId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_VaccineSchedule_DiseaseId",
                 table: "VaccineSchedule",
                 column: "DiseaseId");
@@ -573,28 +562,28 @@ namespace PediVax.BusinessObjects.Migrations
                 name: "VaccineProfile");
 
             migrationBuilder.DropTable(
-                name: "Appointment");
-
-            migrationBuilder.DropTable(
                 name: "VaccineSchedulePersonal");
 
             migrationBuilder.DropTable(
-                name: "Payment");
-
-            migrationBuilder.DropTable(
-                name: "ChildProfile");
+                name: "Appointment");
 
             migrationBuilder.DropTable(
                 name: "VaccineSchedule");
 
             migrationBuilder.DropTable(
-                name: "VaccinePackage");
+                name: "ChildProfile");
+
+            migrationBuilder.DropTable(
+                name: "Payment");
+
+            migrationBuilder.DropTable(
+                name: "Disease");
 
             migrationBuilder.DropTable(
                 name: "User");
 
             migrationBuilder.DropTable(
-                name: "Disease");
+                name: "VaccinePackage");
 
             migrationBuilder.DropTable(
                 name: "Vaccine");

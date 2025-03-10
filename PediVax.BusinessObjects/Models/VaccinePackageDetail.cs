@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PediVax.BusinessObjects.Enum;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,7 +17,7 @@ namespace PediVax.BusinessObjects.Models
         public int PackageId { get; set; }
         public int VaccineId { get; set; }
         public int Quantity { get; set; }
-        public string IsActive { get; set; }
+        public EnumList.IsActive IsActive { get; set; }
 
         // Navigation properties
         [ForeignKey("PackageId")]

@@ -11,5 +11,8 @@ namespace PediVax.BusinessObjects.DTO.VaccinePackageDetailDTO
     {
         [Required(ErrorMessage = "Quantity is required")]
         public int Quantity { get; set; }
+
+        public int PackageId { get; set; }
+        public int VaccineId { get; set; }
     }
 }

@@ -66,7 +66,7 @@ namespace PediVax.Controllers
         [HttpPost("create")]
         [ProducesResponseType(typeof(VaccineProfileResponseDTO), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CreateVaccineProfile([FromForm] CreateVaccineProfileDTO request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateVaccineProfile([FromBody] CreateVaccineProfileDTO request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -82,6 +82,33 @@ namespace PediVax.Controllers
             {
                 _logger.LogError(ex, "Error creating a new vaccine profile.");
                 return Problem("An error occurred while creating the vaccine profile.");
+            }
+        }
+
+        [HttpPut("update/{vaccineProfileId}")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> UpdateVaccineProfile(int vaccineProfileId, [FromBody] UpdateVaccineProfileDTO request, CancellationToken cancellationToken)
+        {
+            if (vaccineProfileId <= 0)
+            {
+                return BadRequest(new { message = "Invalid vaccine profile ID." });
+            }
+
+            try
+            {
+                var response = await _vaccineProfileService.UpdateVaccineProfile(vaccineProfileId, request, cancellationToken);
+                return Ok(new { success = response });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { message = "Vaccine profile not found." });
+            }
+            catch (ApplicationException ex)
+            {
+                _logger.LogError(ex, "Error updating vaccine profile with ID {vaccineProfileId}", vaccineProfileId);
+                return Problem("An error occurred while updating the vaccine profile.");
             }
         }
 

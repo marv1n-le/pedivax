@@ -106,7 +106,41 @@ namespace PediVax.Services.Service
                 throw new ApplicationException("Error while saving vaccine profile", ex);
             }
         }
+        public async Task<bool> UpdateVaccineProfile(int id, UpdateVaccineProfileDTO updateVaccineProfileDTO, CancellationToken cancellationToken)
+        {
+            if (id <= 0)
+            {
+                _logger.LogWarning("Invalid vaccine profile ID: {id}", id);
+                throw new ArgumentException("Invalid vaccine profile ID");
+            }
 
+            try
+            {
+                var vaccineProfile = await _vaccineProfileRepository.GetVaccineProfileById(id, cancellationToken);
+                if (vaccineProfile == null)
+                {
+                    _logger.LogWarning("Vaccine profile not found for ID: {id}", id);
+                    throw new KeyNotFoundException("Vaccine profile not found");
+                }
+
+                SetAuditFields(vaccineProfile);
+                vaccineProfile.VaccinationDate = updateVaccineProfileDTO.VaccinationDate ?? vaccineProfile.VaccinationDate;
+                vaccineProfile.IsCompleted = updateVaccineProfileDTO.IsCompleted ?? vaccineProfile.IsCompleted;
+                vaccineProfile.ChildId = updateVaccineProfileDTO.ChildId;
+                vaccineProfile.DiseaseId = updateVaccineProfileDTO.DiseaseId;
+
+                return await _vaccineProfileRepository.UpdateVaccineProfile(vaccineProfile, cancellationToken) > 0;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating vaccine profile with ID {id}", id);
+                throw new ApplicationException("Error while updating vaccine profile", ex);
+            }
+        }   
         public async Task<bool> DeleteVaccineProfile(int id, CancellationToken cancellationToken)
         {
             if (id <= 0)

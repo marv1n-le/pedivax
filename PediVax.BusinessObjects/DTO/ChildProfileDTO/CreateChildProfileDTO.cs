@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using PediVax.BusinessObjects.Enum;
+using System.Text.Json.Serialization;
 
 namespace PediVax.BusinessObjects.DTO.ChildProfileDTO;
 
@@ -16,7 +17,6 @@ public class CreateChildProfileDTO
     public string FullName { get; set; }
 
     [Required(ErrorMessage = "Child's date of birth is required")]
-    [DataType(DataType.Date)]
     public DateTime DateOfBirth { get; set; }
 
     [Required(ErrorMessage = "Child's gender is required")]
@@ -25,6 +25,7 @@ public class CreateChildProfileDTO
     [Required(ErrorMessage = "Relationship is required")]
     public EnumList.Relationship Relationship { get; set; }
 
+    [Required(ErrorMessage = "Profile picture is required")]
     [FromForm]
-    public IFormFile? ProfilePicture { get; set; }
+    public IFormFile ProfilePicture { get; set; }
 }

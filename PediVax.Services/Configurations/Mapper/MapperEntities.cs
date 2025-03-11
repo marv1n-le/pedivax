@@ -11,12 +11,12 @@ using PediVax.BusinessObjects.DTO.ChildProfileDTO;
 using PediVax.BusinessObjects.DTO.AppointmentDTO;
 using PediVax.BusinessObjects.DTO.DiseaseDTO;
 using PediVax.BusinessObjects.DTO.VaccineDTO;
-using PediVax.BusinessObjects.DTO.VaccinationRecordDTo;
 using PediVax.BusinessObjects.DTO.VaccinePackageDTO;
 using PediVax.BusinessObjects.DTO.VaccinePackageDetailDTO;
 using PediVax.BusinessObjects.DTO.VaccineScheduleDTO;
 using PediVax.BusinessObjects.DTO.VaccineProfileDTO;
 using PediVax.BusinessObjects.DTO.VaccineSchedulePersonalDTO;
+using System.Globalization;
 
 namespace PediVax.Services.Configuration.Mapper
 {
@@ -36,7 +36,9 @@ namespace PediVax.Services.Configuration.Mapper
                 .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore());
             CreateMap<User, UserResponseDTO>();
             CreateMap<User, UserResponseDTO>()
-                .ForMember(dest => dest.ChildProfile, opt => opt.MapFrom(src => src.ChildProfiles));
+                .ForMember(dest => dest.ChildProfile, opt => opt.MapFrom(src => src.ChildProfiles))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src =>
+    DateTime.ParseExact(src.DateOfBirth.ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal)));
 
 
             //ChildProfile Mapper
@@ -59,10 +61,6 @@ namespace PediVax.Services.Configuration.Mapper
             CreateMap<CreateAppointmentDTO, Appointment>();
             CreateMap<UpdateAppointmentDTO, Appointment>();
             CreateMap<Appointment, AppointmentResponseDTO>();
-            //VaccinationRecord Mapper
-            CreateMap<CreateVaccinationRecordDTO, VaccinationRecord>();
-            CreateMap<UpdateVaccinationRecordDTO, VaccinationRecord>();
-            CreateMap<VaccinationRecord, VaccinationRecordRequestDTO>();
 
             //VaccinePackage Mappper 
             CreateMap<CreateVaccinePackageDTO, VaccinePackage>();
@@ -84,8 +82,6 @@ namespace PediVax.Services.Configuration.Mapper
             CreateMap<UpdateVaccineProfileDTO, VaccineProfile>();
             CreateMap<VaccineProfile, VaccineProfileResponseDTO>();
 
-            //VaccineSchedulePersonal Mapper
-            CreateMap<VaccineSchedulePersonal, VaccineSchedulePersonalResponseDTO>();
         }
     }
 }

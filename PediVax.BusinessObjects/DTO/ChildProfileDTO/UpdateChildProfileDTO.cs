@@ -1,5 +1,6 @@
 
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 using PediVax.BusinessObjects.Enum;
 
@@ -12,6 +13,7 @@ public class UpdateChildProfileDTO
     public string FullName { get; set; }
     
     public IFormFile? ProfilePicture { get; set; }
+    [JsonConverter(typeof(DateOnlyJsonConverter))]
     public DateTime? DateOfBirth { get; set; }
     public EnumList.Gender? Gender { get; set; }
     public EnumList.Relationship? Relationship { get; set; }

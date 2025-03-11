@@ -11,7 +11,7 @@ namespace PediVax.Services.IService
     {
         Task<List<VaccineProfileResponseDTO>> GetAllVaccineProfiles(CancellationToken cancellationToken);
         Task<VaccineProfileResponseDTO> GetVaccineProfileById(int id, CancellationToken cancellationToken);
-        Task<VaccineProfileResponseDTO> AddVaccineProfile(CreateVaccineProfileDTO vaccineProfileDTO, CancellationToken cancellationToken);
+        Task<List<VaccineProfileResponseDTO>> GenerateVaccineProfile(int childId, CancellationToken cancellationToken);
         Task<bool> UpdateVaccineProfile(int id, UpdateVaccineProfileDTO updateVaccineProfileDTO, CancellationToken cancellationToken);
         Task<bool> DeleteVaccineProfile(int id, CancellationToken cancellationToken);
 

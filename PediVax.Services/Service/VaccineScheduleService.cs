@@ -63,7 +63,6 @@ namespace PediVax.Services.Service
 
             foreach (var schedule in vaccineSchedules)
             {
-                schedule.Vaccine = await _vaccineRepository.GetVaccineById(schedule.VaccineId, cancellationToken);
                 schedule.Disease = await _diseaseRepository.GetDiseaseById(schedule.DiseaseId, cancellationToken);
             }
 
@@ -84,9 +83,6 @@ namespace PediVax.Services.Service
                 _logger.LogWarning("Vaccine schedule not found: {vaccineScheduleId}", vaccineScheduleId);
                 throw new KeyNotFoundException("Vaccine schedule not found");
             }
-
-            // Lấy thông tin Vaccine và Disease
-            vaccineSchedule.Vaccine = await _vaccineRepository.GetVaccineById(vaccineSchedule.VaccineId, cancellationToken);
             vaccineSchedule.Disease = await _diseaseRepository.GetDiseaseById(vaccineSchedule.DiseaseId, cancellationToken);
 
             return _mapper.Map<VaccineScheduleResponseDTO>(vaccineSchedule);
@@ -101,13 +97,6 @@ namespace PediVax.Services.Service
 
             try
             {
-                // Kiểm tra Vaccine có tồn tại và đang hoạt động
-                var vaccine = await _vaccineRepository.GetVaccineById(vaccineScheduleRequestDTO.VaccineId, cancellationToken);
-                if (vaccine == null || vaccine.IsActive != EnumList.IsActive.Active)
-                {
-                    throw new ArgumentException("Invalid or inactive VaccineId");
-                }
-
                 // Kiểm tra Disease có tồn tại và đang hoạt động
                 var disease = await _diseaseRepository.GetDiseaseById(vaccineScheduleRequestDTO.DiseaseId, cancellationToken);
                 if (disease == null || disease.IsActive > EnumList.IsActive.Active)
@@ -125,7 +114,6 @@ namespace PediVax.Services.Service
                     throw new ApplicationException("Adding new vaccine schedule failed");
 
                 // Gán thông tin Vaccine và Disease vào object trả về
-                vaccineSchedule.Vaccine = vaccine;
                 vaccineSchedule.Disease = disease;
 
                 return _mapper.Map<VaccineScheduleResponseDTO>(vaccineSchedule);

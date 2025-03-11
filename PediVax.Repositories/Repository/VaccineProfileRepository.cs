@@ -46,9 +46,10 @@ namespace PediVax.Repositories.Repository
         }
 
 
-        public async Task<int> AddVaccineProfile(VaccineProfile vaccineProfile, CancellationToken cancellationToken)
+        public async Task GenerateVaccineProfile(List<VaccineProfile> vaccineProfile, CancellationToken cancellationToken)
         {
-            return await CreateAsync(vaccineProfile, cancellationToken);
+            _context.VaccineProfiles.AddRange(vaccineProfile);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<int> UpdateVaccineProfile(VaccineProfile vaccineProfile, CancellationToken cancellationToken)

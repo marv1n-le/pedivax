@@ -89,11 +89,13 @@ namespace PediVax.Services.Service
                     Address = createUserDTO.Address,
                     Image = await _cloudinaryService.UploadImage(createUserDTO.Image),
                     Role = EnumList.Role.Customer,
+                    DateOfBirth = createUserDTO.DateOfBirth,
                     CreatedDate = DateTime.UtcNow,
                     CreatedBy = GetCurrentUserName(),
                     ModifiedDate = DateTime.UtcNow,
                     ModifiedBy = GetCurrentUserName(),
                     IsActive = EnumList.IsActive.Active
+                    
                 };
                 if (await _userRepository.AddUser(user, cancellationToken) <= 0)
                 {

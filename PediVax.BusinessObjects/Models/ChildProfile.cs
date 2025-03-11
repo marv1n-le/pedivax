@@ -30,6 +30,5 @@ namespace PediVax.BusinessObjects.Models
         public virtual User User { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
         public virtual ICollection<VaccineProfile> VaccineProfiles { get; set;}
-        public virtual ICollection<VaccineSchedulePersonal> VaccineSchedulePersonals { get; set; }
     }
 }

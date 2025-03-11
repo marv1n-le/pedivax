@@ -59,6 +59,9 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Property<int?>("PaymentId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Reaction")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("VaccineId")
                         .HasColumnType("int");
 
@@ -313,64 +316,19 @@ namespace PediVax.BusinessObjects.Migrations
                             UserId = 1,
                             Address = "PediVax HCM",
                             CreatedBy = "System",
-                            CreatedDate = new DateTime(2025, 3, 10, 8, 45, 44, 630, DateTimeKind.Utc).AddTicks(8402),
+                            CreatedDate = new DateTime(2025, 3, 11, 16, 57, 41, 764, DateTimeKind.Utc).AddTicks(9045),
                             DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@pedivax.com",
                             FullName = "System Admin",
                             Image = "https://pedivax.com/images/user.png",
                             IsActive = 1,
                             ModifiedBy = "System",
-                            ModifiedDate = new DateTime(2025, 3, 10, 8, 45, 44, 630, DateTimeKind.Utc).AddTicks(8406),
-                            PasswordHash = "znAjCtbI9wgJUIynxmTmndSzq8b+tfXI/ViICrXUPfM=",
-                            PasswordSalt = "wC5gnGVQLTwAsWcOsC4/Ch2+RGQpMb16gtpzCWvuBsM=",
+                            ModifiedDate = new DateTime(2025, 3, 11, 16, 57, 41, 764, DateTimeKind.Utc).AddTicks(9048),
+                            PasswordHash = "bmMaFW4CZNagj8n5u8O2TiEmXQ/yTMuBmaXva4RRf+g=",
+                            PasswordSalt = "LauSlKugalk0lQRuwwVHkd2q/SFNou4bMVqBeS9K9Zs=",
                             PhoneNumber = "0123456789",
                             Role = 1
                         });
-                });
-
-            modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccinationRecord", b =>
-                {
-                    b.Property<int>("RecordId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RecordId"));
-
-                    b.Property<DateTime>("AdministeredDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("AppointmentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("IsActive")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ModifiedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Reaction")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("RecordId");
-
-                    b.HasIndex("AppointmentId");
-
-                    b.ToTable("VaccinationRecord");
                 });
 
             modelBuilder.Entity("PediVax.BusinessObjects.Models.Vaccine", b =>
@@ -473,6 +431,9 @@ namespace PediVax.BusinessObjects.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PackageId"));
 
+                    b.Property<int>("AgeInMonths")
+                        .HasColumnType("int");
+
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -498,6 +459,9 @@ namespace PediVax.BusinessObjects.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("TotalDoses")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -514,14 +478,10 @@ namespace PediVax.BusinessObjects.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PackageDetailId"));
 
-                    b.Property<string>("IsActive")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PackageId")
+                    b.Property<int>("IsActive")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("PackageId")
                         .HasColumnType("int");
 
                     b.Property<int>("VaccineId")
@@ -560,6 +520,9 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Property<int>("DiseaseId")
                         .HasColumnType("int");
 
+                    b.Property<int>("DoseNumber")
+                        .HasColumnType("int");
+
                     b.Property<int>("IsActive")
                         .HasColumnType("int");
 
@@ -573,8 +536,14 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("ScheduledDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("VaccinationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("VaccineScheduleId")
+                        .HasColumnType("int");
 
                     b.HasKey("VaccineProfileId");
 
@@ -621,75 +590,11 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("VaccineId")
-                        .HasColumnType("int");
-
                     b.HasKey("VaccineScheduleId");
 
                     b.HasIndex("DiseaseId");
 
-                    b.HasIndex("VaccineId");
-
                     b.ToTable("VaccineSchedule");
-                });
-
-            modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccineSchedulePersonal", b =>
-                {
-                    b.Property<int>("VaccineSchedulePersonalId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VaccineSchedulePersonalId"));
-
-                    b.Property<int>("ChildId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DiseaseId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DoseNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IsActive")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IsCompleted")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ModifiedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ScheduledDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("VaccineId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VaccineScheduleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("VaccineSchedulePersonalId");
-
-                    b.HasIndex("ChildId");
-
-                    b.HasIndex("DiseaseId");
-
-                    b.HasIndex("VaccineId");
-
-                    b.HasIndex("VaccineScheduleId");
-
-                    b.ToTable("VaccineSchedulePersonal");
                 });
 
             modelBuilder.Entity("PediVax.BusinessObjects.Models.Appointment", b =>
@@ -771,17 +676,6 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Navigation("VaccinePackage");
                 });
 
-            modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccinationRecord", b =>
-                {
-                    b.HasOne("PediVax.BusinessObjects.Models.Appointment", "Appointment")
-                        .WithMany("VaccinationRecords")
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Appointment");
-                });
-
             modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccineDisease", b =>
                 {
                     b.HasOne("PediVax.BusinessObjects.Models.Disease", "Disease")
@@ -833,6 +727,12 @@ namespace PediVax.BusinessObjects.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PediVax.BusinessObjects.Models.VaccineSchedule", "VaccineSchedule")
+                        .WithMany("VaccineProfiles")
+                        .HasForeignKey("ChildId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("PediVax.BusinessObjects.Models.Disease", "Disease")
                         .WithMany("VaccineProfiles")
                         .HasForeignKey("DiseaseId")
@@ -844,6 +744,8 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Navigation("ChildProfile");
 
                     b.Navigation("Disease");
+
+                    b.Navigation("VaccineSchedule");
                 });
 
             modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccineSchedule", b =>
@@ -854,56 +756,11 @@ namespace PediVax.BusinessObjects.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("PediVax.BusinessObjects.Models.Vaccine", "Vaccine")
-                        .WithMany("VaccineSchedules")
-                        .HasForeignKey("VaccineId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.Navigation("Disease");
-
-                    b.Navigation("Vaccine");
-                });
-
-            modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccineSchedulePersonal", b =>
-                {
-                    b.HasOne("PediVax.BusinessObjects.Models.ChildProfile", "ChildProfile")
-                        .WithMany("VaccineSchedulePersonals")
-                        .HasForeignKey("ChildId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PediVax.BusinessObjects.Models.Disease", "Disease")
-                        .WithMany("VaccineSchedulePersonals")
-                        .HasForeignKey("DiseaseId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("PediVax.BusinessObjects.Models.Vaccine", "Vaccine")
-                        .WithMany("VaccineSchedulePersonals")
-                        .HasForeignKey("VaccineId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("PediVax.BusinessObjects.Models.VaccineSchedule", "VaccineSchedule")
-                        .WithMany("VaccineSchedulePersonals")
-                        .HasForeignKey("VaccineScheduleId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("ChildProfile");
-
-                    b.Navigation("Disease");
-
-                    b.Navigation("Vaccine");
-
-                    b.Navigation("VaccineSchedule");
                 });
 
             modelBuilder.Entity("PediVax.BusinessObjects.Models.Appointment", b =>
                 {
-                    b.Navigation("VaccinationRecords");
-
                     b.Navigation("VaccineProfiles");
                 });
 
@@ -912,8 +769,6 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("VaccineProfiles");
-
-                    b.Navigation("VaccineSchedulePersonals");
                 });
 
             modelBuilder.Entity("PediVax.BusinessObjects.Models.Disease", b =>
@@ -921,8 +776,6 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Navigation("VaccineDiseases");
 
                     b.Navigation("VaccineProfiles");
-
-                    b.Navigation("VaccineSchedulePersonals");
 
                     b.Navigation("VaccineSchedules");
                 });
@@ -948,10 +801,6 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Navigation("VaccineDiseases");
 
                     b.Navigation("VaccinePackageDetails");
-
-                    b.Navigation("VaccineSchedulePersonals");
-
-                    b.Navigation("VaccineSchedules");
                 });
 
             modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccinePackage", b =>
@@ -967,7 +816,7 @@ namespace PediVax.BusinessObjects.Migrations
 
             modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccineSchedule", b =>
                 {
-                    b.Navigation("VaccineSchedulePersonals");
+                    b.Navigation("VaccineProfiles");
                 });
 #pragma warning restore 612, 618
         }

@@ -16,7 +16,6 @@ namespace PediVax.BusinessObjects.Models
         public int PackageDetailId { get; set; }
         public int PackageId { get; set; }
         public int VaccineId { get; set; }
-        public int Quantity { get; set; }
         public EnumList.IsActive IsActive { get; set; }
 
         // Navigation properties

@@ -12,7 +12,6 @@ namespace PediVax.BusinessObjects.Models
         [Key]
         public int VaccineScheduleId { get; set; }
         public int DiseaseId { get; set; }
-        public int VaccineId { get; set; }
         public int AgeInMonths { get; set; }
         public int DoseNumber { get; set; }
         public EnumList.IsActive IsActive{ get; set; }
@@ -24,10 +23,6 @@ namespace PediVax.BusinessObjects.Models
         // Navigation properties
         [ForeignKey("DiseaseId")]
         public virtual Disease Disease { get; set; }
-
-        [ForeignKey("VaccineId")]
-        public virtual Vaccine Vaccine { get; set; }
-
-        public virtual ICollection<VaccineSchedulePersonal> VaccineSchedulePersonals { get; set; }
+        public virtual ICollection<VaccineProfile> VaccineProfiles { get; set; }
     }
 }

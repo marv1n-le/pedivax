@@ -14,10 +14,13 @@ namespace PediVax.BusinessObjects.Models
     {
         [Key]
         public int VaccineProfileId { get; set; }
+        public int VaccineScheduleId { get; set; }
         public int? AppointmentId { get; set; }
         public int ChildId { get; set; }
         public int DiseaseId { get; set; }
         public DateTime? VaccinationDate { get; set; }
+        public int DoseNumber { get; set; }
+        public DateTime ScheduledDate { get; set; }
         public EnumList.IsCompleted IsCompleted { get; set; }
         public EnumList.IsActive IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -26,6 +29,10 @@ namespace PediVax.BusinessObjects.Models
         public string ModifiedBy { get; set; }
 
         // Navigation properties
+        [ForeignKey("VaccineScheduleId")]
+        public virtual VaccineSchedule VaccineSchedule { get; set; }
+
+        [ForeignKey("AppointmentId")]
         public virtual Appointment Appointment { get; set; }
 
         [ForeignKey("ChildId")]

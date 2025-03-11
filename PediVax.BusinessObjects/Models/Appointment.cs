@@ -18,6 +18,7 @@ namespace PediVax.BusinessObjects.Models
         public int? VaccineId { get; set; }
         public int? VaccinePackageId { get; set; }
         public DateTime AppointmentDate { get; set; }
+        public string? Reaction { get; set; }
         public Enum.EnumList.AppointmentStatus AppointmentStatus { get; set; }
         public Enum.EnumList.IsActive IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -37,7 +38,6 @@ namespace PediVax.BusinessObjects.Models
 
         [ForeignKey("VaccinePackageId")]
         public virtual VaccinePackage VaccinePackage { get; set; }
-        public virtual ICollection<VaccinationRecord> VaccinationRecords { get; set; }
         public virtual ICollection<VaccineProfile> VaccineProfiles { get; set; }
     }
 }

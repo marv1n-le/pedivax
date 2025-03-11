@@ -63,10 +63,11 @@ namespace PediVax.Controllers
             }
         }
 
-        [HttpPost("create")]
-        [ProducesResponseType(typeof(VaccineProfileResponseDTO), (int)HttpStatusCode.Created)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CreateVaccineProfile([FromBody] CreateVaccineProfileDTO request, CancellationToken cancellationToken)
+        [HttpPost("create/{childId}")]
+        [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateVaccineProfile(int childId, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -75,8 +76,8 @@ namespace PediVax.Controllers
 
             try
             {
-                var response = await _vaccineProfileService.AddVaccineProfile(request, cancellationToken);
-                return CreatedAtAction(nameof(GetVaccineProfileById), new { vaccineProfileId = response.VaccineProfileId }, response);
+                var response = await _vaccineProfileService.GenerateVaccineProfile(childId, cancellationToken);
+                return CreatedAtAction(nameof(CreateVaccineProfile), new { childId = response }, response);
             }
             catch (ApplicationException ex)
             {

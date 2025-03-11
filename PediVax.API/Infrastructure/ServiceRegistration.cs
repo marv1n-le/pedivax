@@ -23,12 +23,10 @@ namespace PediVax.Infrastructure
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<IChildProfileRepository, ChildProfileRepository>();
             services.AddScoped<IVaccineService, VaccineService>();
-            services.AddScoped<IVaccinationRecordService, VaccinationRecordService>();
             services.AddScoped<IVaccinePackageService, VaccinePackageService>();
             services.AddScoped<IVaccinePackageDetailService, VaccinePackageDetailService>();
             services.AddScoped<IVaccineScheduleService, VaccineScheduleService>();
             services.AddScoped<IVaccineProfileService, VaccineProfileService>();
-            services.AddScoped<IVaccineSchedulePersonalRepository, VaccineSchedulePersonalRepository>();
 
             //Register services
             services.AddScoped<IUserService, UserService>();
@@ -38,12 +36,10 @@ namespace PediVax.Infrastructure
             services.AddScoped<ICloudinaryService, CloudinaryService>();
             services.AddScoped<IChildProfileService, ChildProfileService>();
             services.AddScoped<IVaccineRepository, VaccineRepository>();
-            services.AddScoped<IVaccinationRecordRepository, VaccinationRecordRepository>();
             services.AddScoped<IVaccinePackageRepository, VaccinePackageRepository>();
             services.AddScoped<IVaccinePackageDetailRepository, VaccinePackageDetailRepository>();
             services.AddScoped<IVaccineScheduleRepository, VaccineScheduleRepository>();
             services.AddScoped<IVaccineProfileRepository, VaccineProfileRepository>();
-            services.AddScoped<IVaccineSchedulePersonalService, VaccineSchedulePersonalService>();
 
             //External services
 

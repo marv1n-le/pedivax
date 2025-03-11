@@ -12,8 +12,6 @@ namespace PediVax.BusinessObjects.DTO.VaccineScheduleDTO
     {
         [Required(ErrorMessage = "DiseaseId is required")]
         public int DiseaseId { get; set; }
-        [Required(ErrorMessage = "VaccineId is required")]
-        public int VaccineId { get; set; }
         [Required(ErrorMessage = "AgeInMonths is required")]
         public int AgeInMonths { get; set; }
         [Required(ErrorMessage = "DoseNumber is required")]

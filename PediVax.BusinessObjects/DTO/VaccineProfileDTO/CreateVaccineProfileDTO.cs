@@ -11,12 +11,11 @@ namespace PediVax.BusinessObjects.DTO.VaccineProfileDTO
 {
     public class CreateVaccineProfileDTO
     {
-        [Required(ErrorMessage = "ChildId is required")]
+        public int VaccineProfileId { get; set; }
+        public int VaccineScheduleId { get; set; }
         public int ChildId { get; set; }
-        [Required(ErrorMessage = "DiseaseId is required")]
         public int DiseaseId { get; set; }
         public DateTime? VaccinationDate { get; set; }
-        [Required(ErrorMessage = "IsCompleted is required")]
         public EnumList.IsCompleted IsCompleted { get; set; }
     }
 }

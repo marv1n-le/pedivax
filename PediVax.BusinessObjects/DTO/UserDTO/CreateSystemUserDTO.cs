@@ -1,6 +1,7 @@
 using PediVax.BusinessObjects.Enum;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PediVax.BusinessObjects.DTO.RequestDTO;
 
@@ -27,6 +28,7 @@ public class CreateSystemUserDTO
     public string Address { get; set; }
 
     [Required(ErrorMessage = "Date of birth is required")]
+    [JsonConverter(typeof(DateOnlyJsonConverter))]
     public DateTime DateOfBirth { get; set; }
     
     [Required(ErrorMessage = "Role is required")]

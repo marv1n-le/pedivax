@@ -13,7 +13,7 @@ namespace PediVax.Repositories.IRepository
         Task<List<VaccineProfile>> GetAllVaccineProfile(CancellationToken cancellationToken);
         Task<VaccineProfile> GetVaccineProfileById(int id, CancellationToken cancellationToken);
         Task<VaccineProfile?> GetVaccineProfileByChildId(int childId, CancellationToken cancellationToken);
-        Task<int> AddVaccineProfile(VaccineProfile vaccineProfile, CancellationToken cancellationToken);
+        Task GenerateVaccineProfile(List<VaccineProfile> vaccineProfile, CancellationToken cancellationToken);
         Task<int> UpdateVaccineProfile(VaccineProfile vaccineProfile, CancellationToken cancellationToken);
         Task<bool> DeleteVaccineProfile(int id, CancellationToken cancellationToken);
     }

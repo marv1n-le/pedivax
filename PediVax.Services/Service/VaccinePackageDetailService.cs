@@ -96,10 +96,6 @@ public class VaccinePackageDetailService : IVaccinePackageDetailService
                 throw new KeyNotFoundException("VaccinePackageDetail not found");
             }
 
-            // Chỉ cập nhật Quantity nếu có giá trị mới, giữ nguyên ID và các thuộc tính khác
-            vaccinePackageDetail.Quantity = updateVaccinePackageDetailDTO.Quantity ?? vaccinePackageDetail.Quantity;
-
-
             int rowsAffected = await _vaccinePackageDetailRepository.UpdateVaccinePackageDetail(vaccinePackageDetail, cancellationToken);
             return rowsAffected > 0;
         }

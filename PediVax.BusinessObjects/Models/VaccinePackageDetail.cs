@@ -17,6 +17,7 @@ namespace PediVax.BusinessObjects.Models
         public int PackageId { get; set; }
         public int VaccineId { get; set; }
         public EnumList.IsActive IsActive { get; set; }
+        public int? Quantity { get; set; }
 
         // Navigation properties
         [ForeignKey("PackageId")]

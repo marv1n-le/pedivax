@@ -14,6 +14,7 @@ namespace PediVax.BusinessObjects.DTO.AppointmentDTO
         public int? ChildId { get; set; }
         public int? VaccineId { get; set; }
         public int? VaccinePackageId { get; set; }
+        public string? Reaction { get; set; }
         public DateTime AppointmentDate { get; set; }
         public Enum.EnumList.AppointmentStatus AppointmentStatus { get; set; }
         public Enum.EnumList.IsActive IsActive { get; set; }

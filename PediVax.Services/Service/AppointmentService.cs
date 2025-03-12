@@ -91,6 +91,14 @@ public class AppointmentService : IAppointmentService
             appointment.AppointmentStatus = EnumList.AppointmentStatus.Pending;
             SetAuditFields(appointment);
 
+            var count = await _appointmentRepository.GetQuantityAppointmentByPackageIdAndVaccineId(appointment.ChildId, (int)appointment.VaccinePackageId, (int)appointment.VaccineId, cancellationToken);
+            var quantity = await _appointmentRepository.GetCountOfPackageDetail((int)appointment.VaccinePackageId, (int)appointment.VaccineId, cancellationToken);
+            
+            if(count >= quantity)
+            {
+                throw new InvalidOperationException("Số lượng cuộc hẹn đã đạt giới hạn của gói vắc xin.");
+            }
+
             if (await _appointmentRepository.AddAppointment(appointment, cancellationToken) <= 0)
             {
                 throw new ApplicationException("Adding new appointment failed");

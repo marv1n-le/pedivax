@@ -68,5 +68,19 @@ namespace PediVax.Repositories.Repository
         {
             return await DeleteAsync(appointmentId, cancellationToken);
         }
+
+        public async Task<int> GetQuantityAppointmentByPackageIdAndVaccineId(int childId, int packageId, int vaccineId, CancellationToken cancellationToken)
+        {
+            return await _context.Appointments
+                .Where(a => a.ChildId == childId && a.VaccinePackageId == packageId && a.VaccineId == vaccineId)
+                .CountAsync();
+        }
+
+        public async Task<int> GetCountOfPackageDetail( int packageId, int vaccineId, CancellationToken cancellationToken)
+        {
+            var packageDetail = await _context.VaccinePackageDetails
+                .Where(a => a.PackageId == packageId && a.VaccineId == vaccineId).SingleOrDefaultAsync(cancellationToken);
+            return packageDetail?.Quantity ?? 0;
+        }
     }
 }

@@ -15,6 +15,7 @@ namespace PediVax.BusinessObjects.DTO.AppointmentDTO
         public int VaccineId { get; set; } // Có thể không bắt buộc nếu là gói vaccine
 
         public int VaccinePackageId { get; set; } // Có thể không bắt buộc nếu là vaccine đơn lẻ
+        public string? Reaction { get; set; }
 
         [Required(ErrorMessage = "Appointment date is required")]
         public DateTime AppointmentDate { get; set; }

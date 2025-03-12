@@ -34,5 +34,8 @@ namespace PediVax.Repositories.IRepository
 
         // Xóa cuộc hẹn theo ID
         Task<bool> DeleteAppointment(int appointmentId, CancellationToken cancellationToken);
+
+        Task<int>GetQuantityAppointmentByPackageIdAndVaccineId(int childId, int packageId, int vaccineId, CancellationToken cancellationToken);
+        Task<int>GetCountOfPackageDetail(int packageId, int vaccineId, CancellationToken cancellationToken);
     }
 }

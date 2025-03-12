@@ -29,7 +29,7 @@ namespace PediVax.BusinessObjects.Models
         public string ModifiedBy { get; set; }
 
         // Navigation properties
-        [ForeignKey("VaccineScheduleId")]
+        [ForeignKey("VaccineScheduleId")] 
         public virtual VaccineSchedule VaccineSchedule { get; set; }
 
         [ForeignKey("AppointmentId")]

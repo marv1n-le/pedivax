@@ -124,5 +124,51 @@ namespace PediVax.Services.Service
                 throw new ApplicationException("Error while saving vaccine schedule", ex);
             }
         }
+
+        public async Task<bool> UpdateVaccineSchedule(int vaccineScheduleId, UpdateVaccineScheduleDTO updateVaccineScheduleDTO, CancellationToken cancellationToken)
+        {
+            if (vaccineScheduleId <= 0)
+            {
+                _logger.LogWarning("Invalid vaccine schedule ID: {vaccineScheduleId}", vaccineScheduleId);
+                throw new ArgumentException("Invalid vaccine schedule ID");
+            }
+
+            try
+            {
+                var vaccineSchedule = await _vaccineScheduleRepository.GetVaccineScheduleById(vaccineScheduleId, cancellationToken);
+                if (vaccineSchedule == null)
+                {
+                    _logger.LogWarning("Vaccine schedule not found for ID: {vaccineScheduleId}", vaccineScheduleId);
+                    throw new KeyNotFoundException("Vaccine schedule not found");
+                }
+
+                SetAuditFields(vaccineSchedule);
+                vaccineSchedule.DiseaseId = updateVaccineScheduleDTO.DiseaseId ?? vaccineSchedule.DiseaseId;
+                vaccineSchedule.AgeInMonths = updateVaccineScheduleDTO.AgeInMonths ?? vaccineSchedule.AgeInMonths;
+                vaccineSchedule.DoseNumber = updateVaccineScheduleDTO.DoseNumber ?? vaccineSchedule.DoseNumber;
+
+                return await _vaccineScheduleRepository.UpdateVaccineSchedule(vaccineSchedule, cancellationToken) > 0;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating vaccine schedule with ID {vaccineScheduleId}", vaccineScheduleId);
+                throw new ApplicationException("Error while updating vaccine schedule", ex);
+            }
+        }
+
+        public async Task<bool> DeleteVaccineSchedule(int vaccineScheduleId, CancellationToken cancellationToken)
+        {
+            if (vaccineScheduleId <= 0)
+            {
+                _logger.LogWarning("Invalid vaccine schedule ID: {vaccineScheduleId}", vaccineScheduleId);
+                throw new ArgumentException("Invalid vaccine schedule ID");
+            }
+
+            return await _vaccineScheduleRepository.DeleteVaccineSchedule(vaccineScheduleId, cancellationToken);
+        }
     }
 }

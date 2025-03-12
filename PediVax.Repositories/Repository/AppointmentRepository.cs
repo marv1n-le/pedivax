@@ -43,8 +43,8 @@ namespace PediVax.Repositories.Repository
         {
             return await _context.Appointments
                 .Where(a => a.ChildId == childId)
-                .Include(a => a.Vaccine)          // Load dữ liệu Vaccine
-                .Include(a => a.VaccinePackage)   // Load dữ liệu VaccinePackage
+                .Include(a => a.Vaccine)
+                .Include(a => a.VaccinePackage)
                 .ToListAsync(cancellationToken);
         }
 
@@ -52,8 +52,8 @@ namespace PediVax.Repositories.Repository
         {
             return await _context.Appointments
                 .Where(a => a.AppointmentDate.Date == appointmentDate.Date)
-                .Include(a => a.Vaccine)          // Load dữ liệu Vaccine
-                .Include(a => a.VaccinePackage)   // Load dữ liệu VaccinePackage
+                .Include(a => a.Vaccine)
+                .Include(a => a.VaccinePackage)
                 .ToListAsync(cancellationToken);
         }
 

@@ -81,6 +81,12 @@ public class AppointmentService : IAppointmentService
             throw new ArgumentNullException(nameof(createAppointmentDTO), "Appointment data is required");
         }
 
+        // ✅ Kiểm tra nếu cả VaccinePackageId và VaccineId cùng tồn tại
+        if (createAppointmentDTO.VaccinePackageId.HasValue && createAppointmentDTO.VaccineId.HasValue)
+        {
+            throw new ArgumentException("Bạn không thể chọn cả Vaccine Package và Vaccine riêng lẻ cùng lúc. Vui lòng chọn một trong hai.");
+        }
+
         try
         {
             var appointment = _mapper.Map<Appointment>(createAppointmentDTO);
@@ -91,12 +97,19 @@ public class AppointmentService : IAppointmentService
             appointment.AppointmentStatus = EnumList.AppointmentStatus.Pending;
             SetAuditFields(appointment);
 
-            var count = await _appointmentRepository.GetQuantityAppointmentByPackageIdAndVaccineId(appointment.ChildId, (int)appointment.VaccinePackageId, (int)appointment.VaccineId, cancellationToken);
-            var quantity = await _appointmentRepository.GetCountOfPackageDetail((int)appointment.VaccinePackageId, (int)appointment.VaccineId, cancellationToken);
-            
-            if(count >= quantity)
+            // ✅ Chỉ kiểm tra số lượng nếu chọn VaccinePackage
+            if (appointment.VaccinePackageId.HasValue)
             {
-                throw new InvalidOperationException("Số lượng cuộc hẹn đã đạt giới hạn của gói vắc xin.");
+                var count = await _appointmentRepository.GetQuantityAppointmentByPackageIdAndVaccineId(
+                    appointment.ChildId, (int)appointment.VaccinePackageId, (int)appointment.VaccineId, cancellationToken);
+
+                var quantity = await _appointmentRepository.GetCountOfPackageDetail(
+                    (int)appointment.VaccinePackageId, (int)appointment.VaccineId, cancellationToken);
+
+                if (count >= quantity)
+                {
+                    throw new InvalidOperationException("Số lượng cuộc hẹn đã đạt giới hạn của gói vắc xin.");
+                }
             }
 
             if (await _appointmentRepository.AddAppointment(appointment, cancellationToken) <= 0)
@@ -113,6 +126,7 @@ public class AppointmentService : IAppointmentService
             throw new ApplicationException("Error while saving appointment", ex);
         }
     }
+
 
     public async Task<bool> UpdateAppointment(int id, UpdateAppointmentDTO updateAppointmentDTO, CancellationToken cancellationToken)
     {

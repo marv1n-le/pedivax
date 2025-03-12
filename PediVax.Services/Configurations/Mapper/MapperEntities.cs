@@ -60,7 +60,10 @@ namespace PediVax.Services.Configuration.Mapper
 
             CreateMap<CreateAppointmentDTO, Appointment>();
             CreateMap<UpdateAppointmentDTO, Appointment>();
-            CreateMap<Appointment, AppointmentResponseDTO>();
+            CreateMap<Appointment, AppointmentResponseDTO>()
+                .ForMember(dest => dest.VaccineName, opt => opt.MapFrom(src => src.Vaccine != null ? src.Vaccine.Name : null))
+                .ForMember(dest => dest.VaccinePackageName, opt => opt.MapFrom(src => src.VaccinePackage != null ? src.VaccinePackage.Name : null));
+
 
             //VaccinePackage Mappper 
             CreateMap<CreateVaccinePackageDTO, VaccinePackage>();

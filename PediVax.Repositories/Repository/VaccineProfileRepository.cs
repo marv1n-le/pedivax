@@ -38,11 +38,11 @@ namespace PediVax.Repositories.Repository
             return await GetByIdAsync(id, cancellationToken);
         }
 
-        public async Task<VaccineProfile?> GetVaccineProfileByChildId(int childId, CancellationToken cancellationToken)
+        public async Task<List<VaccineProfile>> GetVaccineProfileByChildId(int childId, CancellationToken cancellationToken)
         {
             return await _context.VaccineProfiles
                 .Where(vp => vp.ChildId == childId)
-                .FirstOrDefaultAsync(cancellationToken);
+                .ToListAsync(cancellationToken);
         }
 
 

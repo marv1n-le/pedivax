@@ -12,5 +12,7 @@ namespace PediVax.Services.IService
         Task<List<VaccineScheduleResponseDTO>> GetAllVaccineSchedule(CancellationToken cancellationToken);
         Task<VaccineScheduleResponseDTO> GetVaccineScheduleById(int id, CancellationToken cancellationToken);
         Task<VaccineScheduleResponseDTO> CreateVaccineSchedule(CreateVaccineScheduleDTO vaccineSchedule, CancellationToken cancellationToken);
+        Task<bool> UpdateVaccineSchedule(int vaccineScheduleId, UpdateVaccineScheduleDTO updateVaccineScheduleDTO, CancellationToken cancellationToken);
+        Task<bool> DeleteVaccineSchedule(int vaccineScheduleId, CancellationToken cancellationToken);
     }
 }

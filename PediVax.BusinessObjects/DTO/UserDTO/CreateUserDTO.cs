@@ -32,7 +32,7 @@ namespace PediVax.BusinessObjects.DTO.RequestDTO
         public string Address { get; set; }
 
         [Required(ErrorMessage = "Date of birth is required")]
-        public DateTime DateOfBirth { get; set; }
+        public string DateOfBirth { get; set; }
         
     }
 }

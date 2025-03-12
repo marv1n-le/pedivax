@@ -8,7 +8,7 @@ namespace PediVax.BusinessObjects.Helpers
 {
     public static class ParseDateHelper
     {
-        public static DateTime? ParseDate(string date)
+        public static DateTime ParseDate(string date)
         {
             DateTime parsedDate;
             if (DateTime.TryParseExact(date, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out parsedDate))

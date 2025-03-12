@@ -17,7 +17,7 @@ public class CreateChildProfileDTO
     public string FullName { get; set; }
 
     [Required(ErrorMessage = "Child's date of birth is required")]
-    public DateTime DateOfBirth { get; set; }
+    public string DateOfBirth { get; set; }
 
     [Required(ErrorMessage = "Child's gender is required")]
     public EnumList.Gender Gender { get; set; }

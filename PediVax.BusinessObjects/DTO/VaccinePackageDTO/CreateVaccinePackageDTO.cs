@@ -19,5 +19,8 @@ namespace PediVax.BusinessObjects.DTO.VaccinePackageDTO
         [Range(0, double.MaxValue, ErrorMessage = "Total price must be a positive value")]
         public decimal TotalPrice { get; set; }
 
+        public int TotalDoses { get; set; }
+        
+
     }
 }

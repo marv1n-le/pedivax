@@ -38,15 +38,17 @@ namespace PediVax.Services.Configuration.Mapper
             CreateMap<User, UserResponseDTO>()
                 .ForMember(dest => dest.ChildProfile, opt => opt.MapFrom(src => src.ChildProfiles))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src =>
-    DateTime.ParseExact(src.DateOfBirth.ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal)));
+    DateTime.ParseExact(src.DateOfBirth.ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture)));
 
 
             //ChildProfile Mapper
             CreateMap<CreateChildProfileDTO, ChildProfile>();
             CreateMap<UpdateChildProfileDTO, ChildProfile>();
             CreateMap<ChildProfile, ChildProfileResponseDTO>()
-                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Image == null ? null : src.Image));
-            
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Image == null ? null : src.Image))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src =>
+    DateTime.ParseExact(src.DateOfBirth.ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture))); ;
+
             //Vaccine Mapper
             CreateMap<CreateVaccineDTO, Vaccine>();
             CreateMap<UpdateVaccineDTO, Vaccine>();

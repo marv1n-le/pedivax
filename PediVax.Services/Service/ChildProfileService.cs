@@ -1,8 +1,10 @@
+using System.Globalization;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using PediVax.BusinessObjects.DTO.ChildProfileDTO;
 using PediVax.BusinessObjects.Enum;
+using PediVax.BusinessObjects.Helpers;
 using PediVax.BusinessObjects.Models;
 using PediVax.Repositories.IRepository;
 using PediVax.Services.ExternalService;
@@ -68,6 +70,8 @@ public class ChildProfileService : IChildProfileService
     {
         try
         {
+            DateTime birthDate = ParseDateHelper.ParseDate(createChildProfileDTO.DateOfBirth);
+
             var childProfile = _mapper.Map<ChildProfile>(createChildProfileDTO);
             if (createChildProfileDTO.ProfilePicture != null)
             {
@@ -76,9 +80,10 @@ public class ChildProfileService : IChildProfileService
                 Console.WriteLine("Image uploaded successfully.");
             }
 
+
             childProfile.UserId = createChildProfileDTO.UserId;
             childProfile.FullName = createChildProfileDTO.FullName;
-            childProfile.DateOfBirth = createChildProfileDTO.DateOfBirth;
+            childProfile.DateOfBirth = birthDate;
             childProfile.Gender = createChildProfileDTO.Gender;
             childProfile.Relationship = createChildProfileDTO.Relationship;
             childProfile.IsActive = EnumList.IsActive.Active;

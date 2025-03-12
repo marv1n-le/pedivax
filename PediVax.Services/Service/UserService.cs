@@ -20,6 +20,7 @@ using PediVax.Services.ExternalService;
 using Microsoft.Extensions.Logging;
 using System.Transactions;
 using System.Threading;
+using PediVax.BusinessObjects.DTO.ChildProfileDTO;
 
 namespace PediVax.Services.Service
 {
@@ -78,7 +79,7 @@ namespace PediVax.Services.Service
 
                 var salt = PasswordHelper.GenerateSalt();
                 var hashedPassword = PasswordHelper.HashPassword(createUserDTO.Password, salt);
-
+                DateTime birthDate = ParseDateHelper.ParseDate(createUserDTO.DateOfBirth);
                 var user = new User()
                 {
                     FullName = createUserDTO.FullName,
@@ -89,7 +90,7 @@ namespace PediVax.Services.Service
                     Address = createUserDTO.Address,
                     Image = await _cloudinaryService.UploadImage(createUserDTO.Image),
                     Role = EnumList.Role.Customer,
-                    DateOfBirth = createUserDTO.DateOfBirth,
+                    DateOfBirth = birthDate,
                     CreatedDate = DateTime.UtcNow,
                     CreatedBy = GetCurrentUserName(),
                     ModifiedDate = DateTime.UtcNow,

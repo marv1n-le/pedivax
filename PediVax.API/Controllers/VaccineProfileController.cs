@@ -63,7 +63,34 @@ namespace PediVax.Controllers
             }
         }
 
-        [HttpPost("create/{childId}")]
+        [HttpGet("get-by-child-id/{childId}")]
+        [ProducesResponseType(typeof(VaccineProfileResponseDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetVaccineProfileByChildId(int childId, CancellationToken cancellationToken)
+        {
+            if (childId <= 0)
+            {
+                return BadRequest(new { message = "Invalid child ID." });
+            }
+
+            try
+            {
+                var response = await _vaccineProfileService.GetVaccineProfileByChildId(childId, cancellationToken);
+                return Ok(response);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { message = "Vaccine profile not found." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching vaccine profile.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, new { message = "An error occurred while fetching vaccine profile." });
+            }
+        }
+
+        [HttpPost("generate-vaccine-profile/{childId}")]
         [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -90,6 +117,7 @@ namespace PediVax.Controllers
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> UpdateVaccineProfile(int vaccineProfileId, [FromBody] UpdateVaccineProfileDTO request, CancellationToken cancellationToken)
         {
             if (vaccineProfileId <= 0)
@@ -102,9 +130,22 @@ namespace PediVax.Controllers
                 var response = await _vaccineProfileService.UpdateVaccineProfile(vaccineProfileId, request, cancellationToken);
                 return Ok(new { success = response });
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException ex)
             {
-                return NotFound(new { message = "Vaccine profile not found." });
+                if (ex.Message.Contains("Vaccine profile not found"))
+                {
+                    return NotFound(new { message = "Vaccine profile not found." });
+                }
+                if (ex.Message.Contains("Appointment not found"))
+                {
+                    return NotFound(new { message = "Appointment not found." });
+                }
+                return NotFound(new { message = "Resource not found." });
+            }
+            catch (ArgumentException ex)
+            {
+                // Trường hợp appointment chưa hoàn thành
+                return BadRequest(new { message = ex.Message });
             }
             catch (ApplicationException ex)
             {

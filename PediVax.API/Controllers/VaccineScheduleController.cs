@@ -82,5 +82,53 @@ namespace PediVax.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, new { message = "An error occurred while creating vaccine schedule." });
             }
         }
+
+        [HttpPut("update/{vaccineScheduleId}")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateVaccineSchedule(int vaccineScheduleId, [FromBody] UpdateVaccineScheduleDTO updateVaccineScheduleDTO, CancellationToken cancellationToken)
+        {
+            if (vaccineScheduleId <= 0)
+            {
+                return BadRequest(new { message = "Invalid vaccine schedule ID." });
+            }
+
+            try
+            {
+                var response = await _vaccineScheduleService.UpdateVaccineSchedule(vaccineScheduleId, updateVaccineScheduleDTO, cancellationToken);
+                return Ok(response);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { message = "Vaccine schedule not found." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating vaccine schedule.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, new { message = "An error occurred while updating vaccine schedule." });
+            }
+        }
+
+        [HttpDelete("delete/{vaccineScheduleId}")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> DeleteVaccineSchedule(int vaccineScheduleId, CancellationToken cancellationToken)
+        {
+            if (vaccineScheduleId <= 0)
+            {
+                return BadRequest(new { message = "Invalid vaccine schedule ID." });
+            }
+
+            try
+            {
+                var response = await _vaccineScheduleService.DeleteVaccineSchedule(vaccineScheduleId, cancellationToken);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting vaccine schedule.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, new { message = "An error occurred while deleting vaccine schedule." });
+            }
+        }
     }
 }

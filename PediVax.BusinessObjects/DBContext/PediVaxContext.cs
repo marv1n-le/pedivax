@@ -121,6 +121,12 @@ namespace PediVax.BusinessObjects.DBContext
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.User)
+                .WithMany(u => u.Appointments)
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Appointment>()
                 .HasOne(a => a.ChildProfile)
                 .WithMany(cp => cp.Appointments)
                 .HasForeignKey(a => a.ChildId)
@@ -159,7 +165,7 @@ namespace PediVax.BusinessObjects.DBContext
             modelBuilder.Entity<VaccineProfile>()
                 .HasOne(vsp => vsp.VaccineSchedule)
                 .WithMany(cp => cp.VaccineProfiles)
-                .HasForeignKey(vsp => vsp.ChildId)
+                .HasForeignKey(vsp => vsp.VaccineScheduleId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<PaymentDetail>()

@@ -14,6 +14,7 @@ namespace PediVax.BusinessObjects.Models
         [Key]
         public int AppointmentId { get; set; }
         public int? PaymentId { get; set; }
+        public int UserId { get; set; }
         public int ChildId { get; set; }
         public int? VaccineId { get; set; }
         public int? VaccinePackageId { get; set; }
@@ -32,6 +33,9 @@ namespace PediVax.BusinessObjects.Models
 
         [ForeignKey("ChildId")]
         public virtual ChildProfile ChildProfile { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
 
         [ForeignKey("VaccineId")]
         public virtual Vaccine Vaccine { get; set; }

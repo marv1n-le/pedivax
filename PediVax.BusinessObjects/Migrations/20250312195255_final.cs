@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PediVax.BusinessObjects.Migrations
 {
     /// <inheritdoc />
-    public partial class aaaa : Migration
+    public partial class final : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -246,6 +246,7 @@ namespace PediVax.BusinessObjects.Migrations
                     AppointmentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PaymentId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     ChildId = table.Column<int>(type: "int", nullable: false),
                     VaccineId = table.Column<int>(type: "int", nullable: true),
                     VaccinePackageId = table.Column<int>(type: "int", nullable: true),
@@ -271,6 +272,11 @@ namespace PediVax.BusinessObjects.Migrations
                         column: x => x.PaymentId,
                         principalTable: "Payment",
                         principalColumn: "PaymentId");
+                    table.ForeignKey(
+                        name: "FK_Appointment_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_Appointment_VaccinePackage_VaccinePackageId",
                         column: x => x.VaccinePackageId,
@@ -350,8 +356,8 @@ namespace PediVax.BusinessObjects.Migrations
                         principalTable: "Disease",
                         principalColumn: "DiseaseId");
                     table.ForeignKey(
-                        name: "FK_VaccineProfile_VaccineSchedule_ChildId",
-                        column: x => x.ChildId,
+                        name: "FK_VaccineProfile_VaccineSchedule_VaccineScheduleId",
+                        column: x => x.VaccineScheduleId,
                         principalTable: "VaccineSchedule",
                         principalColumn: "VaccineScheduleId");
                 });
@@ -359,7 +365,7 @@ namespace PediVax.BusinessObjects.Migrations
             migrationBuilder.InsertData(
                 table: "User",
                 columns: new[] { "UserId", "Address", "CreatedBy", "CreatedDate", "DateOfBirth", "Email", "FullName", "Image", "IsActive", "ModifiedBy", "ModifiedDate", "PasswordHash", "PasswordSalt", "PhoneNumber", "Role" },
-                values: new object[] { 1, "PediVax HCM", "System", new DateTime(2025, 3, 12, 6, 51, 53, 987, DateTimeKind.Utc).AddTicks(5986), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@pedivax.com", "System Admin", "https://pedivax.com/images/user.png", 1, "System", new DateTime(2025, 3, 12, 6, 51, 53, 987, DateTimeKind.Utc).AddTicks(5988), "jrsVfha6nJxWoUmqpMw2MXkDInU4yoY5L+AWMBu6rbo=", "sX+vRlXjp0xxkO/mo9Hx7YrPtx8mf/AuA/f3d7eQkAo=", "0123456789", 1 });
+                values: new object[] { 1, "PediVax HCM", "System", new DateTime(2025, 3, 12, 19, 52, 55, 90, DateTimeKind.Utc).AddTicks(7152), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@pedivax.com", "System Admin", "https://pedivax.com/images/user.png", 1, "System", new DateTime(2025, 3, 12, 19, 52, 55, 90, DateTimeKind.Utc).AddTicks(7160), "qne3QDp2/UzJHLp3QjNHYrBsr2jnrzVwwQFy2OIqsAE=", "53926DWudfpzYbpVLUBULHALCt9Qw2sJaMxTlO4anok=", "0123456789", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Appointment_ChildId",
@@ -370,6 +376,11 @@ namespace PediVax.BusinessObjects.Migrations
                 name: "IX_Appointment_PaymentId",
                 table: "Appointment",
                 column: "PaymentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appointment_UserId",
+                table: "Appointment",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Appointment_VaccineId",
@@ -440,6 +451,11 @@ namespace PediVax.BusinessObjects.Migrations
                 name: "IX_VaccineProfile_DiseaseId",
                 table: "VaccineProfile",
                 column: "DiseaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VaccineProfile_VaccineScheduleId",
+                table: "VaccineProfile",
+                column: "VaccineScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VaccineSchedule_DiseaseId",

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PediVax.BusinessObjects.Migrations
 {
     /// <inheritdoc />
-    public partial class dbfinal : Migration
+    public partial class aaaa : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -221,7 +221,8 @@ namespace PediVax.BusinessObjects.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PackageId = table.Column<int>(type: "int", nullable: false),
                     VaccineId = table.Column<int>(type: "int", nullable: false),
-                    IsActive = table.Column<int>(type: "int", nullable: false)
+                    IsActive = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -358,7 +359,7 @@ namespace PediVax.BusinessObjects.Migrations
             migrationBuilder.InsertData(
                 table: "User",
                 columns: new[] { "UserId", "Address", "CreatedBy", "CreatedDate", "DateOfBirth", "Email", "FullName", "Image", "IsActive", "ModifiedBy", "ModifiedDate", "PasswordHash", "PasswordSalt", "PhoneNumber", "Role" },
-                values: new object[] { 1, "PediVax HCM", "System", new DateTime(2025, 3, 11, 16, 57, 41, 764, DateTimeKind.Utc).AddTicks(9045), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@pedivax.com", "System Admin", "https://pedivax.com/images/user.png", 1, "System", new DateTime(2025, 3, 11, 16, 57, 41, 764, DateTimeKind.Utc).AddTicks(9048), "bmMaFW4CZNagj8n5u8O2TiEmXQ/yTMuBmaXva4RRf+g=", "LauSlKugalk0lQRuwwVHkd2q/SFNou4bMVqBeS9K9Zs=", "0123456789", 1 });
+                values: new object[] { 1, "PediVax HCM", "System", new DateTime(2025, 3, 12, 6, 51, 53, 987, DateTimeKind.Utc).AddTicks(5986), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@pedivax.com", "System Admin", "https://pedivax.com/images/user.png", 1, "System", new DateTime(2025, 3, 12, 6, 51, 53, 987, DateTimeKind.Utc).AddTicks(5988), "jrsVfha6nJxWoUmqpMw2MXkDInU4yoY5L+AWMBu6rbo=", "sX+vRlXjp0xxkO/mo9Hx7YrPtx8mf/AuA/f3d7eQkAo=", "0123456789", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Appointment_ChildId",

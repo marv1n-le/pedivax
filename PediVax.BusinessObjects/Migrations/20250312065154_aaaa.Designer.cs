@@ -12,8 +12,8 @@ using PediVax.BusinessObjects.DBContext;
 namespace PediVax.BusinessObjects.Migrations
 {
     [DbContext(typeof(PediVaxContext))]
-    [Migration("20250311165742_dbfinal")]
-    partial class dbfinal
+    [Migration("20250312065154_aaaa")]
+    partial class aaaa
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -319,16 +319,16 @@ namespace PediVax.BusinessObjects.Migrations
                             UserId = 1,
                             Address = "PediVax HCM",
                             CreatedBy = "System",
-                            CreatedDate = new DateTime(2025, 3, 11, 16, 57, 41, 764, DateTimeKind.Utc).AddTicks(9045),
+                            CreatedDate = new DateTime(2025, 3, 12, 6, 51, 53, 987, DateTimeKind.Utc).AddTicks(5986),
                             DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@pedivax.com",
                             FullName = "System Admin",
                             Image = "https://pedivax.com/images/user.png",
                             IsActive = 1,
                             ModifiedBy = "System",
-                            ModifiedDate = new DateTime(2025, 3, 11, 16, 57, 41, 764, DateTimeKind.Utc).AddTicks(9048),
-                            PasswordHash = "bmMaFW4CZNagj8n5u8O2TiEmXQ/yTMuBmaXva4RRf+g=",
-                            PasswordSalt = "LauSlKugalk0lQRuwwVHkd2q/SFNou4bMVqBeS9K9Zs=",
+                            ModifiedDate = new DateTime(2025, 3, 12, 6, 51, 53, 987, DateTimeKind.Utc).AddTicks(5988),
+                            PasswordHash = "jrsVfha6nJxWoUmqpMw2MXkDInU4yoY5L+AWMBu6rbo=",
+                            PasswordSalt = "sX+vRlXjp0xxkO/mo9Hx7YrPtx8mf/AuA/f3d7eQkAo=",
                             PhoneNumber = "0123456789",
                             Role = 1
                         });
@@ -485,6 +485,9 @@ namespace PediVax.BusinessObjects.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("PackageId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<int>("VaccineId")

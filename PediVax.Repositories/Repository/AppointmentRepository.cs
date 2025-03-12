@@ -19,8 +19,12 @@ namespace PediVax.Repositories.Repository
 
         public async Task<List<Appointment>> GetAllAppointments(CancellationToken cancellationToken)
         {
-            return await GetAllAsync(cancellationToken);
+            return await _context.Appointments
+                .Include(a => a.Vaccine)          // Load dữ liệu Vaccine
+                .Include(a => a.VaccinePackage)   // Load dữ liệu VaccinePackage
+                .ToListAsync(cancellationToken);
         }
+
 
         public async Task<(List<Appointment> Data, int TotalCount)> GetAppointmentsPaged(int pageNumber, int pageSize, CancellationToken cancellationToken)
         {
@@ -29,13 +33,18 @@ namespace PediVax.Repositories.Repository
 
         public async Task<Appointment> GetAppointmentById(int appointmentId, CancellationToken cancellationToken)
         {
-            return await GetByIdAsync(appointmentId, cancellationToken);
+            return await _context.Appointments
+                .Include(a => a.Vaccine)          // Load dữ liệu Vaccine
+                .Include(a => a.VaccinePackage)   // Load dữ liệu VaccinePackage
+                .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId, cancellationToken);
         }
 
         public async Task<List<Appointment>> GetAppointmentsByChildId(int childId, CancellationToken cancellationToken)
         {
             return await _context.Appointments
                 .Where(a => a.ChildId == childId)
+                .Include(a => a.Vaccine)          // Load dữ liệu Vaccine
+                .Include(a => a.VaccinePackage)   // Load dữ liệu VaccinePackage
                 .ToListAsync(cancellationToken);
         }
 
@@ -43,6 +52,8 @@ namespace PediVax.Repositories.Repository
         {
             return await _context.Appointments
                 .Where(a => a.AppointmentDate.Date == appointmentDate.Date)
+                .Include(a => a.Vaccine)          // Load dữ liệu Vaccine
+                .Include(a => a.VaccinePackage)   // Load dữ liệu VaccinePackage
                 .ToListAsync(cancellationToken);
         }
 
@@ -50,8 +61,11 @@ namespace PediVax.Repositories.Repository
         {
             return await _context.Appointments
                 .Where(a => a.AppointmentStatus == status)
+                .Include(a => a.Vaccine)          // Load dữ liệu Vaccine
+                .Include(a => a.VaccinePackage)   // Load dữ liệu VaccinePackage
                 .ToListAsync(cancellationToken);
         }
+
 
 
         public async Task<int> AddAppointment(Appointment appointment, CancellationToken cancellationToken)
@@ -67,6 +81,20 @@ namespace PediVax.Repositories.Repository
         public async Task<bool> DeleteAppointment(int appointmentId, CancellationToken cancellationToken)
         {
             return await DeleteAsync(appointmentId, cancellationToken);
+        }
+
+        public async Task<int> GetQuantityAppointmentByPackageIdAndVaccineId(int childId, int packageId, int vaccineId, CancellationToken cancellationToken)
+        {
+            return await _context.Appointments
+                .Where(a => a.ChildId == childId && a.VaccinePackageId == packageId && a.VaccineId == vaccineId)
+                .CountAsync();
+        }
+
+        public async Task<int> GetCountOfPackageDetail( int packageId, int vaccineId, CancellationToken cancellationToken)
+        {
+            var packageDetail = await _context.VaccinePackageDetails
+                .Where(a => a.PackageId == packageId && a.VaccineId == vaccineId).SingleOrDefaultAsync(cancellationToken);
+            return packageDetail?.Quantity ?? 0;
         }
     }
 }

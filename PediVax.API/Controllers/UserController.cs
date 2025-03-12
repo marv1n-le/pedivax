@@ -85,7 +85,7 @@ namespace PediVax.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        [Authorize(Roles = "Admin, Staff, Doctor")]
+        [Authorize(Roles = "Admin, Staff, Doctor, Customer")]
         public async Task<IActionResult> GetUserById(int id, CancellationToken cancellationToken)
         {
             if (id <= 0)

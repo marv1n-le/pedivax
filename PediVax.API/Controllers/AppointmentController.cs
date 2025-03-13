@@ -24,24 +24,24 @@ namespace PediVax.Controllers
             _logger = logger;
         }
 
-        [HttpPost("create")]
-        [ProducesResponseType((int)HttpStatusCode.Created)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDTO request, CancellationToken cancellationToken)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new { message = "Invalid request data." });
-            }
+        //[HttpPost("create")]
+        //[ProducesResponseType((int)HttpStatusCode.Created)]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDTO request, CancellationToken cancellationToken)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(new { message = "Invalid request data." });
+        //    }
 
-            var createdAppointment = await _appointmentService.CreateAppointment(request, cancellationToken);
-            if (createdAppointment == null)
-            {
-                return BadRequest(new { message = "Failed to create appointment." });
-            }
+        //    var createdAppointment = await _appointmentService.CreateAppointment(request, cancellationToken);
+        //    if (createdAppointment == null)
+        //    {
+        //        return BadRequest(new { message = "Failed to create appointment." });
+        //    }
 
-            return CreatedAtAction(nameof(GetAppointmentById), new { appointmentId = createdAppointment.AppointmentId }, createdAppointment);
-        }
+        //    return CreatedAtAction(nameof(GetAppointmentById), new { appointmentId = createdAppointment.AppointmentId }, createdAppointment);
+        //}
 
         [HttpPut("update/{appointmentId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]

@@ -74,58 +74,58 @@ public class AppointmentService : IAppointmentService
         return (_mapper.Map<List<AppointmentResponseDTO>>(appointments), totalCount);
     }
 
-    public async Task<AppointmentResponseDTO> CreateAppointment(CreateAppointmentDTO createAppointmentDTO, CancellationToken cancellationToken)
-    {
-        if (createAppointmentDTO == null)
-        {
-            throw new ArgumentNullException(nameof(createAppointmentDTO), "Appointment data is required");
-        }
+    //public async Task<AppointmentResponseDTO> CreateAppointment(CreateAppointmentDTO createAppointmentDTO, CancellationToken cancellationToken)
+    //{
+    //    if (createAppointmentDTO == null)
+    //    {
+    //        throw new ArgumentNullException(nameof(createAppointmentDTO), "Appointment data is required");
+    //    }
 
-        // ✅ Kiểm tra nếu cả VaccinePackageId và VaccineId cùng tồn tại
-        if (createAppointmentDTO.VaccinePackageId.HasValue && createAppointmentDTO.VaccineId.HasValue)
-        {
-            throw new ArgumentException("Bạn không thể chọn cả Vaccine Package và Vaccine riêng lẻ cùng lúc. Vui lòng chọn một trong hai.");
-        }
+    //    // ✅ Kiểm tra nếu cả VaccinePackageId và VaccineId cùng tồn tại
+    //    if (createAppointmentDTO.VaccinePackageId.HasValue && createAppointmentDTO.VaccineId.HasValue)
+    //    {
+    //        throw new ArgumentException("Bạn không thể chọn cả Vaccine Package và Vaccine riêng lẻ cùng lúc. Vui lòng chọn một trong hai.");
+    //    }
 
-        try
-        {
-            var appointment = _mapper.Map<Appointment>(createAppointmentDTO);
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+    //    try
+    //    {
+    //        var appointment = _mapper.Map<Appointment>(createAppointmentDTO);
+    //        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-            appointment.CreatedBy = GetCurrentUserName();
-            appointment.CreatedDate = DateTime.UtcNow;
-            appointment.AppointmentStatus = EnumList.AppointmentStatus.Pending;
-            SetAuditFields(appointment);
+    //        appointment.CreatedBy = GetCurrentUserName();
+    //        appointment.CreatedDate = DateTime.UtcNow;
+    //        appointment.AppointmentStatus = EnumList.AppointmentStatus.Pending;
+    //        SetAuditFields(appointment);
 
-            // ✅ Chỉ kiểm tra số lượng nếu chọn VaccinePackage
-            if (appointment.VaccinePackageId.HasValue)
-            {
-                var count = await _appointmentRepository.GetQuantityAppointmentByPackageIdAndVaccineId(
-                    appointment.ChildId, (int)appointment.VaccinePackageId, (int)appointment.VaccineId, cancellationToken);
+    //        // ✅ Chỉ kiểm tra số lượng nếu chọn VaccinePackage
+    //        if (appointment.VaccinePackageId.HasValue)
+    //        {
+    //            var count = await _appointmentRepository.GetQuantityAppointmentByPackageIdAndVaccineId(
+    //                appointment.ChildId, (int)appointment.VaccinePackageId, (int)appointment.VaccineId, cancellationToken);
 
-                var quantity = await _appointmentRepository.GetCountOfPackageDetail(
-                    (int)appointment.VaccinePackageId, (int)appointment.VaccineId, cancellationToken);
+    //            var quantity = await _appointmentRepository.GetCountOfPackageDetail(
+    //                (int)appointment.VaccinePackageId, (int)appointment.VaccineId, cancellationToken);
 
-                if (count >= quantity)
-                {
-                    throw new InvalidOperationException("Số lượng cuộc hẹn đã đạt giới hạn của gói vắc xin.");
-                }
-            }
+    //            if (count >= quantity)
+    //            {
+    //                throw new InvalidOperationException("Số lượng cuộc hẹn đã đạt giới hạn của gói vắc xin.");
+    //            }
+    //        }
 
-            if (await _appointmentRepository.AddAppointment(appointment, cancellationToken) <= 0)
-            {
-                throw new ApplicationException("Adding new appointment failed");
-            }
+    //        if (await _appointmentRepository.AddAppointment(appointment, cancellationToken) <= 0)
+    //        {
+    //            throw new ApplicationException("Adding new appointment failed");
+    //        }
 
-            scope.Complete();
-            return _mapper.Map<AppointmentResponseDTO>(appointment);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error adding new appointment");
-            throw new ApplicationException("Error while saving appointment", ex);
-        }
-    }
+    //        scope.Complete();
+    //        return _mapper.Map<AppointmentResponseDTO>(appointment);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogError(ex, "Error adding new appointment");
+    //        throw new ApplicationException("Error while saving appointment", ex);
+    //    }
+    //}
 
 
     public async Task<bool> UpdateAppointment(int id, UpdateAppointmentDTO updateAppointmentDTO, CancellationToken cancellationToken)

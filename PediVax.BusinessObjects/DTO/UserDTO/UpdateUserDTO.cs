@@ -26,6 +26,6 @@ namespace PediVax.BusinessObjects.DTO.RequestDTO
         public Enum.EnumList.Role? Role { get; set; }
 
         [JsonConverter(typeof(DateOnlyJsonConverter))]
-        public DateTime? DateOfBirth { get; set; }
+        public string? DateOfBirth { get; set; }
     }
 }

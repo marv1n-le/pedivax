@@ -18,19 +18,8 @@ public class CreateSystemUserDTO
     public string FullName { get; set; }
 
     [Required(ErrorMessage = "Phone number is required")]
-    [Phone(ErrorMessage = "Invalid phone number format")]
     public string PhoneNumber { get; set; }
 
-    [Required(ErrorMessage = "Image is required")]
-    public IFormFile Image { get; set; }
-
-    [Required(ErrorMessage = "Address is required")]
-    public string Address { get; set; }
-
-    [Required(ErrorMessage = "Date of birth is required")]
-    [JsonConverter(typeof(DateOnlyJsonConverter))]
-    public DateTime DateOfBirth { get; set; }
-    
     [Required(ErrorMessage = "Role is required")]
     public EnumList.Role Role { get; set; }
 

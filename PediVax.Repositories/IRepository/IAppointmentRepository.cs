@@ -36,6 +36,5 @@ namespace PediVax.Repositories.IRepository
         Task<bool> DeleteAppointment(int appointmentId, CancellationToken cancellationToken);
 
         Task<int>GetQuantityAppointmentByPackageIdAndVaccineId(int childId, int packageId, int vaccineId, CancellationToken cancellationToken);
-        Task<int>GetCountOfPackageDetail(int packageId, int vaccineId, CancellationToken cancellationToken);
     }
 }

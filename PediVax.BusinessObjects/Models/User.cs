@@ -17,11 +17,11 @@ namespace PediVax.BusinessObjects.Models
         public string PasswordHash { get; set; }
         public string PasswordSalt { get; set; }
         public string FullName { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Address { get; set; }
-        public string Image { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Address { get; set; }
+        public string? Image { get; set; }
         public Enum.EnumList.Role Role { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
         public Enum.EnumList.IsActive IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }

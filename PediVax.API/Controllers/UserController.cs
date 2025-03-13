@@ -129,7 +129,7 @@ namespace PediVax.Controllers
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        [Authorize(Roles = "Admin, Staff, Doctor")]
+        [Authorize(Roles = "Admin, Staff, Doctor, Customer")]
         public async Task<IActionResult> UpdateUser(int id, [FromForm] UpdateUserDTO updateUserDto, CancellationToken cancellationToken)
         {
             if (id <= 0)

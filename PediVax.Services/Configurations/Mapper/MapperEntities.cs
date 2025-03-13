@@ -36,9 +36,7 @@ namespace PediVax.Services.Configuration.Mapper
                 .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore());
             CreateMap<User, UserResponseDTO>();
             CreateMap<User, UserResponseDTO>()
-                .ForMember(dest => dest.ChildProfile, opt => opt.MapFrom(src => src.ChildProfiles))
-                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src =>
-    DateTime.ParseExact(src.DateOfBirth.ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture)));
+                .ForMember(dest => dest.ChildProfile, opt => opt.MapFrom(src => src.ChildProfiles));
 
 
             //ChildProfile Mapper

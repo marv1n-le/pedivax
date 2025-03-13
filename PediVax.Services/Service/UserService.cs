@@ -72,14 +72,11 @@ namespace PediVax.Services.Service
                     throw new Exception("Phone number already exists.");
                 if (await CheckEmailExist(createUserDTO.Email, cancellationToken))
                     throw new Exception("Email already exists.");
-                if (createUserDTO.Image == null || createUserDTO.Image.Length == 0)
-                    throw new ArgumentException("Invalid vaccine image");
 
                 using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
                 var salt = PasswordHelper.GenerateSalt();
                 var hashedPassword = PasswordHelper.HashPassword(createUserDTO.Password, salt);
-                DateTime birthDate = ParseDateHelper.ParseDate(createUserDTO.DateOfBirth);
                 var user = new User()
                 {
                     FullName = createUserDTO.FullName,
@@ -87,10 +84,7 @@ namespace PediVax.Services.Service
                     PhoneNumber = createUserDTO.PhoneNumber,
                     PasswordHash = hashedPassword,
                     PasswordSalt = salt,
-                    Address = createUserDTO.Address,
-                    Image = await _cloudinaryService.UploadImage(createUserDTO.Image),
                     Role = EnumList.Role.Customer,
-                    DateOfBirth = birthDate,
                     CreatedDate = DateTime.UtcNow,
                     CreatedBy = GetCurrentUserName(),
                     ModifiedDate = DateTime.UtcNow,
@@ -143,8 +137,6 @@ namespace PediVax.Services.Service
                     PhoneNumber = createSystemUserDto.PhoneNumber,
                     PasswordHash = hashedPassword,
                     PasswordSalt = salt,
-                    Address = createSystemUserDto.Address,
-                    Image = await _cloudinaryService.UploadImage(createSystemUserDto.Image),
                     Role = createSystemUserDto.Role,
                     CreatedDate = DateTime.UtcNow,
                     CreatedBy = GetCurrentUserName(),
@@ -256,6 +248,11 @@ namespace PediVax.Services.Service
                         throw new Exception("Full name must be under 100 characters.");
                     }
                     existing.FullName = updateUserDTO.FullName;
+                }
+                if (existing.DateOfBirth != null && !string.IsNullOrWhiteSpace(updateUserDTO.DateOfBirth))
+                {
+                    DateTime? birthDate = ParseDateHelper.ParseDate(updateUserDTO.DateOfBirth);
+                    existing.DateOfBirth = birthDate ?? existing.DateOfBirth;
                 }
 
                 existing.Role = updateUserDTO.Role ?? existing.Role;

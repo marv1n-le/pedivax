@@ -13,14 +13,14 @@ namespace PediVax.BusinessObjects.Models
     public class VaccinePackageDetail
     {
         [Key]
-        public int PackageDetailId { get; set; }
-        public int PackageId { get; set; }
+        public int VaccinePackageDetailId { get; set; }
+        public int VaccinePackageId { get; set; }
         public int VaccineId { get; set; }
         public EnumList.IsActive IsActive { get; set; }
-        public int? Quantity { get; set; }
+        public int DoseNumber { get; set; }
 
         // Navigation properties
-        [ForeignKey("PackageId")]
+        [ForeignKey("VaccinePackageId")]
         public virtual VaccinePackage VaccinePackage { get; set; }
 
         [ForeignKey("VaccineId")]

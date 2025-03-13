@@ -93,7 +93,7 @@ namespace PediVax.BusinessObjects.DBContext
             modelBuilder.Entity<VaccinePackageDetail>()
                 .HasOne(vpd => vpd.VaccinePackage)
                 .WithMany(vp => vp.VaccinePackageDetails)
-                .HasForeignKey(vpd => vpd.PackageId)
+                .HasForeignKey(vpd => vpd.VaccinePackageId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<VaccinePackageDetail>()

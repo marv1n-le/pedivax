@@ -9,10 +9,11 @@ namespace PediVax.BusinessObjects.DTO.VaccinePackageDetailDTO
 {
     public class CreateVaccinePackageDetailDTO
     {
-        [Required(ErrorMessage = "Quantity is required")]
-        public int Quantity { get; set; }
-
-        public int PackageId { get; set; }
+        [Required(ErrorMessage = "VaccinePackageId is required")]
+        public int VaccinePackageId { get; set; }
+        [Required(ErrorMessage = "VaccineId is required")]
         public int VaccineId { get; set; }
+        [Required(ErrorMessage = "DoseNumber is required")]
+        public int DoseNumber { get; set; }
     }
 }

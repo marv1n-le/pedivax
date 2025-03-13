@@ -37,20 +37,20 @@ namespace PediVax.Controllers
             return Ok(response);
         }
 
-        [HttpGet("get-by-id/{packageId}")]
+        [HttpGet("get-by-id/{vaccinePackageId}")]
         [ProducesResponseType(typeof(VaccinePackageResponseDTO), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetVaccinePackageById(int packageId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetVaccinePackageById(int vaccinePackageId, CancellationToken cancellationToken)
         {
-            if (packageId <= 0)
+            if (vaccinePackageId <= 0)
             {
                 return BadRequest(new { message = "Invalid package ID." });
             }
 
             try
             {
-                var response = await _vaccinePackageService.GetVaccinePackageById(packageId, cancellationToken);
+                var response = await _vaccinePackageService.GetVaccinePackageById(vaccinePackageId, cancellationToken);
                 return Ok(response);
             }
             catch (KeyNotFoundException)
@@ -59,7 +59,7 @@ namespace PediVax.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching vaccine package with ID {packageId}", packageId);
+                _logger.LogError(ex, "Error fetching vaccine package with ID {packageId}", vaccinePackageId);
                 return Problem("An unexpected error occurred.");
             }
         }
@@ -90,7 +90,7 @@ namespace PediVax.Controllers
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> UpdateVaccinePackage(int id, [FromForm] UpdateVaccinePackageDTO updateVaccinePackageDTO, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateVaccinePackage(int id, [FromBody] UpdateVaccinePackageDTO updateVaccinePackageDTO, CancellationToken cancellationToken)
         {
             if (id <= 0)
             {

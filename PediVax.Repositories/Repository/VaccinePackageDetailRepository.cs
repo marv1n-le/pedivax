@@ -1,4 +1,5 @@
-﻿using PediVax.BusinessObjects.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using PediVax.BusinessObjects.Models;
 using PediVax.Repositories.IRepository;
 using PediVax.Repositories.Repository.BaseRepository;
 using System.Collections.Generic;
@@ -21,6 +22,13 @@ namespace PediVax.Repositories.Repository
         public async Task<VaccinePackageDetail?> GetVaccinePackageDetailById(int packageDetailId, CancellationToken cancellationToken)
         {
             return await GetByIdAsync(packageDetailId, cancellationToken);
+        }
+
+        public async Task<List<VaccinePackageDetail>> GetVaccinePackageDetailByPackageId(int packageId, CancellationToken cancellationToken)
+        {
+            return await _context.VaccinePackageDetails
+                .Where(vpd => vpd.VaccinePackageId == packageId)
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<(List<VaccinePackageDetail>, int)> GetVaccinePackageDetailPaged(int pageNumber, int pageSize, CancellationToken cancellationToken)

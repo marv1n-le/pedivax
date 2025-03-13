@@ -25,6 +25,7 @@ namespace PediVax.Repositories.Repository
         {
             return await _context.VaccinePackages
                 .Include(vp => vp.VaccinePackageDetails)
+                .ThenInclude(vpd => vpd.Vaccine)
                 .FirstOrDefaultAsync(vp => vp.VaccinePackageId == packageId);
         }
 

@@ -46,12 +46,21 @@ namespace PediVax.Controllers
             }
         }
 
+        [HttpGet("get-by-vaccine-package-id/{vaccinePackageId}")]
+        [ProducesResponseType(typeof(List<VaccinePackageDetailResponseDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetVaccinePackageDetailByVaccinePackageId(int vaccinePackageId, CancellationToken cancellationToken)
+        {
+            var response = await _vaccinePackageDetailService.GetVaccinePackageDetailByVaccinePackageId(vaccinePackageId, cancellationToken);
+            return Ok(response);
+        }
+
         [HttpPost("create")]
         [ProducesResponseType(typeof(VaccinePackageDetailResponseDTO), (int)HttpStatusCode.Created)]
         public async Task<IActionResult> AddVaccinePackageDetail([FromBody] CreateVaccinePackageDetailDTO createDTO, CancellationToken cancellationToken)
         {
             var response = await _vaccinePackageDetailService.AddVaccinePackageDetail(createDTO, cancellationToken);
-            return CreatedAtAction(nameof(GetVaccinePackageDetailById), new { id = response.PackageDetailId }, response);
+            return CreatedAtAction(nameof(GetVaccinePackageDetailById), new { id = response.VaccinePackageDetailId }, response);
         }
 
         [HttpPut("update/{id}")]

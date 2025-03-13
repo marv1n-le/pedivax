@@ -12,7 +12,7 @@ namespace PediVax.BusinessObjects.Models
     public class VaccinePackage
     {
         [Key]
-        public int PackageId { get; set; }
+        public int VaccinePackageId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal TotalPrice { get; set; }

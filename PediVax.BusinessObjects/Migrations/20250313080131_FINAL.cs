@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PediVax.BusinessObjects.Migrations
 {
     /// <inheritdoc />
-    public partial class final : Migration
+    public partial class FINAL : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,11 +40,11 @@ namespace PediVax.BusinessObjects.Migrations
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordSalt = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Role = table.Column<int>(type: "int", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsActive = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -85,7 +85,7 @@ namespace PediVax.BusinessObjects.Migrations
                 name: "VaccinePackage",
                 columns: table => new
                 {
-                    PackageId = table.Column<int>(type: "int", nullable: false)
+                    VaccinePackageId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -100,7 +100,7 @@ namespace PediVax.BusinessObjects.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VaccinePackage", x => x.PackageId);
+                    table.PrimaryKey("PK_VaccinePackage", x => x.VaccinePackageId);
                 });
 
             migrationBuilder.CreateTable(
@@ -205,7 +205,7 @@ namespace PediVax.BusinessObjects.Migrations
                         name: "FK_Payment_VaccinePackage_VaccinePackageId",
                         column: x => x.VaccinePackageId,
                         principalTable: "VaccinePackage",
-                        principalColumn: "PackageId");
+                        principalColumn: "VaccinePackageId");
                     table.ForeignKey(
                         name: "FK_Payment_Vaccine_VaccineId",
                         column: x => x.VaccineId,
@@ -217,21 +217,21 @@ namespace PediVax.BusinessObjects.Migrations
                 name: "VaccinePackageDetail",
                 columns: table => new
                 {
-                    PackageDetailId = table.Column<int>(type: "int", nullable: false)
+                    VaccinePackageDetailId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PackageId = table.Column<int>(type: "int", nullable: false),
+                    VaccinePackageId = table.Column<int>(type: "int", nullable: false),
                     VaccineId = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: true)
+                    DoseNumber = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VaccinePackageDetail", x => x.PackageDetailId);
+                    table.PrimaryKey("PK_VaccinePackageDetail", x => x.VaccinePackageDetailId);
                     table.ForeignKey(
-                        name: "FK_VaccinePackageDetail_VaccinePackage_PackageId",
-                        column: x => x.PackageId,
+                        name: "FK_VaccinePackageDetail_VaccinePackage_VaccinePackageId",
+                        column: x => x.VaccinePackageId,
                         principalTable: "VaccinePackage",
-                        principalColumn: "PackageId");
+                        principalColumn: "VaccinePackageId");
                     table.ForeignKey(
                         name: "FK_VaccinePackageDetail_Vaccine_VaccineId",
                         column: x => x.VaccineId,
@@ -281,7 +281,7 @@ namespace PediVax.BusinessObjects.Migrations
                         name: "FK_Appointment_VaccinePackage_VaccinePackageId",
                         column: x => x.VaccinePackageId,
                         principalTable: "VaccinePackage",
-                        principalColumn: "PackageId");
+                        principalColumn: "VaccinePackageId");
                     table.ForeignKey(
                         name: "FK_Appointment_Vaccine_VaccineId",
                         column: x => x.VaccineId,
@@ -313,7 +313,7 @@ namespace PediVax.BusinessObjects.Migrations
                         name: "FK_PaymentDetail_VaccinePackage_VaccinePackageId",
                         column: x => x.VaccinePackageId,
                         principalTable: "VaccinePackage",
-                        principalColumn: "PackageId");
+                        principalColumn: "VaccinePackageId");
                 });
 
             migrationBuilder.CreateTable(
@@ -365,7 +365,7 @@ namespace PediVax.BusinessObjects.Migrations
             migrationBuilder.InsertData(
                 table: "User",
                 columns: new[] { "UserId", "Address", "CreatedBy", "CreatedDate", "DateOfBirth", "Email", "FullName", "Image", "IsActive", "ModifiedBy", "ModifiedDate", "PasswordHash", "PasswordSalt", "PhoneNumber", "Role" },
-                values: new object[] { 1, "PediVax HCM", "System", new DateTime(2025, 3, 12, 19, 52, 55, 90, DateTimeKind.Utc).AddTicks(7152), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@pedivax.com", "System Admin", "https://pedivax.com/images/user.png", 1, "System", new DateTime(2025, 3, 12, 19, 52, 55, 90, DateTimeKind.Utc).AddTicks(7160), "qne3QDp2/UzJHLp3QjNHYrBsr2jnrzVwwQFy2OIqsAE=", "53926DWudfpzYbpVLUBULHALCt9Qw2sJaMxTlO4anok=", "0123456789", 1 });
+                values: new object[] { 1, "PediVax HCM", "System", new DateTime(2025, 3, 13, 8, 1, 30, 521, DateTimeKind.Utc).AddTicks(1783), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@pedivax.com", "System Admin", "https://pedivax.com/images/user.png", 1, "System", new DateTime(2025, 3, 13, 8, 1, 30, 521, DateTimeKind.Utc).AddTicks(1786), "hT9iUzvXnwBhrJ8Mdpk6hNz6Wumm7BRuAsHikgFfDDc=", "Wkk9MtLFVtUBhr0ORww8s5bfkO8Ivi+AUK5mAEbcuVc=", "0123456789", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Appointment_ChildId",
@@ -428,14 +428,14 @@ namespace PediVax.BusinessObjects.Migrations
                 column: "VaccineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VaccinePackageDetail_PackageId",
-                table: "VaccinePackageDetail",
-                column: "PackageId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_VaccinePackageDetail_VaccineId",
                 table: "VaccinePackageDetail",
                 column: "VaccineId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VaccinePackageDetail_VaccinePackageId",
+                table: "VaccinePackageDetail",
+                column: "VaccinePackageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VaccineProfile_AppointmentId",

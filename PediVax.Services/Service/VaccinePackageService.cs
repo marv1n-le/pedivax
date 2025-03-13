@@ -108,7 +108,8 @@ public class VaccinePackageService : IVaccinePackageService
             SetAuditFields(vaccinePackage);
             vaccinePackage.Name = updateVaccinePackageDTO.Name ?? vaccinePackage.Name;
             vaccinePackage.Description = updateVaccinePackageDTO.Description ?? vaccinePackage.Description;
-            vaccinePackage.TotalPrice = updateVaccinePackageDTO.TotalPrice ?? vaccinePackage.TotalPrice;
+            vaccinePackage.TotalDoses = updateVaccinePackageDTO.TotalDoses ?? vaccinePackage.TotalDoses;
+            vaccinePackage.AgeInMonths = updateVaccinePackageDTO.AgeInMonths ?? vaccinePackage.AgeInMonths;
 
             int rowsAffected = await _vaccinePackageRepository.UpdateVaccinePackage(vaccinePackage, cancellationToken);
             return rowsAffected > 0;
@@ -154,5 +155,43 @@ public class VaccinePackageService : IVaccinePackageService
 
         var (vaccinePackages, totalCount) = await _vaccinePackageRepository.GetVaccinePackagePaged(pageNumber, pageSize, cancellationToken);
         return (_mapper.Map<List<VaccinePackageResponseDTO>>(vaccinePackages), totalCount);
+    }
+
+    public async Task<bool> UpdateTotalPrice(int packageId, CancellationToken cancellationToken)
+    {
+        var vaccinePackage = await _vaccinePackageRepository.GetVaccinePackageById(packageId, cancellationToken);
+
+        if (vaccinePackage == null)
+        {
+            throw new KeyNotFoundException("Vaccine package not found");
+        }
+
+        decimal totalPrice = CalculateTotalPrice(vaccinePackage);
+
+        vaccinePackage.TotalPrice = totalPrice;
+
+        var result = await _vaccinePackageRepository.UpdateVaccinePackage(vaccinePackage, cancellationToken);
+
+        return result > 0;
+    }
+
+    public decimal CalculateTotalPrice(VaccinePackage vaccinePackage)
+    {
+        if (vaccinePackage.VaccinePackageDetails == null || !vaccinePackage.VaccinePackageDetails.Any())
+        {
+            throw new ApplicationException("At least one VaccinePackageDetail is required to calculate the total price.");
+        }
+
+        decimal totalPrice = 0;
+
+        foreach (var detail in vaccinePackage.VaccinePackageDetails)
+        {
+            totalPrice += detail.Vaccine.Price * detail.DoseNumber;
+        }
+
+        decimal discount = 0.10m; 
+        totalPrice -= totalPrice * discount;
+
+        return totalPrice;
     }
 }

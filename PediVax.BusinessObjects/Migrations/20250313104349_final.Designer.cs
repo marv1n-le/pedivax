@@ -12,8 +12,8 @@ using PediVax.BusinessObjects.DBContext;
 namespace PediVax.BusinessObjects.Migrations
 {
     [DbContext(typeof(PediVaxContext))]
-    [Migration("20250313080131_FINAL")]
-    partial class FINAL
+    [Migration("20250313104349_final")]
+    partial class final
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -321,16 +321,16 @@ namespace PediVax.BusinessObjects.Migrations
                             UserId = 1,
                             Address = "PediVax HCM",
                             CreatedBy = "System",
-                            CreatedDate = new DateTime(2025, 3, 13, 8, 1, 30, 521, DateTimeKind.Utc).AddTicks(1783),
+                            CreatedDate = new DateTime(2025, 3, 13, 10, 43, 48, 982, DateTimeKind.Utc).AddTicks(5958),
                             DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@pedivax.com",
                             FullName = "System Admin",
                             Image = "https://pedivax.com/images/user.png",
                             IsActive = 1,
                             ModifiedBy = "System",
-                            ModifiedDate = new DateTime(2025, 3, 13, 8, 1, 30, 521, DateTimeKind.Utc).AddTicks(1786),
-                            PasswordHash = "hT9iUzvXnwBhrJ8Mdpk6hNz6Wumm7BRuAsHikgFfDDc=",
-                            PasswordSalt = "Wkk9MtLFVtUBhr0ORww8s5bfkO8Ivi+AUK5mAEbcuVc=",
+                            ModifiedDate = new DateTime(2025, 3, 13, 10, 43, 48, 982, DateTimeKind.Utc).AddTicks(5966),
+                            PasswordHash = "oGepU2YTY5CGeE57eZacEUOup8HNY7MErIYNboJ38vo=",
+                            PasswordSalt = "RsReHcLMrh8GXnKGyOG1SNE5fyjZo1Acqfh9oSQDkuw=",
                             PhoneNumber = "0123456789",
                             Role = 1
                         });
@@ -447,7 +447,6 @@ namespace PediVax.BusinessObjects.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("IsActive")
@@ -467,7 +466,7 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Property<int>("TotalDoses")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TotalPrice")
+                    b.Property<decimal?>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("VaccinePackageId");

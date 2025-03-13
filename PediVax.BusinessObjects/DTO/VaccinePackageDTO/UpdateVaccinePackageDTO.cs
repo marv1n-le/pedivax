@@ -10,6 +10,7 @@ namespace PediVax.BusinessObjects.DTO.VaccinePackageDTO
     {
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public decimal? TotalPrice { get; set; }
+        public int? TotalDoses { get; set; }
+        public int? AgeInMonths { get; set; }
     }
 }

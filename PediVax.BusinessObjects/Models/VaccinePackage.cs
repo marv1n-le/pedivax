@@ -14,8 +14,8 @@ namespace PediVax.BusinessObjects.Models
         [Key]
         public int VaccinePackageId { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public decimal TotalPrice { get; set; }
+        public string? Description { get; set; }
+        public decimal? TotalPrice { get; set; }
         public int TotalDoses { get; set; }
         public int AgeInMonths { get; set; }
         public Enum.EnumList.IsActive IsActive { get; set; }

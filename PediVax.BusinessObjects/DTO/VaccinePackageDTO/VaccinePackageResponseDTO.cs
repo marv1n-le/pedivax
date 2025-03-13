@@ -8,7 +8,7 @@ namespace PediVax.BusinessObjects.DTO.VaccinePackageDTO
 {
     public class VaccinePackageResponseDTO
     {
-        public int PackageId { get; set; }
+        public int VaccinePackageId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal TotalPrice { get; set; }

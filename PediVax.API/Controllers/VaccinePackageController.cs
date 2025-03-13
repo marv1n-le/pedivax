@@ -67,7 +67,7 @@ namespace PediVax.Controllers
         [HttpPost("create-vaccine-package")]
         [ProducesResponseType(typeof(VaccinePackageResponseDTO), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddVaccinePackage([FromForm] CreateVaccinePackageDTO createVaccinePackageDTO, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddVaccinePackage([FromBody] CreateVaccinePackageDTO createVaccinePackageDTO, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -77,7 +77,7 @@ namespace PediVax.Controllers
             try
             {
                 var response = await _vaccinePackageService.AddVaccinePackage(createVaccinePackageDTO, cancellationToken);
-                return CreatedAtAction(nameof(GetVaccinePackageById), new { packageId = response.PackageId }, response);
+                return CreatedAtAction(nameof(GetVaccinePackageById), new { vaccinePackageId = response.VaccinePackageId }, response);
             }
             catch (ApplicationException ex)
             {
@@ -117,6 +117,30 @@ namespace PediVax.Controllers
                 return Problem("An error occurred while updating the vaccine package.");
             }
         }
+
+        [HttpPost("update-total-price/{vaccinePackageId}")]
+        public async Task<IActionResult> UpdateTotalPrice(int vaccinePackageId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                bool result = await _vaccinePackageService.UpdateTotalPrice(vaccinePackageId, cancellationToken);
+
+                if (result)
+                {
+                    return Ok(new { Message = "TotalPrice updated successfully" });
+                }
+                else
+                {
+                    return BadRequest(new { Message = "Failed to update TotalPrice" });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating TotalPrice for VaccinePackage with ID {packageId}", vaccinePackageId);
+                return StatusCode(500, new { Message = "An error occurred while updating TotalPrice" });
+            }
+        }
+
 
         [HttpDelete("delete-vaccine-package/{id}")]
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]

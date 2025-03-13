@@ -9,6 +9,7 @@ using PediVax.Services.IService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -97,7 +98,12 @@ namespace PediVax.Services.Service
 
             try
             {
-                // Kiểm tra Disease có tồn tại và đang hoạt động
+                var existingVaccineSchedule = await _vaccineScheduleRepository.GetAllVaccineSchedule(cancellationToken);
+                if (existingVaccineSchedule.Any(v => v.DiseaseId == vaccineScheduleRequestDTO.DiseaseId && v.AgeInMonths == vaccineScheduleRequestDTO.AgeInMonths && v.DoseNumber == vaccineScheduleRequestDTO.DoseNumber))
+                {
+                    throw new ApplicationException($"Vaccine schedule with DiseaseId {vaccineScheduleRequestDTO.DiseaseId}, AgeInMonths {vaccineScheduleRequestDTO.AgeInMonths}, and DoseNumber {vaccineScheduleRequestDTO.DoseNumber} already exists.");
+                }
+
                 var disease = await _diseaseRepository.GetDiseaseById(vaccineScheduleRequestDTO.DiseaseId, cancellationToken);
                 if (disease == null || disease.IsActive > EnumList.IsActive.Active)
                 {
@@ -113,7 +119,6 @@ namespace PediVax.Services.Service
                 if (await _vaccineScheduleRepository.AddVaccineSchedule(vaccineSchedule, cancellationToken) <= 0)
                     throw new ApplicationException("Adding new vaccine schedule failed");
 
-                // Gán thông tin Vaccine và Disease vào object trả về
                 vaccineSchedule.Disease = disease;
 
                 return _mapper.Map<VaccineScheduleResponseDTO>(vaccineSchedule);
@@ -146,7 +151,11 @@ namespace PediVax.Services.Service
                 vaccineSchedule.DiseaseId = updateVaccineScheduleDTO.DiseaseId ?? vaccineSchedule.DiseaseId;
                 vaccineSchedule.AgeInMonths = updateVaccineScheduleDTO.AgeInMonths ?? vaccineSchedule.AgeInMonths;
                 vaccineSchedule.DoseNumber = updateVaccineScheduleDTO.DoseNumber ?? vaccineSchedule.DoseNumber;
-
+                var existingVaccineSchedule = await _vaccineScheduleRepository.GetAllVaccineSchedule(cancellationToken);
+                if (existingVaccineSchedule.Any(v => v.DiseaseId == updateVaccineScheduleDTO.DiseaseId && v.AgeInMonths == updateVaccineScheduleDTO.AgeInMonths && v.DoseNumber == updateVaccineScheduleDTO.DoseNumber))
+                {
+                    throw new ApplicationException($"Vaccine schedule with DiseaseId {updateVaccineScheduleDTO.DiseaseId}, AgeInMonths {updateVaccineScheduleDTO.AgeInMonths}, and DoseNumber {updateVaccineScheduleDTO.DoseNumber} already exists.");
+                }
                 return await _vaccineScheduleRepository.UpdateVaccineSchedule(vaccineSchedule, cancellationToken) > 0;
             }
             catch (KeyNotFoundException)

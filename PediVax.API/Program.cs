@@ -7,6 +7,7 @@ using PediVax.Infrastructure;
 using System.Text;
 using CloudinaryDotNet;
 using PediVax.BusinessObjects.DTO;
+using System.Text.Json.Serialization;
 
 namespace PediVax;
 
@@ -38,6 +39,12 @@ public class Program
     {
         options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     });
+
+        builder.Services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+        });
 
         #region Configre Swagger
         builder.Services.AddSwaggerGen(c =>

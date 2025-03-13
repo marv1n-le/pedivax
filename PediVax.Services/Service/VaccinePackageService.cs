@@ -177,21 +177,25 @@ public class VaccinePackageService : IVaccinePackageService
 
     public decimal CalculateTotalPrice(VaccinePackage vaccinePackage)
     {
+        if (vaccinePackage == null)
+        {
+            throw new ApplicationException("VaccinePackage is null.");
+        }
+
         if (vaccinePackage.VaccinePackageDetails == null || !vaccinePackage.VaccinePackageDetails.Any())
         {
             throw new ApplicationException("At least one VaccinePackageDetail is required to calculate the total price.");
         }
 
-        decimal totalPrice = 0;
+        decimal totalPrice = vaccinePackage.VaccinePackageDetails
+            .Where(detail => detail.Vaccine != null) // Bỏ qua nếu Vaccine bị null
+            .GroupBy(detail => detail.VaccineId)  // Nhóm theo VaccineId
+            .Sum(group => group.First().Vaccine.Price * group.Count()); // Đếm số lần xuất hiện
 
-        foreach (var detail in vaccinePackage.VaccinePackageDetails)
-        {
-            totalPrice += detail.Vaccine.Price * detail.DoseNumber;
-        }
-
-        decimal discount = 0.10m; 
+        decimal discount = 0.10m;
         totalPrice -= totalPrice * discount;
 
         return totalPrice;
     }
+
 }

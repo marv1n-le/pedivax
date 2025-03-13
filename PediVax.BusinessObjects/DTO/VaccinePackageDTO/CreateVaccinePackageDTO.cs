@@ -12,7 +12,7 @@ namespace PediVax.BusinessObjects.DTO.VaccinePackageDTO
 
         public string? Description { get; set; }
 
-        [Required(ErrorMessage = "Total dose is required")]
+        [Required(ErrorMessage = "TotalDoses is required")]
         public int TotalDoses { get; set; }
 
         [Required(ErrorMessage = "Age in month is required")]

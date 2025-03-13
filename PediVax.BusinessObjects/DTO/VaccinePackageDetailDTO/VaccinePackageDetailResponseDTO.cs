@@ -1,4 +1,6 @@
-﻿using PediVax.BusinessObjects.Models;
+﻿using PediVax.BusinessObjects.DTO.VaccineDTO;
+using PediVax.BusinessObjects.DTO.VaccinePackageDTO;
+using PediVax.BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +11,13 @@ namespace PediVax.BusinessObjects.DTO.VaccinePackageDetailDTO
 {
     public class VaccinePackageDetailResponseDTO
     {
-        public int PackageDetailId { get; set; }
-        public int PackageId { get; set; }
+        public int VaccinePackageDetailId { get; set; }
+        public int VaccinePackageId { get; set; }
         public int VaccineId { get; set; }
-        public int Quantity { get; set; }
+        public int DoseNumber { get; set; }
         public string IsActive { get; set; }
 
-        public VaccinePackage VaccinePackage { get; set; }
-        public Vaccine Vaccine { get; set; }
+        public VaccinePackageResponseDTO VaccinePackage { get; set; }
+        public VaccineResponseDTO Vaccine { get; set; }
     }
 }

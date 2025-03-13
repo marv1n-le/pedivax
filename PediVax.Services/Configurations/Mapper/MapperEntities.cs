@@ -17,6 +17,7 @@ using PediVax.BusinessObjects.DTO.VaccineScheduleDTO;
 using PediVax.BusinessObjects.DTO.VaccineProfileDTO;
 using PediVax.BusinessObjects.DTO.VaccineSchedulePersonalDTO;
 using System.Globalization;
+using PediVax.BusinessObjects.Enum;
 
 namespace PediVax.Services.Configuration.Mapper
 {
@@ -56,8 +57,8 @@ namespace PediVax.Services.Configuration.Mapper
             //Disease Mapper
             CreateMap<CreateDiseaseDTO, Disease>();
             CreateMap<Disease, DiseaseResponseDTO>();
-            //Appointment Mapper
 
+            //Appointment Mapper
             CreateMap<CreateAppointmentDTO, Appointment>();
             CreateMap<UpdateAppointmentDTO, Appointment>();
             CreateMap<Appointment, AppointmentResponseDTO>()
@@ -68,7 +69,8 @@ namespace PediVax.Services.Configuration.Mapper
             //VaccinePackage Mappper 
             CreateMap<CreateVaccinePackageDTO, VaccinePackage>();
             CreateMap<UpdateVaccinePackageDTO, VaccinePackage>();
-            CreateMap<VaccinePackage, VaccinePackageResponseDTO>();
+            CreateMap<VaccinePackage, VaccinePackageResponseDTO>()
+                 .ForMember(dest => dest.VaccinePackageDetails, opt => opt.MapFrom(src => src.VaccinePackageDetails)).ReverseMap();
 
             //VaccinePackageDetail Mapper
             CreateMap<CreateVaccinePackageDetailDTO, VaccinePackageDetail>();

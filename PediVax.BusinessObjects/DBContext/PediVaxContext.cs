@@ -18,27 +18,23 @@ namespace PediVax.BusinessObjects.DBContext
         {
             if (!optionsBuilder.IsConfigured)
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "..", "PediVax.API"); // Trỏ về thư mục chứa appsettings.json
-                Console.WriteLine($"Adjusted Base Path: {path}");
-
+                // Đọc appsettings.json từ thư mục hiện tại
                 var configuration = new ConfigurationBuilder()
-                    .SetBasePath(path)
+                    .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                    .AddEnvironmentVariables() // Thêm dòng này để đọc từ biến môi trường Azure
                     .Build();
 
                 string connectionString = configuration.GetConnectionString("DefaultConnection");
-                Console.WriteLine($"Connection String: {connectionString}");
 
                 if (string.IsNullOrEmpty(connectionString))
                 {
-                    Console.WriteLine("⚠️ ConnectionString vẫn null! Kiểm tra đường dẫn appsettings.json");
                     throw new InvalidOperationException("Không thể lấy ConnectionString.");
                 }
 
                 optionsBuilder.UseSqlServer(connectionString);
             }
         }
-
 
         // DbSet properties
         public DbSet<User> Users { get; set; }
@@ -65,7 +61,12 @@ namespace PediVax.BusinessObjects.DBContext
                 .HasForeignKey(cp => cp.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Payments)
+                .WithOne(p => p.User)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<ChildProfile>()
                 .HasOne(cp => cp.User)
                 .WithMany(u => u.ChildProfiles)
@@ -102,6 +103,19 @@ namespace PediVax.BusinessObjects.DBContext
                 .HasForeignKey(vpd => vpd.VaccineId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.PaymentDetail)
+                .WithMany(pd => pd.Appointments)
+                .HasForeignKey(a => a.PaymentDetailId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Payment>()
+                .HasMany(p => p.PaymentDetails)
+                .WithOne(pd => pd.Payment)
+                .HasForeignKey(pd => pd.PaymentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.VaccinePackage)
                 .WithMany(vp => vp.Payments)
@@ -112,12 +126,6 @@ namespace PediVax.BusinessObjects.DBContext
                 .HasOne(p => p.Vaccine)
                 .WithMany(v => v.Payments)
                 .HasForeignKey(p => p.VaccineId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Payment)
-                .WithMany(p => p.Appointments)
-                .HasForeignKey(a => a.PaymentId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Appointment>()
@@ -172,12 +180,6 @@ namespace PediVax.BusinessObjects.DBContext
                 .HasOne(pd => pd.Payment)
                 .WithMany(p => p.PaymentDetails)
                 .HasForeignKey(pd => pd.PaymentId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<PaymentDetail>()
-                .HasOne(pd => pd.VaccinePackage)
-                .WithMany(vp => vp.PaymentDetails)
-                .HasForeignKey(pd => pd.VaccinePackageId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Vaccine>()

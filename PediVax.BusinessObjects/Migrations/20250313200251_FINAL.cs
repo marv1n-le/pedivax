@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PediVax.BusinessObjects.Migrations
 {
     /// <inheritdoc />
-    public partial class final : Migration
+    public partial class FINAL : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -190,17 +190,23 @@ namespace PediVax.BusinessObjects.Migrations
                     PaymentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     VaccinePackageId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     VaccineId = table.Column<int>(type: "int", nullable: true),
                     PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Payment", x => x.PaymentId);
+                    table.ForeignKey(
+                        name: "FK_Payment_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_Payment_VaccinePackage_VaccinePackageId",
                         column: x => x.VaccinePackageId,
@@ -240,12 +246,48 @@ namespace PediVax.BusinessObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaymentDetail",
+                columns: table => new
+                {
+                    PaymentDetailId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PaymentId = table.Column<int>(type: "int", nullable: false),
+                    VaccinePackageDetailId = table.Column<int>(type: "int", nullable: false),
+                    IsCompleted = table.Column<int>(type: "int", nullable: false),
+                    AdministeredDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DoseSequence = table.Column<int>(type: "int", nullable: false),
+                    ScheduledDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    VaccinePackageId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentDetail", x => x.PaymentDetailId);
+                    table.ForeignKey(
+                        name: "FK_PaymentDetail_Payment_PaymentId",
+                        column: x => x.PaymentId,
+                        principalTable: "Payment",
+                        principalColumn: "PaymentId");
+                    table.ForeignKey(
+                        name: "FK_PaymentDetail_VaccinePackageDetail_VaccinePackageDetailId",
+                        column: x => x.VaccinePackageDetailId,
+                        principalTable: "VaccinePackageDetail",
+                        principalColumn: "VaccinePackageDetailId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PaymentDetail_VaccinePackage_VaccinePackageId",
+                        column: x => x.VaccinePackageId,
+                        principalTable: "VaccinePackage",
+                        principalColumn: "VaccinePackageId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Appointment",
                 columns: table => new
                 {
                     AppointmentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PaymentId = table.Column<int>(type: "int", nullable: true),
+                    PaymentDetailId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ChildId = table.Column<int>(type: "int", nullable: false),
                     VaccineId = table.Column<int>(type: "int", nullable: true),
@@ -257,7 +299,8 @@ namespace PediVax.BusinessObjects.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -267,6 +310,11 @@ namespace PediVax.BusinessObjects.Migrations
                         column: x => x.ChildId,
                         principalTable: "ChildProfile",
                         principalColumn: "ChildId");
+                    table.ForeignKey(
+                        name: "FK_Appointment_PaymentDetail_PaymentDetailId",
+                        column: x => x.PaymentDetailId,
+                        principalTable: "PaymentDetail",
+                        principalColumn: "PaymentDetailId");
                     table.ForeignKey(
                         name: "FK_Appointment_Payment_PaymentId",
                         column: x => x.PaymentId,
@@ -287,33 +335,6 @@ namespace PediVax.BusinessObjects.Migrations
                         column: x => x.VaccineId,
                         principalTable: "Vaccine",
                         principalColumn: "VaccineId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PaymentDetail",
-                columns: table => new
-                {
-                    PaymentDetailId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PaymentId = table.Column<int>(type: "int", nullable: false),
-                    VaccinePackageId = table.Column<int>(type: "int", nullable: false),
-                    IsCompleted = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AdministeredDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PaymentDetail", x => x.PaymentDetailId);
-                    table.ForeignKey(
-                        name: "FK_PaymentDetail_Payment_PaymentId",
-                        column: x => x.PaymentId,
-                        principalTable: "Payment",
-                        principalColumn: "PaymentId");
-                    table.ForeignKey(
-                        name: "FK_PaymentDetail_VaccinePackage_VaccinePackageId",
-                        column: x => x.VaccinePackageId,
-                        principalTable: "VaccinePackage",
-                        principalColumn: "VaccinePackageId");
                 });
 
             migrationBuilder.CreateTable(
@@ -365,12 +386,17 @@ namespace PediVax.BusinessObjects.Migrations
             migrationBuilder.InsertData(
                 table: "User",
                 columns: new[] { "UserId", "Address", "CreatedBy", "CreatedDate", "DateOfBirth", "Email", "FullName", "Image", "IsActive", "ModifiedBy", "ModifiedDate", "PasswordHash", "PasswordSalt", "PhoneNumber", "Role" },
-                values: new object[] { 1, "PediVax HCM", "System", new DateTime(2025, 3, 13, 10, 43, 48, 982, DateTimeKind.Utc).AddTicks(5958), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@pedivax.com", "System Admin", "https://pedivax.com/images/user.png", 1, "System", new DateTime(2025, 3, 13, 10, 43, 48, 982, DateTimeKind.Utc).AddTicks(5966), "oGepU2YTY5CGeE57eZacEUOup8HNY7MErIYNboJ38vo=", "RsReHcLMrh8GXnKGyOG1SNE5fyjZo1Acqfh9oSQDkuw=", "0123456789", 1 });
+                values: new object[] { 1, "PediVax HCM", "System", new DateTime(2025, 3, 13, 20, 2, 51, 137, DateTimeKind.Utc).AddTicks(1059), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@pedivax.com", "System Admin", "https://pedivax.com/images/user.png", 1, "System", new DateTime(2025, 3, 13, 20, 2, 51, 137, DateTimeKind.Utc).AddTicks(1062), "akV+8Dvfd1YrtLQtrVdN6fUkqW0AMLMJ0olmedxzql8=", "3QuOt/fvsE4vshtlIfBujcirpEbxOHoDVi6AtQWOJ5U=", "0123456789", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Appointment_ChildId",
                 table: "Appointment",
                 column: "ChildId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appointment_PaymentDetailId",
+                table: "Appointment",
+                column: "PaymentDetailId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Appointment_PaymentId",
@@ -398,6 +424,11 @@ namespace PediVax.BusinessObjects.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Payment_UserId",
+                table: "Payment",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Payment_VaccineId",
                 table: "Payment",
                 column: "VaccineId");
@@ -411,6 +442,11 @@ namespace PediVax.BusinessObjects.Migrations
                 name: "IX_PaymentDetail_PaymentId",
                 table: "PaymentDetail",
                 column: "PaymentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentDetail_VaccinePackageDetailId",
+                table: "PaymentDetail",
+                column: "VaccinePackageDetailId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentDetail_VaccinePackageId",
@@ -467,13 +503,7 @@ namespace PediVax.BusinessObjects.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PaymentDetail");
-
-            migrationBuilder.DropTable(
                 name: "VaccineDisease");
-
-            migrationBuilder.DropTable(
-                name: "VaccinePackageDetail");
 
             migrationBuilder.DropTable(
                 name: "VaccineProfile");
@@ -488,10 +518,16 @@ namespace PediVax.BusinessObjects.Migrations
                 name: "ChildProfile");
 
             migrationBuilder.DropTable(
-                name: "Payment");
+                name: "PaymentDetail");
 
             migrationBuilder.DropTable(
                 name: "Disease");
+
+            migrationBuilder.DropTable(
+                name: "Payment");
+
+            migrationBuilder.DropTable(
+                name: "VaccinePackageDetail");
 
             migrationBuilder.DropTable(
                 name: "User");

@@ -8,6 +8,7 @@ using System.Text;
 using CloudinaryDotNet;
 using PediVax.BusinessObjects.DTO;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Options;
 
 namespace PediVax;
 
@@ -28,7 +29,17 @@ public class Program
             options.IdleTimeout = TimeSpan.FromMinutes(30);
             options.Cookie.IsEssential = true;
         });
-        
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigins", policy =>
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -47,10 +58,10 @@ public class Program
         });
 
         #region Configre Swagger
-        builder.Services.AddSwaggerGen(c =>
+        builder.Services.AddSwaggerGen(options =>
         {
-            c.SwaggerDoc("v1", new() { Title = "PediVax API", Version = "v1" });
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            options.SwaggerDoc("v1", new OpenApiInfo { Title = "PediVax API", Version = "v1" });
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
                 Description = "Please enter a valid JWT token",
@@ -60,7 +71,7 @@ public class Program
                 Scheme = "Bearer"
             });
 
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
                     new OpenApiSecurityScheme
@@ -83,10 +94,7 @@ public class Program
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidateAudience = true,
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    ValidateIssuer = false,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
@@ -110,12 +118,13 @@ public class Program
         
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
+
             app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "PediVax API V1");
+                c.RoutePrefix = "swagger";
+            });
 
         app.UseHttpsRedirection();
 

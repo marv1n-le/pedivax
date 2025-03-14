@@ -146,7 +146,6 @@ public class AppointmentService : IAppointmentService
             }
 
             SetAuditFields(appointment);
-            appointment.PaymentId = updateAppointmentDTO.PaymentId;
             appointment.ChildId = updateAppointmentDTO.ChildId;
             appointment.VaccineId = updateAppointmentDTO.VaccineId;
             appointment.VaccinePackageId = updateAppointmentDTO.VaccinePackageId;

@@ -10,14 +10,14 @@ namespace PediVax.BusinessObjects.Helpers
     {
         public static DateTime ParseDate(string date)
         {
-            DateTime parsedDate;
-            if (DateTime.TryParseExact(date, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out parsedDate))
+            string[] formats = { "dd/MM/yyyy", "yyyy-MM-dd", "MM/dd/yyyy" };
+            if (DateTime.TryParseExact(date, formats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime parsedDate))
             {
                 return parsedDate;
             }
             else
             {
-                throw new ArgumentException("Date must be in dd/MM/yyyy format.");
+                throw new ArgumentException($"Date must be in one of these formats: {string.Join(", ", formats)}.");
             }
         }
     }

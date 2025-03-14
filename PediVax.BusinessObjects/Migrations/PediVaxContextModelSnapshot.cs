@@ -56,6 +56,9 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("PaymentDetailId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PaymentId")
                         .HasColumnType("int");
 
@@ -74,6 +77,8 @@ namespace PediVax.BusinessObjects.Migrations
                     b.HasKey("AppointmentId");
 
                     b.HasIndex("ChildId");
+
+                    b.HasIndex("PaymentDetailId");
 
                     b.HasIndex("PaymentId");
 
@@ -193,15 +198,17 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PaymentStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
 
                     b.Property<string>("PaymentType")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("VaccineId")
                         .HasColumnType("int");
@@ -210,6 +217,8 @@ namespace PediVax.BusinessObjects.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("PaymentId");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("VaccineId");
 
@@ -226,26 +235,35 @@ namespace PediVax.BusinessObjects.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentDetailId"));
 
-                    b.Property<DateTime>("AdministeredDate")
+                    b.Property<DateTime?>("AdministeredDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("IsCompleted")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("DoseSequence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IsCompleted")
+                        .HasColumnType("int");
 
                     b.Property<string>("Notes")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PaymentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("VaccinePackageId")
+                    b.Property<DateTime?>("ScheduledDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VaccinePackageDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VaccinePackageId")
                         .HasColumnType("int");
 
                     b.HasKey("PaymentDetailId");
 
                     b.HasIndex("PaymentId");
+
+                    b.HasIndex("VaccinePackageDetailId");
 
                     b.HasIndex("VaccinePackageId");
 
@@ -318,16 +336,16 @@ namespace PediVax.BusinessObjects.Migrations
                             UserId = 1,
                             Address = "PediVax HCM",
                             CreatedBy = "System",
-                            CreatedDate = new DateTime(2025, 3, 13, 10, 43, 48, 982, DateTimeKind.Utc).AddTicks(5958),
+                            CreatedDate = new DateTime(2025, 3, 13, 20, 2, 51, 137, DateTimeKind.Utc).AddTicks(1059),
                             DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@pedivax.com",
                             FullName = "System Admin",
                             Image = "https://pedivax.com/images/user.png",
                             IsActive = 1,
                             ModifiedBy = "System",
-                            ModifiedDate = new DateTime(2025, 3, 13, 10, 43, 48, 982, DateTimeKind.Utc).AddTicks(5966),
-                            PasswordHash = "oGepU2YTY5CGeE57eZacEUOup8HNY7MErIYNboJ38vo=",
-                            PasswordSalt = "RsReHcLMrh8GXnKGyOG1SNE5fyjZo1Acqfh9oSQDkuw=",
+                            ModifiedDate = new DateTime(2025, 3, 13, 20, 2, 51, 137, DateTimeKind.Utc).AddTicks(1062),
+                            PasswordHash = "akV+8Dvfd1YrtLQtrVdN6fUkqW0AMLMJ0olmedxzql8=",
+                            PasswordSalt = "3QuOt/fvsE4vshtlIfBujcirpEbxOHoDVi6AtQWOJ5U=",
                             PhoneNumber = "0123456789",
                             Role = 1
                         });
@@ -611,10 +629,14 @@ namespace PediVax.BusinessObjects.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("PediVax.BusinessObjects.Models.Payment", "Payment")
+                    b.HasOne("PediVax.BusinessObjects.Models.PaymentDetail", "PaymentDetail")
                         .WithMany("Appointments")
-                        .HasForeignKey("PaymentId")
+                        .HasForeignKey("PaymentDetailId")
                         .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("PediVax.BusinessObjects.Models.Payment", null)
+                        .WithMany("Appointments")
+                        .HasForeignKey("PaymentId");
 
                     b.HasOne("PediVax.BusinessObjects.Models.User", "User")
                         .WithMany("Appointments")
@@ -634,7 +656,7 @@ namespace PediVax.BusinessObjects.Migrations
 
                     b.Navigation("ChildProfile");
 
-                    b.Navigation("Payment");
+                    b.Navigation("PaymentDetail");
 
                     b.Navigation("User");
 
@@ -656,6 +678,12 @@ namespace PediVax.BusinessObjects.Migrations
 
             modelBuilder.Entity("PediVax.BusinessObjects.Models.Payment", b =>
                 {
+                    b.HasOne("PediVax.BusinessObjects.Models.User", "User")
+                        .WithMany("Payments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("PediVax.BusinessObjects.Models.Vaccine", "Vaccine")
                         .WithMany("Payments")
                         .HasForeignKey("VaccineId")
@@ -665,6 +693,8 @@ namespace PediVax.BusinessObjects.Migrations
                         .WithMany("Payments")
                         .HasForeignKey("VaccinePackageId")
                         .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("User");
 
                     b.Navigation("Vaccine");
 
@@ -679,15 +709,19 @@ namespace PediVax.BusinessObjects.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("PediVax.BusinessObjects.Models.VaccinePackage", "VaccinePackage")
+                    b.HasOne("PediVax.BusinessObjects.Models.VaccinePackageDetail", "VaccinePackageDetail")
                         .WithMany("PaymentDetails")
-                        .HasForeignKey("VaccinePackageId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasForeignKey("VaccinePackageDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("PediVax.BusinessObjects.Models.VaccinePackage", null)
+                        .WithMany("PaymentDetails")
+                        .HasForeignKey("VaccinePackageId");
 
                     b.Navigation("Payment");
 
-                    b.Navigation("VaccinePackage");
+                    b.Navigation("VaccinePackageDetail");
                 });
 
             modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccineDisease", b =>
@@ -801,11 +835,18 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Navigation("PaymentDetails");
                 });
 
+            modelBuilder.Entity("PediVax.BusinessObjects.Models.PaymentDetail", b =>
+                {
+                    b.Navigation("Appointments");
+                });
+
             modelBuilder.Entity("PediVax.BusinessObjects.Models.User", b =>
                 {
                     b.Navigation("Appointments");
 
                     b.Navigation("ChildProfiles");
+
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("PediVax.BusinessObjects.Models.Vaccine", b =>
@@ -828,6 +869,11 @@ namespace PediVax.BusinessObjects.Migrations
                     b.Navigation("Payments");
 
                     b.Navigation("VaccinePackageDetails");
+                });
+
+            modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccinePackageDetail", b =>
+                {
+                    b.Navigation("PaymentDetails");
                 });
 
             modelBuilder.Entity("PediVax.BusinessObjects.Models.VaccineSchedule", b =>

@@ -31,5 +31,6 @@ namespace PediVax.BusinessObjects.Models
         // Navigation properties
         public virtual ICollection<ChildProfile> ChildProfiles { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<Payment> Payments { get; set; }
     }
 }

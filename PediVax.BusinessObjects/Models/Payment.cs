@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PediVax.BusinessObjects.Enum;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,11 +15,12 @@ namespace PediVax.BusinessObjects.Models
         [Key]
         public int PaymentId { get; set; }
         public int? VaccinePackageId { get; set; }
+        public int UserId { get; set; }
         public int? VaccineId { get; set; }
         public string? PaymentType { get; set; }
         public decimal TotalAmount { get; set; }
         public DateTime PaymentDate { get; set; }
-        public string PaymentStatus { get; set; }
+        public EnumList.PaymentStatus PaymentStatus { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
 
@@ -27,6 +29,9 @@ namespace PediVax.BusinessObjects.Models
         public virtual VaccinePackage VaccinePackage { get; set; }
         [ForeignKey("VaccineId")]
         public virtual Vaccine Vaccine { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
         public virtual ICollection<PaymentDetail> PaymentDetails { get; set; }
     }

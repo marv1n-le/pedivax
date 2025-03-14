@@ -13,7 +13,7 @@ namespace PediVax.BusinessObjects.Models
     {
         [Key]
         public int AppointmentId { get; set; }
-        public int? PaymentId { get; set; }
+        public int? PaymentDetailId { get; set; }
         public int UserId { get; set; }
         public int ChildId { get; set; }
         public int? VaccineId { get; set; }
@@ -28,8 +28,8 @@ namespace PediVax.BusinessObjects.Models
         public string ModifiedBy { get; set; }
 
         // Navigation properties
-        [ForeignKey("PaymentId")]
-        public virtual Payment Payment { get; set; }
+        [ForeignKey("PaymentDetailId")]
+        public virtual PaymentDetail PaymentDetail { get; set; }
 
         [ForeignKey("ChildId")]
         public virtual ChildProfile ChildProfile { get; set; }

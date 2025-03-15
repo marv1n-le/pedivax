@@ -82,6 +82,40 @@ namespace PediVax.API.Controllers
             }
             return Ok(response);
         }
+        [HttpPut("update-payment/{id}")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> UpdatePayment(int id, [FromBody] UpdatePaymentDTO updatePaymentDTO, CancellationToken cancellationToken)
+        {
+            if (id <= 0)
+            {
+                return BadRequest(new { message = "ID thanh toán không hợp lệ." });
+            }
+
+            if (updatePaymentDTO == null)
+            {
+                return BadRequest(new { message = "Dữ liệu thanh toán không hợp lệ." });
+            }
+
+            try
+            {
+                var updated = await _paymentService.UpdatePayment(id, updatePaymentDTO, cancellationToken);
+
+                if (!updated)
+                {
+                    return NotFound(new { message = "Không tìm thấy thanh toán để cập nhật." });
+                }
+
+                return Ok(new { success = true, message = "Cập nhật thanh toán thành công." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi cập nhật thanh toán {id}: {message}", id, ex.Message);
+                return StatusCode(500, new { message = "Đã xảy ra lỗi khi cập nhật thanh toán.", error = ex.Message });
+            }
+        }
 
         /// <summary>
         /// Thêm thanh toán mới
@@ -143,6 +177,8 @@ namespace PediVax.API.Controllers
                 }
                 return Redirect("http://localhost:3000/failed");
             }
+
+
         }
     }
 }

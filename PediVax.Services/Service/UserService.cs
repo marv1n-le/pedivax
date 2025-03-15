@@ -16,11 +16,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using PediVax.BusinessObjects.Enum;
 using PediVax.BusinessObjects.Helpers;
-using PediVax.Services.ExternalService;
 using Microsoft.Extensions.Logging;
 using System.Transactions;
 using System.Threading;
 using PediVax.BusinessObjects.DTO.ChildProfileDTO;
+using PediVax.Services.ExternalService;
 
 namespace PediVax.Services.Service
 {

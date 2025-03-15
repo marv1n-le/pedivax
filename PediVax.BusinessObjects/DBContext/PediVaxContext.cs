@@ -18,11 +18,10 @@ namespace PediVax.BusinessObjects.DBContext
         {
             if (!optionsBuilder.IsConfigured)
             {
-                // Đọc appsettings.json từ thư mục hiện tại
                 var configuration = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                    .AddEnvironmentVariables() // Thêm dòng này để đọc từ biến môi trường Azure
+                    .AddEnvironmentVariables()
                     .Build();
 
                 string connectionString = configuration.GetConnectionString("DefaultConnection");

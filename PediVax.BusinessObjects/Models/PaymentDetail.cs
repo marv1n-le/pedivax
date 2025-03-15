@@ -16,7 +16,7 @@ namespace PediVax.BusinessObjects.Models
         public int PaymentDetailId { get; set; }
         public int PaymentId { get; set; }
         public int VaccinePackageDetailId { get; set; }
-        public EnumList.IsActive IsCompleted { get; set; }
+        public EnumList.IsCompleted IsCompleted { get; set; }
         public DateTime? AdministeredDate { get; set; }
         public string? Notes { get; set; }
         public int DoseSequence { get; set; }

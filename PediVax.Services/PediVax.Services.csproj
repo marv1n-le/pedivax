@@ -7,6 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="ExternalService\VnPay\**" />
+      <EmbeddedResource Remove="ExternalService\VnPay\**" />
+      <None Remove="ExternalService\VnPay\**" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\PediVax.Repositories\PediVax.Repositories.csproj" />
     </ItemGroup>
 
@@ -14,10 +20,6 @@
       <PackageReference Include="AutoMapper" Version="14.0.0" />
       <PackageReference Include="CloudinaryDotNet" Version="1.27.4" />
       <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="ExternalService\VnPay\" />
     </ItemGroup>
 
 </Project>

@@ -106,34 +106,30 @@ namespace PediVax.Services.Service
                         throw new KeyNotFoundException("Vaccine not found");
                     }
                     payment.TotalAmount = vaccine.Price;
-                    payment.VaccinePackageId = null; // Đảm bảo VaccinePackageId luôn null
+                    payment.VaccinePackageId = null;
                 }
                 else
                 {
                     throw new ApplicationException("Either VaccineId or VaccinePackageId must be provided.");
                 }
 
-                // Đảm bảo TotalAmount hợp lệ
                 if (payment.TotalAmount <= 0)
                 {
                     throw new ApplicationException("TotalAmount must be greater than 0.");
                 }
 
-                // Đảm bảo trạng thái thanh toán
                 payment.PaymentStatus = EnumList.PaymentStatus.AwaitingPayment;
                 payment.PaymentDate = DateTime.UtcNow;
                 SetAuditFields(payment);
 
                 _logger.LogInformation($"Creating Payment: VaccineId={payment.VaccineId}, VaccinePackageId={payment.VaccinePackageId}, TotalAmount={payment.TotalAmount}");
 
-                // Lưu vào database
                 var createdPaymentId = await _paymentRepository.CreatePayment(payment, cancellationToken);
                 if (createdPaymentId <= 0)
                 {
                     throw new ApplicationException("Adding new payment failed.");
                 }
 
-                // Lấy lại thông tin từ DB
                 var savedPayment = await _paymentRepository.GetPaymentById(createdPaymentId, cancellationToken);
                 if (savedPayment == null)
                 {
@@ -141,22 +137,29 @@ namespace PediVax.Services.Service
                 }
 
                 var response = _mapper.Map<PaymentResponseDTO>(savedPayment);
+                response.VaccineId = savedPayment.VaccineId;
+                response.VaccinePackageId = savedPayment.VaccinePackageId;
 
-                // ✅ Kiểm tra lại dữ liệu trả về
-                response.VaccineId = savedPayment.VaccineId; // Chỉ có nếu chọn vaccine
-                response.VaccinePackageId = savedPayment.VaccinePackageId; // Chỉ có nếu chọn vaccine package
-
-                // ✅ Tạo URL thanh toán nếu cần
-                var model = new VnPaymentRequestModel()
+                // Kiểm tra PaymentType để quyết định có tạo URL hay không
+                if (!string.IsNullOrEmpty(payment.PaymentType) && payment.PaymentType.Equals("BankTransfer", StringComparison.OrdinalIgnoreCase))
                 {
-                    Amount = (double)payment.TotalAmount,
-                    FullName = "Khach hang",
-                    Description = payment.VaccinePackageId + "  " + payment.VaccineId,
-                    OrderId = payment.PaymentId
-                };
-                _logger.LogInformation("ABC:" + model.OrderId);
+                    var model = new VnPaymentRequestModel()
+                    {
+                        Amount = (double)payment.TotalAmount,
+                        FullName = "Khach hang",
+                        Description = payment.VaccinePackageId + "  " + payment.VaccineId,
+                        OrderId = payment.PaymentId
+                    };
 
-                response.URL = _vnPayService.CreatePaymentUrl(_httpContextAccessor.HttpContext, model);
+                    _logger.LogInformation("Creating payment URL for BankTransfer: " + model.OrderId);
+                    response.URL = _vnPayService.CreatePaymentUrl(_httpContextAccessor.HttpContext, model);
+                }
+                else
+                {
+                    _logger.LogInformation("PaymentType is Cash, no URL needed.");
+                    response.URL = null;
+                }
+
                 response.PaymentDate = payment.PaymentDate;
 
                 return response;
@@ -196,7 +199,7 @@ namespace PediVax.Services.Service
                 }
 
 
-                payment.PaymentDate = updatePaymentDTO.PaymentDate ?? payment.PaymentDate;
+                
                 payment.PaymentStatus = updatePaymentDTO.PaymentStatus ?? payment.PaymentStatus;
 
                 int rowsAffected = await _paymentRepository.UpdatePayment(payment, cancellationToken);

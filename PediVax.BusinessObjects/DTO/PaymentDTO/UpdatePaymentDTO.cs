@@ -10,11 +10,7 @@ namespace PediVax.BusinessObjects.DTO.PaymentDTO
 {
     public class UpdatePaymentDTO
     {
-        [Required(ErrorMessage = "Payment Id is required")]
-        public int PaymentId { get; set; }
-
-
-        public DateTime? PaymentDate { get; set; }
+        
         public EnumList.PaymentStatus? PaymentStatus { get; set; }
     }
 }

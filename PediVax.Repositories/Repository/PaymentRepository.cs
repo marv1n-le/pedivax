@@ -16,20 +16,29 @@ namespace PediVax.Repositories.Repository
         {
         }
 
-        // Sửa lại GetAllPayments để sử dụng trực tiếp DbContext
         public async Task<List<Payment>> GetAllPayments(CancellationToken cancellationToken)
         {
             return await _context.Payments.ToListAsync(cancellationToken);
         }
 
-        // Sửa lại GetPaymentById để sử dụng trực tiếp DbContext
         public async Task<Payment?> GetPaymentById(int paymentId, CancellationToken cancellationToken)
         {
             return await _context.Payments
                 .FirstOrDefaultAsync(p => p.PaymentId == paymentId, cancellationToken);
         }
 
-        // Các phương thức khác vẫn giữ nguyên
+        public async Task<Payment> GetPaymentByVaccineId(int vaccineId, CancellationToken cancellationToken)
+        {
+            return await _context.Payments
+                .FirstOrDefaultAsync(p => p.VaccineId == vaccineId, cancellationToken);
+        }
+
+        public async Task<Payment> GetPaymentByVaccinePackageId(int vaccinePackageId, CancellationToken cancellationToken)
+        {
+            return await _context.Payments
+                .FirstOrDefaultAsync(p => p.VaccinePackageId == vaccinePackageId, cancellationToken);
+        }
+
         public async Task<(List<Payment>, int)> GetPaymentPaged(int pageNumber, int pageSize, CancellationToken cancellationToken)
         {
             return await GetPagedAsync(pageNumber, pageSize, cancellationToken);

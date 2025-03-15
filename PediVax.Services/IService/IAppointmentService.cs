@@ -12,7 +12,7 @@ namespace PediVax.Services.IService
         Task<List<AppointmentResponseDTO>> GetAllAppointments(CancellationToken cancellationToken);
         Task<AppointmentResponseDTO> GetAppointmentById(int appointmentId, CancellationToken cancellationToken);
         Task<(List<AppointmentResponseDTO> Data, int TotalCount)> GetAppointmentsPaged(int pageNumber, int pageSize, CancellationToken cancellationToken);
-        //Task<AppointmentResponseDTO> CreateAppointment(CreateAppointmentDTO createAppointmentDTO, CancellationToken cancellationToken);
+        Task<AppointmentResponseDTO> CreateAppointment(CreateAppointmentDTO createAppointmentDTO, CancellationToken cancellationToken);
         Task<bool> UpdateAppointment(int id, UpdateAppointmentDTO updateAppointmentDTO, CancellationToken cancellationToken);
         Task<bool> DeleteAppointment(int appointmentId, CancellationToken cancellationToken);
         Task<List<AppointmentResponseDTO>> GetAppointmentsByChildId(int childId, CancellationToken cancellationToken);

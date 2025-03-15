@@ -199,7 +199,7 @@ namespace PediVax.Services.Service
                 }
 
 
-                payment.PaymentDate = updatePaymentDTO.PaymentDate ?? payment.PaymentDate;
+                
                 payment.PaymentStatus = updatePaymentDTO.PaymentStatus ?? payment.PaymentStatus;
 
                 int rowsAffected = await _paymentRepository.UpdatePayment(payment, cancellationToken);

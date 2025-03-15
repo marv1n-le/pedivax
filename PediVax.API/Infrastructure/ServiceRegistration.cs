@@ -28,6 +28,7 @@ namespace PediVax.Infrastructure
             services.AddScoped<IVaccineScheduleService, VaccineScheduleService>();
             services.AddScoped<IVaccineProfileService, VaccineProfileService>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IVaccineDiseaseRepository, VaccineDiseaseRepository>();
             //Register services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDiseaseService, DiseaseService>();
@@ -42,6 +43,8 @@ namespace PediVax.Infrastructure
             services.AddScoped<IVaccineProfileRepository, VaccineProfileRepository>();
             services.AddScoped<IVnPayService, VnPayService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IVaccineDiseaseService, VaccineDiseaseService>();
+
 
             //External services
 

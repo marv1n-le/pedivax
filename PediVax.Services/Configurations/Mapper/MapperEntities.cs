@@ -18,6 +18,7 @@ using PediVax.BusinessObjects.DTO.VaccineProfileDTO;
 using PediVax.BusinessObjects.DTO.VaccineSchedulePersonalDTO;
 using System.Globalization;
 using PediVax.BusinessObjects.Enum;
+using PediVax.BusinessObjects.DTO.PaymentDTO;
 
 namespace PediVax.Services.Configuration.Mapper
 {
@@ -86,6 +87,15 @@ namespace PediVax.Services.Configuration.Mapper
             CreateMap<CreateVaccineProfileDTO, VaccineProfile>();
             CreateMap<UpdateVaccineProfileDTO, VaccineProfile>();
             CreateMap<VaccineProfile, VaccineProfileResponseDTO>();
+
+            //Payment 
+            CreateMap<CreatePaymentDTO, Payment>();
+            CreateMap<UpdatePaymentDTO, Payment>();
+            CreateMap<Payment, PaymentResponseDTO>()
+            .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount))
+            .ForMember(dest => dest.VaccineId, opt => opt.MapFrom(src => src.VaccineId))
+            .ForMember(dest => dest.VaccinePackageId, opt => opt.MapFrom(src => src.VaccinePackageId))
+            .ReverseMap();
 
         }
     }

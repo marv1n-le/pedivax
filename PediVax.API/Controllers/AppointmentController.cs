@@ -24,24 +24,24 @@ namespace PediVax.Controllers
             _logger = logger;
         }
 
-        //[HttpPost("create")]
-        //[ProducesResponseType((int)HttpStatusCode.Created)]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        //public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDTO request, CancellationToken cancellationToken)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(new { message = "Invalid request data." });
-        //    }
+        [HttpPost("create")]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDTO request, CancellationToken cancellationToken)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Invalid request data." });
+            }
 
-        //    var createdAppointment = await _appointmentService.CreateAppointment(request, cancellationToken);
-        //    if (createdAppointment == null)
-        //    {
-        //        return BadRequest(new { message = "Failed to create appointment." });
-        //    }
+            var createdAppointment = await _appointmentService.CreateAppointment(request, cancellationToken);
+            if (createdAppointment == null)
+            {
+                return BadRequest(new { message = "Failed to create appointment." });
+            }
 
-        //    return CreatedAtAction(nameof(GetAppointmentById), new { appointmentId = createdAppointment.AppointmentId }, createdAppointment);
-        //}
+            return CreatedAtAction(nameof(GetAppointmentById), new { appointmentId = createdAppointment.AppointmentId }, createdAppointment);
+        }
 
         [HttpPut("update/{appointmentId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -143,38 +143,5 @@ namespace PediVax.Controllers
             var response = await _appointmentService.GetAppointmentsByDate(appointmentDate, cancellationToken);
             return Ok(response);
         }
-
-        [HttpPut("update-status/{appointmentId}/{appointmentStatus}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> UpdateAppointmentStatus(int appointmentId, EnumList.AppointmentStatus appointmentStatus, CancellationToken cancellationToken)
-        {
-            if (appointmentId <= 0)
-            {
-                return BadRequest(new { message = "Invalid appointment ID." });
-            }
-
-            try
-            {
-                bool isUpdated = await _appointmentService.UpdateAppointmentStatus(appointmentId, appointmentStatus, cancellationToken);
-
-                if (isUpdated)
-                {
-                    return Ok(new { message = "Appointment status updated successfully." });
-                }
-                return NotFound(new { message = "Appointment not found or cannot be updated." });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error updating appointment status for ID {appointmentId}", appointmentId);
-                return Problem("An unexpected error occurred.");
-            }
-        }
-
     }
 }

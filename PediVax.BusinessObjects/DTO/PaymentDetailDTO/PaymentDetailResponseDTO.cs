@@ -18,10 +18,6 @@ namespace PediVax.BusinessObjects.DTO.PaymentDetailDTO
         public int DoseSequence { get; set; }
         public DateTime? ScheduledDate { get; set; }
 
-        // Navigation properties
-        public string VaccineName { get; set; }
-        public string VaccinePackageName { get; set; }
         public decimal Price { get; set; }
-        public int? AppointmentId { get; set; }
     }
 }

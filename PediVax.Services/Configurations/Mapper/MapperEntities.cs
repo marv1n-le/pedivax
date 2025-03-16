@@ -47,9 +47,7 @@ namespace PediVax.Services.Configuration.Mapper
             CreateMap<CreateChildProfileDTO, ChildProfile>();
             CreateMap<UpdateChildProfileDTO, ChildProfile>();
             CreateMap<ChildProfile, ChildProfileResponseDTO>()
-                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Image == null ? null : src.Image))
-                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src =>
-    DateTime.ParseExact(src.DateOfBirth.ToString("dd/MM/yyyy"), "dd/MM/yyyy", CultureInfo.InvariantCulture))); ;
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Image == null ? null : src.Image));
 
             //Vaccine Mapper
             CreateMap<CreateVaccineDTO, Vaccine>();

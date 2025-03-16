@@ -11,7 +11,7 @@ namespace PediVax.BusinessObjects.DTO.PaymentDTO
     {
 
         public int PaymentId { get; set; }
-
+        public int AppointmentId { get; set; }
         public int UserId { get; set; }
         public int? VaccinePackageId { get; set; }
         public int? VaccineId { get; set; }

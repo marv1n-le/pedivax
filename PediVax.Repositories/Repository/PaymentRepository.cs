@@ -18,7 +18,9 @@ namespace PediVax.Repositories.Repository
 
         public async Task<List<Payment>> GetAllPayments(CancellationToken cancellationToken)
         {
-            return await _context.Payments.ToListAsync(cancellationToken);
+            return await _context.Payments
+                .Include(p => p.Appointment)
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<Payment?> GetPaymentById(int paymentId, CancellationToken cancellationToken)
@@ -38,6 +40,13 @@ namespace PediVax.Repositories.Repository
             return await _context.Payments
                 .FirstOrDefaultAsync(p => p.VaccinePackageId == vaccinePackageId, cancellationToken);
         }
+
+        public async Task<Payment> GetPaymentByAppointmentId(int appointmentId, CancellationToken cancellationToken)
+        {
+            return await _context.Payments
+                .FirstOrDefaultAsync(p => p.AppointmentId == appointmentId, cancellationToken);
+        }
+
 
         public async Task<(List<Payment>, int)> GetPaymentPaged(int pageNumber, int pageSize, CancellationToken cancellationToken)
         {

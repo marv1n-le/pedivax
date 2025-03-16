@@ -23,7 +23,7 @@ public class AppointmentService : IAppointmentService
     private readonly IPaymentRepository _paymentRepository;
     private readonly ILogger<AppointmentService> _logger;
 
-    public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<AppointmentService> logger, IChildProfileRepository childProfileRepository, IVaccinePackageRepository vaccinePackageRepository)
+    public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<AppointmentService> logger, IChildProfileRepository childProfileRepository, IVaccinePackageRepository vaccinePackageRepository, IPaymentRepository paymentRepository)
     {
         _appointmentRepository = appointmentRepository;
         _mapper = mapper;
@@ -31,6 +31,7 @@ public class AppointmentService : IAppointmentService
         _logger = logger;
         _childProfileRepository = childProfileRepository;
         _vaccinePackageRepository = vaccinePackageRepository;
+        _paymentRepository = paymentRepository;
     }
 
     private string GetCurrentUserName()
@@ -224,14 +225,19 @@ public class AppointmentService : IAppointmentService
         var appointment = await _appointmentRepository.GetAppointmentById(appointmentId, cancellationToken);
         if ((int)appointment.AppointmentStatus == 1)
         {
-
             if ((int)appointmentStatus == 2 || (int)appointmentStatus == 5)
             {
+                bool isPaid = await HasUserPaidForAppointment(appointment.UserId, appointmentId, cancellationToken);
+
+                if (!isPaid)
+                {
+                    throw new ArgumentException("User has not paid for the appointment. Payment is required before proceeding.");
+                }
                 appointment.AppointmentStatus = appointmentStatus;
             }
             else
             {
-                throw new ArgumentException("AppoitmentId is Pending, You can only change to WaitingForInjection (2) or Canceled (5).");
+                throw new ArgumentException("AppointmentId is Pending, You can only change to WaitingForInjection (2) or Canceled (5).");
             }
         }
         else if ((int)appointment.AppointmentStatus == 2)
@@ -242,7 +248,7 @@ public class AppointmentService : IAppointmentService
             }
             else
             {
-                throw new ArgumentException("AppoitmentId is WaitingForInjection, You can only change to WaitingForResponse (3).");
+                throw new ArgumentException("AppointmentId is WaitingForInjection, You can only change to WaitingForResponse (3).");
             }
         }
         else if ((int)appointment.AppointmentStatus == 3)
@@ -253,39 +259,28 @@ public class AppointmentService : IAppointmentService
             }
             else
             {
-                throw new ArgumentException("AppoitmentId is WaitingForResponse, You can only change to Completed (4).");
+                throw new ArgumentException("AppointmentId is WaitingForResponse, You can only change to Completed (4).");
             }
         }
         else
         {
-            throw new ArgumentException("You can not change Appoitment Status");
+            throw new ArgumentException("You cannot change Appointment Status.");
         }
 
         var rowAffected = await _appointmentRepository.UpdateAppointment(appointment, cancellationToken);
         return rowAffected > 0;
     }
 
-    //private async Task<bool> CheckIfPaymentIsCompleted(int? vaccineId, int? vaccinePackageId, CancellationToken cancellationToken)
-    //{
-    //    if (vaccineId.HasValue)
-    //    {
-    //        var vaccinePayment = await _paymentRepository
-    //            .GetPaymentByVaccineId(vaccineId.Value, cancellationToken);
-    //        if (vaccinePayment != null && vaccinePayment.PaymentStatus == EnumList.PaymentStatus.Paid)
-    //        {
-    //            return true;
-    //        }
-    //    }
-    //    else if (vaccinePackageId.HasValue)
-    //    {
-    //        var packagePayment = await _paymentRepository
-    //            .GetPaymentByVaccinePackageId(vaccinePackageId.Value, cancellationToken);
-    //        if (packagePayment != null && packagePayment.PaymentStatus == EnumList.PaymentStatus.Paid)
-    //        {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
+    public async Task<bool> HasUserPaidForAppointment(int userId, int appointmentId, CancellationToken cancellationToken)
+    {
+        var payment = await _paymentRepository.GetPaymentByAppointmentId(appointmentId, cancellationToken);
+
+        if (payment != null && payment.UserId == userId && payment.PaymentStatus == EnumList.PaymentStatus.Paid)
+        {
+            return true;
+        }
+
+        return false;
+    }
 
 }

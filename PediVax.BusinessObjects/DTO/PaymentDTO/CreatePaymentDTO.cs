@@ -13,17 +13,8 @@ namespace PediVax.BusinessObjects.DTO.PaymentDTO
         [Required(ErrorMessage = "UserID is required")]
         public int UserId { get; set; }
         public int? VaccinePackageId { get; set; }
-
-        
         public int? VaccineId { get; set; }
-
         [Required(ErrorMessage = "Payment Type is required")]
         public EnumList.PaymentType PaymentType { get; set; }
-
-        //[Required(ErrorMessage = "Total Amount is required")]
-        //[Range(0, double.MaxValue, ErrorMessage = "Total Amount must be a positive value")]
-        //public decimal TotalAmount { get; set; }
-
-
     }
 }

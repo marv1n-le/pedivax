@@ -161,6 +161,7 @@ public class AppointmentService : IAppointmentService
             }
 
             SetAuditFields(appointment);
+            appointment.UserId = updateAppointmentDTO.UserId ?? appointment.UserId;
             appointment.ChildId = updateAppointmentDTO.ChildId ?? appointment.ChildId;
             appointment.PaymentDetailId = updateAppointmentDTO.PaymentDetailId ?? appointment.PaymentDetailId;
             appointment.VaccineId = updateAppointmentDTO.VaccineId ?? appointment.VaccineId;
@@ -227,12 +228,6 @@ public class AppointmentService : IAppointmentService
         {
             if ((int)appointmentStatus == 2 || (int)appointmentStatus == 5)
             {
-                bool isPaid = await HasUserPaidForAppointment(appointment.UserId, appointmentId, cancellationToken);
-
-                if (!isPaid)
-                {
-                    throw new ArgumentException("User has not paid for the appointment. Payment is required before proceeding.");
-                }
                 appointment.AppointmentStatus = appointmentStatus;
             }
             else
@@ -269,18 +264,6 @@ public class AppointmentService : IAppointmentService
 
         var rowAffected = await _appointmentRepository.UpdateAppointment(appointment, cancellationToken);
         return rowAffected > 0;
-    }
-
-    public async Task<bool> HasUserPaidForAppointment(int userId, int appointmentId, CancellationToken cancellationToken)
-    {
-        var payment = await _paymentRepository.GetPaymentByAppointmentId(appointmentId, cancellationToken);
-
-        if (payment != null && payment.UserId == userId && payment.PaymentStatus == EnumList.PaymentStatus.Paid)
-        {
-            return true;
-        }
-
-        return false;
     }
 
 }

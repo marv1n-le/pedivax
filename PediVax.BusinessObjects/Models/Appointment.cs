@@ -43,5 +43,6 @@ namespace PediVax.BusinessObjects.Models
         [ForeignKey("VaccinePackageId")]
         public virtual VaccinePackage VaccinePackage { get; set; }
         public virtual ICollection<VaccineProfile> VaccineProfiles { get; set; }
+        public virtual ICollection<Payment> Payments { get; set; }
     }
 }

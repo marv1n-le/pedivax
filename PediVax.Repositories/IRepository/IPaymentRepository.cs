@@ -13,6 +13,7 @@ namespace PediVax.Repositories.IRepository
         Task<(List<Payment>, int)> GetPaymentPaged(int pageNumber, int pageSize, CancellationToken cancellationToken);
         Task<Payment> GetPaymentByVaccineId(int vaccineId, CancellationToken cancellationToken);
         Task<Payment> GetPaymentByVaccinePackageId(int vaccinePackageId, CancellationToken cancellationToken);
+        Task<Payment> GetPaymentByAppointmentId(int appointmentId, CancellationToken cancellationToken);
         Task<int> CreatePayment(Payment payment, CancellationToken cancellationToken);
         Task<int> UpdatePayment(Payment payment, CancellationToken cancellationToken);
         Task<bool> DeletePayment(int paymentId, CancellationToken cancellationToken);

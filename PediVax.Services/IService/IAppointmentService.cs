@@ -18,6 +18,6 @@ namespace PediVax.Services.IService
         Task<List<AppointmentResponseDTO>> GetAppointmentsByChildId(int childId, CancellationToken cancellationToken);
         Task<List<AppointmentResponseDTO>> GetAppointmentsByDate(DateTime appointmentDate, CancellationToken cancellationToken);
         Task<List<AppointmentResponseDTO>> GetAppointmentsByStatus(EnumList.AppointmentStatus appointmentStatus, CancellationToken cancellationToken);
-        Task<bool> UpdateAppointmentStatus(int appointmentId, EnumList.AppointmentStatus appointmentStatus, CancellationToken cancellationToken);
+     //   Task<bool> UpdateAppointmentStatus(int appointmentId, EnumList.AppointmentStatus appointmentStatus, CancellationToken cancellationToken);
     }
 }

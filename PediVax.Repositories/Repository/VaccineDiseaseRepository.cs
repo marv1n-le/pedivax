@@ -47,6 +47,13 @@ namespace PediVax.Repositories.Repository
             return (data, totalCount);
         }
 
+        public async Task<List<VaccineDisease>> GetVaccineDiseasesByVaccineId(int vaccineId, CancellationToken cancellationToken)
+        {
+            return await _context.VaccineDiseases
+                .Where(vd => vd.VaccineId == vaccineId)
+                .ToListAsync(cancellationToken);
+        }
+
         public async Task<int> CreateVaccineDisease(VaccineDisease vaccineDisease, CancellationToken cancellationToken)
         {
             _context.VaccineDiseases.Add(vaccineDisease);

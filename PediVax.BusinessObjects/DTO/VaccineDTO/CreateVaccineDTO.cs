@@ -12,6 +12,8 @@ public class CreateVaccineDTO
     public IFormFile Image { get; set; }
     [Required(ErrorMessage = ("Description is required"))]
     public string Description { get; set; }
+    [Required(ErrorMessage = ("Quantity is required"))]
+    public int Quantity { get; set; }
     [Required(ErrorMessage = ("Origin is required"))]
     public string Origin { get; set; }
     [Required(ErrorMessage = ("Manufacturer is required"))]

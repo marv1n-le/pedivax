@@ -9,6 +9,7 @@ public class VaccineResponseDTO
     public string Image { get; set; }
     public string Description { get; set; }
     public string Origin { get; set; }
+    public int Quantity { get; set; }
     public string Manufacturer { get; set; }
     public decimal Price { get; set; }
     [JsonConverter(typeof(DateOnlyJsonConverter))]

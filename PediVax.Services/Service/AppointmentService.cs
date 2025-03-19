@@ -20,10 +20,11 @@ public class AppointmentService : IAppointmentService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IChildProfileRepository _childProfileRepository;
     private readonly IVaccinePackageRepository _vaccinePackageRepository;
+    private readonly IVaccineRepository _vaccineRepository;
     private readonly IPaymentRepository _paymentRepository;
     private readonly ILogger<AppointmentService> _logger;
 
-    public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<AppointmentService> logger, IChildProfileRepository childProfileRepository, IVaccinePackageRepository vaccinePackageRepository, IPaymentRepository paymentRepository)
+    public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<AppointmentService> logger, IChildProfileRepository childProfileRepository, IVaccinePackageRepository vaccinePackageRepository, IPaymentRepository paymentRepository, IVaccineRepository vaccineRepository)
     {
         _appointmentRepository = appointmentRepository;
         _mapper = mapper;
@@ -32,6 +33,7 @@ public class AppointmentService : IAppointmentService
         _childProfileRepository = childProfileRepository;
         _vaccinePackageRepository = vaccinePackageRepository;
         _paymentRepository = paymentRepository;
+        _vaccineRepository = vaccineRepository;
     }
 
     private string GetCurrentUserName()
@@ -91,6 +93,19 @@ public class AppointmentService : IAppointmentService
         if (createAppointmentDTO.VaccinePackageId.HasValue && createAppointmentDTO.VaccineId.HasValue)
         {
             throw new ArgumentException("Bạn không thể chọn cả Vaccine Package và Vaccine riêng lẻ cùng lúc. Vui lòng chọn một trong hai.");
+        }
+
+        if (createAppointmentDTO.VaccineId.HasValue)
+        {
+            var vaccine = await _vaccineRepository.GetVaccineById(createAppointmentDTO.VaccineId.Value, cancellationToken);
+            if (vaccine == null)
+            {
+                throw new ArgumentException("Vắc-xin không hợp lệ.");
+            }
+            if (vaccine.Quantity <= 0)
+            {
+                throw new ApplicationException("Vắc-xin này đã hết hàng. Vui lòng chọn vắc-xin khác.");
+            }
         }
 
         var childProfile = await _childProfileRepository.GetChildProfileById(createAppointmentDTO.ChildId);
@@ -160,6 +175,23 @@ public class AppointmentService : IAppointmentService
                 throw new KeyNotFoundException("Appointment not found");
             }
 
+            bool isStatusChangedToSuccess = updateAppointmentDTO.AppointmentStatus.HasValue &&
+                                        updateAppointmentDTO.AppointmentStatus == EnumList.AppointmentStatus.Completed &&
+                                        appointment.AppointmentStatus != EnumList.AppointmentStatus.Completed;
+            if (isStatusChangedToSuccess && appointment.VaccineId.HasValue)
+            {
+                var vaccine = await _vaccineRepository.GetVaccineById(appointment.VaccineId.Value, cancellationToken);
+                if (vaccine != null)
+                {
+                    if (vaccine.Quantity <= 0)
+                    {
+                        throw new ApplicationException("Không đủ vắc-xin trong kho.");
+                    }
+                    vaccine.Quantity -= 1;
+                    await _vaccineRepository.UpdateVaccine(vaccine, cancellationToken);
+                }
+            }
+
             SetAuditFields(appointment);
             appointment.UserId = updateAppointmentDTO.UserId ?? appointment.UserId;
             appointment.Reaction = updateAppointmentDTO.Reaction ?? appointment.Reaction;
@@ -215,50 +247,5 @@ public class AppointmentService : IAppointmentService
         var appointments = await _appointmentRepository.GetAppointmentsByStatus(appointmentStatus, cancellationToken);
         return _mapper.Map<List<AppointmentResponseDTO>>(appointments);
     }
-
-    //public async Task<bool> UpdateAppointmentStatus(int appointmentId, EnumList.AppointmentStatus appointmentStatus, CancellationToken cancellationToken)
-    //{
-    //    var appointment = await _appointmentRepository.GetAppointmentById(appointmentId, cancellationToken);
-    //    if ((int)appointment.AppointmentStatus == 1)
-    //    {
-    //        if ((int)appointmentStatus == 2 || (int)appointmentStatus == 5)
-    //        {
-    //            appointment.AppointmentStatus = appointmentStatus;
-    //        }
-    //        else
-    //        {
-    //            throw new ArgumentException("AppointmentId is Pending, You can only change to WaitingForInjection (2) or Canceled (5).");
-    //        }
-    //    }
-    //    else if ((int)appointment.AppointmentStatus == 2)
-    //    {
-    //        if ((int)appointmentStatus == 3)
-    //        {
-    //            appointment.AppointmentStatus = appointmentStatus;
-    //        }
-    //        else
-    //        {
-    //            throw new ArgumentException("AppointmentId is WaitingForInjection, You can only change to WaitingForResponse (3).");
-    //        }
-    //    }
-    //    else if ((int)appointment.AppointmentStatus == 3)
-    //    {
-    //        if ((int)appointmentStatus == 4)
-    //        {
-    //            appointment.AppointmentStatus = appointmentStatus;
-    //        }
-    //        else
-    //        {
-    //            throw new ArgumentException("AppointmentId is WaitingForResponse, You can only change to Completed (4).");
-    //        }
-    //    }
-    //    else
-    //    {
-    //        throw new ArgumentException("You cannot change Appointment Status.");
-    //    }
-
-    //    var rowAffected = await _appointmentRepository.UpdateAppointment(appointment, cancellationToken);
-    //    return rowAffected > 0;
-    //}
 
 }

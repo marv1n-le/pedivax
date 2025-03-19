@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PediVax.BusinessObjects.DBContext;
 
@@ -11,9 +12,11 @@ using PediVax.BusinessObjects.DBContext;
 namespace PediVax.BusinessObjects.Migrations
 {
     [DbContext(typeof(PediVaxContext))]
-    partial class PediVaxContextModelSnapshot : ModelSnapshot
+    [Migration("20250319030853_fixdb")]
+    partial class fixdb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

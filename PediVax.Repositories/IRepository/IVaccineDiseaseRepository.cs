@@ -10,7 +10,7 @@ namespace PediVax.Repositories.IRepository
         Task<List<VaccineDisease>> GetAllVaccineDiseases(CancellationToken cancellationToken);
         Task<VaccineDisease?> GetVaccineDiseaseById(int vaccineDiseaseId, CancellationToken cancellationToken);
         Task<(List<VaccineDisease>, int)> GetVaccineDiseasePaged(int pageNumber, int pageSize, CancellationToken cancellationToken);
-
+        Task<List<VaccineDisease>> GetVaccineDiseasesByVaccineId(int vaccineId, CancellationToken cancellationToken);
         Task<int> CreateVaccineDisease(VaccineDisease vaccineDisease, CancellationToken cancellationToken);
         Task<int> UpdateVaccineDisease(VaccineDisease vaccineDisease, CancellationToken cancellationToken);
         Task<bool> DeleteVaccineDisease(int vaccineDiseaseId, CancellationToken cancellationToken);

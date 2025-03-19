@@ -21,10 +21,13 @@ public class AppointmentService : IAppointmentService
     private readonly IChildProfileRepository _childProfileRepository;
     private readonly IVaccinePackageRepository _vaccinePackageRepository;
     private readonly IVaccineRepository _vaccineRepository;
+    private readonly IPaymentDetailRepository _paymentDetailRepository;
     private readonly IPaymentRepository _paymentRepository;
+    private readonly IVaccineDiseaseRepository _vaccineDiseaseRepository;
+    private readonly IVaccineProfileRepository _vaccineProfileRepository;
     private readonly ILogger<AppointmentService> _logger;
 
-    public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<AppointmentService> logger, IChildProfileRepository childProfileRepository, IVaccinePackageRepository vaccinePackageRepository, IPaymentRepository paymentRepository, IVaccineRepository vaccineRepository)
+    public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<AppointmentService> logger, IChildProfileRepository childProfileRepository, IVaccinePackageRepository vaccinePackageRepository, IPaymentRepository paymentRepository, IVaccineRepository vaccineRepository, IVaccineDiseaseRepository vaccineDiseaseRepository, IVaccineProfileRepository vaccineProfileRepository, IPaymentDetailRepository paymentDetailRepository)
     {
         _appointmentRepository = appointmentRepository;
         _mapper = mapper;
@@ -34,6 +37,9 @@ public class AppointmentService : IAppointmentService
         _vaccinePackageRepository = vaccinePackageRepository;
         _paymentRepository = paymentRepository;
         _vaccineRepository = vaccineRepository;
+        _vaccineDiseaseRepository = vaccineDiseaseRepository;
+        _vaccineProfileRepository = vaccineProfileRepository;
+        _paymentDetailRepository = paymentDetailRepository; 
     }
 
     private string GetCurrentUserName()
@@ -203,6 +209,11 @@ public class AppointmentService : IAppointmentService
             appointment.AppointmentStatus = updateAppointmentDTO.AppointmentStatus ?? appointment.AppointmentStatus;
 
             int rowAffected = await _appointmentRepository.UpdateAppointment(appointment, cancellationToken);
+
+            if (isStatusChangedToSuccess)
+            {
+                await UpdateVaccineProfilesForCompletedAppointment(appointment, cancellationToken);
+            }
             return rowAffected > 0;
         }
         catch (Exception ex)
@@ -227,6 +238,59 @@ public class AppointmentService : IAppointmentService
         {
             _logger.LogError(ex, "Error deleting appointment with ID {appointmentId}", appointmentId);
             throw new ApplicationException("Error while deleting appointment", ex);
+        }
+    }
+
+    private async Task UpdateVaccineProfilesForCompletedAppointment(Appointment appointment, CancellationToken cancellationToken)
+    {
+        try
+        {
+            // Get the vaccines administered in this appointment
+            List<int> diseaseIds = new List<int>();
+
+            if (appointment.VaccineId.HasValue)
+            {
+                var vaccineDiseases = await _vaccineDiseaseRepository.GetVaccineDiseasesByVaccineId(appointment.VaccineId.Value, cancellationToken);
+                diseaseIds.AddRange(vaccineDiseases.Select(vd => vd.DiseaseId));
+            }
+            else if (appointment.PaymentDetailId.HasValue)
+            {
+                var paymentDetail = await _paymentDetailRepository.GetPaymentDetailById(appointment.PaymentDetailId.Value, cancellationToken);
+
+                if (paymentDetail != null)
+                {
+                    var vaccineId = paymentDetail.VaccinePackageDetail.VaccineId;
+                    var vaccineDiseases = await _vaccineDiseaseRepository.GetVaccineDiseasesByVaccineId(vaccineId, cancellationToken);
+
+                    diseaseIds.AddRange(vaccineDiseases.Select(vd => vd.DiseaseId));
+                }
+
+                if (diseaseIds.Any())
+                {
+                    var childProfiles = await _vaccineProfileRepository.GetVaccineProfileByChildId(appointment.ChildId, cancellationToken);
+
+                    var profilesToUpdate = childProfiles
+                        .Where(vp => diseaseIds.Contains(vp.DiseaseId) &&
+                               vp.IsCompleted == EnumList.IsCompleted.No)
+                        .ToList();
+
+                    foreach (var profile in profilesToUpdate)
+                    {
+                        profile.AppointmentId = appointment.AppointmentId;
+                        profile.VaccinationDate = appointment.AppointmentDate;
+                        profile.IsCompleted = EnumList.IsCompleted.Yes;
+                        profile.ModifiedBy = appointment.ModifiedBy;
+                        profile.ModifiedDate = DateTime.UtcNow;
+
+                        await _vaccineProfileRepository.UpdateVaccineProfile(profile, cancellationToken);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating vaccine profiles for completed appointment {id}", appointment.AppointmentId);
+            throw new ApplicationException("Error while update appointment for vaccineprofile", ex);
         }
     }
 

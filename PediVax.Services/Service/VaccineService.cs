@@ -107,6 +107,7 @@ public class VaccineService : IVaccineService
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             vaccine.Image = await _cloudinaryService.UploadImage(createVaccineDTO.Image);
+            vaccine.Quantity = createVaccineDTO.Quantity;
             vaccine.IsActive = EnumList.IsActive.Active;
             vaccine.CreatedBy = GetCurrentUserName();
             vaccine.CreatedDate = DateTime.UtcNow;
@@ -150,6 +151,7 @@ public class VaccineService : IVaccineService
 
             SetAuditFields(vaccine);
             vaccine.Name = updateVaccineDTO.Name ?? vaccine.Name;
+            vaccine.Quantity = updateVaccineDTO.Quantity ?? vaccine.Quantity;
             vaccine.Description = updateVaccineDTO.Description ?? vaccine.Description;
             vaccine.Description = updateVaccineDTO.Description ?? vaccine.Description;
             vaccine.Origin = updateVaccineDTO.Origin ?? vaccine.Origin;

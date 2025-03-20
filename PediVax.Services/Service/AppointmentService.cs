@@ -246,12 +246,31 @@ public class AppointmentService : IAppointmentService
         try
         {
             // Get the vaccines administered in this appointment
-            List<int> diseaseIds = new List<int>();
-
             if (appointment.VaccineId.HasValue)
             {
+                // Lấy các bệnh tương ứng với vaccineId, nhưng chỉ lấy 1 bệnh đầu tiên cho mỗi vaccine
                 var vaccineDiseases = await _vaccineDiseaseRepository.GetVaccineDiseasesByVaccineId(appointment.VaccineId.Value, cancellationToken);
-                diseaseIds.AddRange(vaccineDiseases.Select(vd => vd.DiseaseId));
+
+                if (vaccineDiseases.Any())
+                {
+                    var diseaseId = vaccineDiseases.First().DiseaseId;
+
+                    var childProfiles = await _vaccineProfileRepository.GetVaccineProfileByChildId(appointment.ChildId, cancellationToken);
+
+                    var profileToUpdate = childProfiles
+                        .FirstOrDefault(vp => vp.DiseaseId == diseaseId && vp.IsCompleted == EnumList.IsCompleted.No);
+
+                    if (profileToUpdate != null)
+                    {
+                        profileToUpdate.AppointmentId = appointment.AppointmentId;
+                        profileToUpdate.VaccinationDate = appointment.AppointmentDate;
+                        profileToUpdate.IsCompleted = EnumList.IsCompleted.Yes;
+                        profileToUpdate.ModifiedBy = appointment.ModifiedBy;
+                        profileToUpdate.ModifiedDate = DateTime.UtcNow;
+
+                        await _vaccineProfileRepository.UpdateVaccineProfile(profileToUpdate, cancellationToken);
+                    }
+                }
             }
             else if (appointment.PaymentDetailId.HasValue)
             {
@@ -262,27 +281,25 @@ public class AppointmentService : IAppointmentService
                     var vaccineId = paymentDetail.VaccinePackageDetail.VaccineId;
                     var vaccineDiseases = await _vaccineDiseaseRepository.GetVaccineDiseasesByVaccineId(vaccineId, cancellationToken);
 
-                    diseaseIds.AddRange(vaccineDiseases.Select(vd => vd.DiseaseId));
-                }
-
-                if (diseaseIds.Any())
-                {
-                    var childProfiles = await _vaccineProfileRepository.GetVaccineProfileByChildId(appointment.ChildId, cancellationToken);
-
-                    var profilesToUpdate = childProfiles
-                        .Where(vp => diseaseIds.Contains(vp.DiseaseId) &&
-                               vp.IsCompleted == EnumList.IsCompleted.No)
-                        .ToList();
-
-                    foreach (var profile in profilesToUpdate)
+                    if (vaccineDiseases.Any())
                     {
-                        profile.AppointmentId = appointment.AppointmentId;
-                        profile.VaccinationDate = appointment.AppointmentDate;
-                        profile.IsCompleted = EnumList.IsCompleted.Yes;
-                        profile.ModifiedBy = appointment.ModifiedBy;
-                        profile.ModifiedDate = DateTime.UtcNow;
+                        var diseaseId = vaccineDiseases.First().DiseaseId;
 
-                        await _vaccineProfileRepository.UpdateVaccineProfile(profile, cancellationToken);
+                        var childProfiles = await _vaccineProfileRepository.GetVaccineProfileByChildId(appointment.ChildId, cancellationToken);
+
+                        var profileToUpdate = childProfiles
+                            .FirstOrDefault(vp => vp.DiseaseId == diseaseId && vp.IsCompleted == EnumList.IsCompleted.No);
+
+                        if (profileToUpdate != null)
+                        {
+                            profileToUpdate.AppointmentId = appointment.AppointmentId;
+                            profileToUpdate.VaccinationDate = appointment.AppointmentDate;
+                            profileToUpdate.IsCompleted = EnumList.IsCompleted.Yes;
+                            profileToUpdate.ModifiedBy = appointment.ModifiedBy;
+                            profileToUpdate.ModifiedDate = DateTime.UtcNow;
+
+                            await _vaccineProfileRepository.UpdateVaccineProfile(profileToUpdate, cancellationToken);
+                        }
                     }
                 }
             }

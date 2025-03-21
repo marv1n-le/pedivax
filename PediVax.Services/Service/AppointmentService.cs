@@ -245,20 +245,34 @@ public class AppointmentService : IAppointmentService
     {
         try
         {
-            // Get the vaccines administered in this appointment
+            List<int> vaccineDiseaseIds = new();
+
             if (appointment.VaccineId.HasValue)
             {
-                // Lấy các bệnh tương ứng với vaccineId, nhưng chỉ lấy 1 bệnh đầu tiên cho mỗi vaccine
-                var vaccineDiseases = await _vaccineDiseaseRepository.GetVaccineDiseasesByVaccineId(appointment.VaccineId.Value, cancellationToken);
-
-                if (vaccineDiseases.Any())
+                vaccineDiseaseIds = (await _vaccineDiseaseRepository.GetVaccineDiseasesByVaccineId(appointment.VaccineId.Value, cancellationToken))
+                    .Select(vd => vd.DiseaseId)
+                    .ToList();
+            }
+            else if (appointment.PaymentDetailId.HasValue)
+            {
+                var paymentDetail = await _paymentDetailRepository.GetPaymentDetailById(appointment.PaymentDetailId.Value, cancellationToken);
+                if (paymentDetail != null)
                 {
-                    var diseaseId = vaccineDiseases.First().DiseaseId;
+                    vaccineDiseaseIds = (await _vaccineDiseaseRepository.GetVaccineDiseasesByVaccineId(paymentDetail.VaccinePackageDetail.VaccineId, cancellationToken))
+                        .Select(vd => vd.DiseaseId)
+                        .ToList();
+                }
+            }
 
-                    var childProfiles = await _vaccineProfileRepository.GetVaccineProfileByChildId(appointment.ChildId, cancellationToken);
+            if (vaccineDiseaseIds.Any())
+            {
+                var childProfiles = await _vaccineProfileRepository.GetVaccineProfileByChildId(appointment.ChildId, cancellationToken);
 
+                foreach (var diseaseId in vaccineDiseaseIds)
+                {
                     var profileToUpdate = childProfiles
-                        .FirstOrDefault(vp => vp.DiseaseId == diseaseId && vp.IsCompleted == EnumList.IsCompleted.No);
+                        .Where(vp => vp.DiseaseId == diseaseId && vp.IsCompleted == EnumList.IsCompleted.No)
+                        .FirstOrDefault();
 
                     if (profileToUpdate != null)
                     {
@@ -272,44 +286,14 @@ public class AppointmentService : IAppointmentService
                     }
                 }
             }
-            else if (appointment.PaymentDetailId.HasValue)
-            {
-                var paymentDetail = await _paymentDetailRepository.GetPaymentDetailById(appointment.PaymentDetailId.Value, cancellationToken);
-
-                if (paymentDetail != null)
-                {
-                    var vaccineId = paymentDetail.VaccinePackageDetail.VaccineId;
-                    var vaccineDiseases = await _vaccineDiseaseRepository.GetVaccineDiseasesByVaccineId(vaccineId, cancellationToken);
-
-                    if (vaccineDiseases.Any())
-                    {
-                        var diseaseId = vaccineDiseases.First().DiseaseId;
-
-                        var childProfiles = await _vaccineProfileRepository.GetVaccineProfileByChildId(appointment.ChildId, cancellationToken);
-
-                        var profileToUpdate = childProfiles
-                            .FirstOrDefault(vp => vp.DiseaseId == diseaseId && vp.IsCompleted == EnumList.IsCompleted.No);
-
-                        if (profileToUpdate != null)
-                        {
-                            profileToUpdate.AppointmentId = appointment.AppointmentId;
-                            profileToUpdate.VaccinationDate = appointment.AppointmentDate;
-                            profileToUpdate.IsCompleted = EnumList.IsCompleted.Yes;
-                            profileToUpdate.ModifiedBy = appointment.ModifiedBy;
-                            profileToUpdate.ModifiedDate = DateTime.UtcNow;
-
-                            await _vaccineProfileRepository.UpdateVaccineProfile(profileToUpdate, cancellationToken);
-                        }
-                    }
-                }
-            }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating vaccine profiles for completed appointment {id}", appointment.AppointmentId);
-            throw new ApplicationException("Error while update appointment for vaccineprofile", ex);
+            throw new ApplicationException("Error while updating appointment for vaccine profile", ex);
         }
     }
+
 
     public async Task<List<AppointmentResponseDTO>> GetAppointmentsByChildId(int childId, CancellationToken cancellationToken)
     {

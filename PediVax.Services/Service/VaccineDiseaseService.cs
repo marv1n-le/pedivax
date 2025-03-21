@@ -114,9 +114,22 @@ namespace PediVax.Services.Service
             return (_mapper.Map<List<VaccineDiseaseResponseDTO>>(vaccineDiseases), totalCount);
         }
 
-        public Task<bool> DeleteVaccineDisease(int id, CancellationToken cancellationToken)
+        public async Task<bool> DeleteVaccineDisease(int id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (id <= 0)
+            {
+                throw new ArgumentException("Invalid ID");
+            }
+
+            var vaccineDisease = await _vaccineDiseaseRepository.GetVaccineDiseaseById(id, cancellationToken);
+            if (vaccineDisease == null)
+            {
+                throw new KeyNotFoundException("VaccineDisease not found");
+            }
+
+            return await _vaccineDiseaseRepository.DeleteVaccineDisease(id, cancellationToken);
         }
+
+
     }
 }

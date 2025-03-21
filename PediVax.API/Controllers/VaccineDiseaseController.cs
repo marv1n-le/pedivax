@@ -89,5 +89,37 @@ namespace PediVax.Controllers
                 return Problem("An error occurred while updating the vaccine-disease relationship.");
             }
         }
+        [HttpDelete("delete/{id}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> DeleteVaccineDisease(int id, CancellationToken cancellationToken)
+        {
+            if (id <= 0)
+            {
+                return BadRequest(new { message = "Invalid vaccine-disease ID." });
+            }
+
+            try
+            {
+                var isDeleted = await _vaccineDiseaseService.DeleteVaccineDisease(id, cancellationToken);
+                if (!isDeleted)
+                {
+                    return NotFound(new { message = "Vaccine-disease relationship not found." });
+                }
+
+                return Ok(new { success = true, message = "Vaccine-disease relationship deleted successfully." });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { message = "Vaccine-disease relationship not found." });
+            }
+            catch (ApplicationException ex)
+            {
+                _logger.LogError(ex, "Error deleting vaccine-disease relationship with ID {id}", id);
+                return Problem("An error occurred while deleting the vaccine-disease relationship.");
+            }
+        }
+
     }
 }

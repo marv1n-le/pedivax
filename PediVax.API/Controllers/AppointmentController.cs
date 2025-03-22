@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace PediVax.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/appointment")]
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentService;

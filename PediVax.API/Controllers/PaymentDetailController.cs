@@ -11,7 +11,7 @@ using System;
 
 namespace PediVax.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/payment-detail")]
     [ApiController]
     public class PaymentDetailController : ControllerBase
     {

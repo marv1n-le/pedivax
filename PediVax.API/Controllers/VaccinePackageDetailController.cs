@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace PediVax.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/vaccine-package-detail")]
     public class VaccinePackageDetailController : ControllerBase
     {
         private readonly IVaccinePackageDetailService _vaccinePackageDetailService;

@@ -15,7 +15,7 @@ using System.Net;
 
 namespace PediVax.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/payment")]
     [ApiController]
     public class VNPayController : ControllerBase
     {

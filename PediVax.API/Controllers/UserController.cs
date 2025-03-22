@@ -10,7 +10,7 @@ using PediVax.Services.IService;
 
 namespace PediVax.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/user")]
     [ApiController]
     public class UserController : ControllerBase
     {

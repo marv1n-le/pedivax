@@ -4,7 +4,7 @@ using PediVax.Services.IService;
 
 namespace PediVax.Controllers;
 
-[Microsoft.AspNetCore.Components.Route("api/child-profile")]
+[Route("api/child-profile")]
 [ApiController]
 public class ChildProfileController : ControllerBase
 {

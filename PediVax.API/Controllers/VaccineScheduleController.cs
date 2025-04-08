@@ -6,7 +6,7 @@ using System.Net;
 
 namespace PediVax.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/vaccine-schedule")]
     [ApiController]
     public class VaccineScheduleController : ControllerBase
     {

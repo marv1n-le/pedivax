@@ -11,7 +11,7 @@ using PediVax.BusinessObjects.DTO.VaccinePackageDTO;
 namespace PediVax.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/vaccine-package")]
     public class VaccinePackageController : ControllerBase
     {
         private readonly IVaccinePackageService _vaccinePackageService;

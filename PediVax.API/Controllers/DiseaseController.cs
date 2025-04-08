@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace PediVax.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/disease")]
     public class DiseaseController : ControllerBase
     {
         private readonly IDiseaseService _diseaseService;
